@@ -1,0 +1,5 @@
+openplotter-gpio (2.0.0-alpha) bionic; urgency=medium
+
+  * Add setalk 1 feature
+
+ -- Sailoog <info@sailoog.com>  Wed, 21 Oct 2020 19:29:30 +0200
