@@ -14,7 +14,7 @@ Install GPIO from openplotter-settings app.
 
 Install openplotter-gpio dependencies:
 
-`sudo apt install `
+`sudo apt install pigpio python3-pigpio`
 
 Clone the repository:
 

@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import time, os, sys
+import time, os, sys, subprocess, ujson
 from openplotterSettings import language
+from openplotterSettings import platform
 
 class Start():
 	def __init__(self, conf, currentLanguage):
@@ -41,10 +42,31 @@ class Check():
 		
 		self.initialMessage = _('Checking GPIO...')
 
-	def check(self): 
+	def check(self):
+		platform2 = platform.Platform()
 		green = ''
 		black = ''
 		red = ''
 
-		return {'green': green,'black': black,'red': red}
+		try:
+			setting_file = platform2.skDir+'/settings.json'
+			with open(setting_file) as data_file:
+				data = ujson.load(data_file)
+		except: data = {}
+		if 'pipedProviders' in data:
+			data = data['pipedProviders']
+		else:
+			data = []
+		seatalkExists = False
+		for i in data:
+			try:
+				if i['pipeElements'][0]['options']['type'] == 'Seatalk' and i['enabled']: seatalkExists = True
+			except: pass
+		if seatalkExists:
+			try:
+				subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
+				green = _('pigpiod running')
+			except: red = _('pigpiod not running')
+		else: black = _('pigpiod not running')
 
+		return {'green': green,'black': black,'red': red}

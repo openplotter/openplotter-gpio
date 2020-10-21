@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter-gpio\n"
-"POT-Creation-Date: 2020-09-27 14:08+0200\n"
-"PO-Revision-Date: 2020-09-27 14:08+0200\n"
+"POT-Creation-Date: 2020-10-21 19:21+0200\n"
+"PO-Revision-Date: 2020-10-21 19:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -31,26 +31,123 @@ msgstr ""
 msgid "Removing version..."
 msgstr ""
 
-#: openplotterGpio.py:43
+#: openplotterGpio.py:44
 msgid "Help"
 msgstr ""
 
-#: openplotterGpio.py:46
+#: openplotterGpio.py:47
 msgid "Settings"
 msgstr ""
 
-#: openplotterGpio.py:73
-msgid "Click on \"Help\" to learn how to get started"
+#: openplotterGpio.py:50
+msgid "GPIO Map"
 msgstr ""
 
-#: openplotterGpio.py:105
-msgid "This app does nothing."
+#: openplotterGpio.py:53
+msgid "Refresh"
 msgstr ""
 
-#: openplotterGpio.py:106
-msgid "This is a template to start writing your own OpenPlotter app."
+#: openplotterGpio.py:63
+msgid "Digital"
 msgstr ""
 
-#: startup.py:42
+#: openplotterGpio.py:64
+msgid "Pulses"
+msgstr ""
+
+#: openplotterGpio.py:66
+msgid "Connections"
+msgstr ""
+
+#: openplotterGpio.py:134 openplotterGpio.py:148 openplotterGpio.py:162
+#: openplotterGpio.py:176
+msgid "Coming soon."
+msgstr ""
+
+#: openplotterGpio.py:191
+msgid "Restarting Signal K server... "
+msgstr ""
+
+#: openplotterGpio.py:197
+msgid "Signal K server restarted"
+msgstr ""
+
+#: openplotterGpio.py:214 openplotterGpio.py:367
+msgid "Invert signal"
+msgstr ""
+
+#: openplotterGpio.py:215
+msgid "SK connection ID"
+msgstr ""
+
+#: openplotterGpio.py:221
+msgid "Enable Seatalk 1 reception"
+msgstr ""
+
+#: openplotterGpio.py:223 openplotterGpio.py:353
+msgid "Add SK Connection"
+msgstr ""
+
+#: openplotterGpio.py:227
+msgid "Edit Connection"
+msgstr ""
+
+#: openplotterGpio.py:229
+msgid "Remove Connection"
+msgstr ""
+
+#: openplotterGpio.py:246
+msgid "Seatalk 1 enabled"
+msgstr ""
+
+#: openplotterGpio.py:250
+msgid "Seatalk 1 disabled"
+msgstr ""
+
+#: openplotterGpio.py:275
+msgid "Fill in all fields"
+msgstr ""
+
+#: openplotterGpio.py:291
+msgid "Failed. Error creating connection in Signal K"
+msgstr ""
+
+#: openplotterGpio.py:294
+msgid "Please install \"Signal K Installer\" OpenPlotter app"
+msgstr ""
+
+#: openplotterGpio.py:313
+msgid "Failed. Error removing connection in Signal K"
+msgstr ""
+
+#: openplotterGpio.py:334
+msgid "no"
+msgstr ""
+
+#: openplotterGpio.py:344
+msgid "yes"
+msgstr ""
+
+#: openplotterGpio.py:358
+msgid "ID"
+msgstr ""
+
+#: openplotterGpio.py:364
+msgid "Select"
+msgstr ""
+
+#: ports.py:31
+msgid "Port used by pigpiod to convert Seatalk 1"
+msgstr ""
+
+#: startup.py:43
 msgid "Checking GPIO..."
+msgstr ""
+
+#: startup.py:68
+msgid "pigpiod running"
+msgstr ""
+
+#: startup.py:69 startup.py:70
+msgid "pigpiod not running"
 msgstr ""
