@@ -63,20 +63,17 @@ class MyFrame(wx.Frame):
 		self.notebook.AddPage(self.digital, _('Digital'))
 		self.notebook.AddPage(self.pulses, _('Pulses'))
 		self.notebook.AddPage(self.oneW, '1W')
-		self.notebook.AddPage(self.connections, _('Connections'))
 		self.notebook.AddPage(self.seatalk, ' Seatalk 1')
 		self.il = wx.ImageList(24, 24)
 		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
 		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
 		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
-		img3 = self.il.Add(wx.Bitmap(self.currentdir+"/data/connections.png", wx.BITMAP_TYPE_PNG))
-		img4 = self.il.Add(wx.Bitmap(self.currentdir+"/data/seatalk.png", wx.BITMAP_TYPE_PNG))
+		img3 = self.il.Add(wx.Bitmap(self.currentdir+"/data/seatalk.png", wx.BITMAP_TYPE_PNG))
 		self.notebook.AssignImageList(self.il)
 		self.notebook.SetPageImage(0, img0)
 		self.notebook.SetPageImage(1, img1)
 		self.notebook.SetPageImage(2, img2)
 		self.notebook.SetPageImage(3, img3)
-		self.notebook.SetPageImage(4, img4)
 
 		vbox = wx.BoxSizer(wx.VERTICAL)
 		vbox.Add(self.toolbar1, 0, wx.EXPAND)
@@ -86,7 +83,6 @@ class MyFrame(wx.Frame):
 		self.pageDigital()
 		self.pageOneW()
 		self.pagePulses()
-		self.pageConnections()
 		self.pageSeatalk()
 
 		self.onRefresh()
@@ -172,20 +168,6 @@ class MyFrame(wx.Frame):
 		vbox.AddStretchSpacer(1)
 		self.pulses.SetSizer(vbox)
 
-	def pageConnections(self):
-		text1 = wx.StaticText(self.connections, label=_('Coming soon.'))
-
-		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-		hbox1.AddStretchSpacer(1)
-		hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
-		hbox1.AddStretchSpacer(1)
-
-		vbox = wx.BoxSizer(wx.VERTICAL)
-		vbox.AddStretchSpacer(1)
-		vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
-		vbox.AddStretchSpacer(1)
-		self.connections.SetSizer(vbox)
-
 	def restart_SK(self, msg):
 		if self.platform.skDir:
 			if msg == 0: msg = _('Restarting Signal K server... ')
@@ -206,7 +188,9 @@ class MyFrame(wx.Frame):
 
 		self.readSeatalk()
 
-	#############################################################################################3
+
+
+	###########################################################################
 
 	def pageSeatalk(self):
 		self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
