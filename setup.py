@@ -31,6 +31,6 @@ setup (
 	'Operating System :: POSIX :: Linux',
 	'Programming Language :: Python :: 3'],
 	include_package_data=True,
-	entry_points={'console_scripts': ['openplotter-gpio=openplotterGpio.openplotterGpio:main','gpioPostInstall=openplotterGpio.gpioPostInstall:main','gpioPreUninstall=openplotterGpio.gpioPreUninstall:main']},
+	entry_points={'console_scripts': ['openplotter-gpio=openplotterGpio.openplotterGpio:main','gpioPostInstall=openplotterGpio.gpioPostInstall:main','gpioPreUninstall=openplotterGpio.gpioPreUninstall:main','openplotter-gpio-read=openplotterGpio.openplotterGpioRead:main']},
 	data_files=[('share/applications', ['openplotterGpio/data/openplotter-gpio.desktop']),('share/pixmaps', ['openplotterGpio/data/openplotter-gpio.png']),],
 	)

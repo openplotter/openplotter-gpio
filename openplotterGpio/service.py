@@ -25,6 +25,16 @@ if sys.argv[1]=='seatalk':
 		subprocess.call(['systemctl', 'disable', 'pigpiod'])
 		subprocess.call(['systemctl', 'stop', 'pigpiod'])
 
+if sys.argv[1]=='openplotter-gpio-read':
+	if sys.argv[2]=='start':
+		subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'start', 'openplotter-gpio-read'])
+	if sys.argv[2]=='stop':
+		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
+	if sys.argv[2]=='restart':
+		subprocess.call(['systemctl', 'restart', 'openplotter-gpio-read'])
+
 if sys.argv[1]=='sk':
 	if sys.argv[2]=='restart':
 		subprocess.call(['systemctl', 'stop', 'signalk.service'])

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import os, subprocess
 from openplotterSettings import conf
 from openplotterSettings import language
 
@@ -26,7 +26,20 @@ def main():
 	package = 'openplotter-gpio'
 	language.Language(currentdir, package, currentLanguage)
 
+	print(_('Removing python packages...'))
+	try:
+		subprocess.call(['pip3', 'uninstall', '-y', 'w1thermsensor'])
+		print(_('DONE'))
+	except Exception as e: print(_('FAILED: ')+str(e))
 
+	print(_('Removing openplotter-gpio-read service...'))
+	try:
+		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
+		subprocess.call(['rm', '-f', '/etc/systemd/system/openplotter-gpio-read.service'])
+		subprocess.call(['systemctl', 'daemon-reload'])
+		print(_('DONE'))
+	except Exception as e: print(_('FAILED: ')+str(e))
 
 	print(_('Removing version...'))
 	try:

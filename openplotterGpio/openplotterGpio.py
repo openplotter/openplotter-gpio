@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import wx, os, webbrowser, subprocess, time, sys, ujson
+import wx, os, webbrowser, subprocess, time, sys, ujson, requests, uuid
 from openplotterSettings import conf
 from openplotterSettings import language
 from openplotterSettings import platform
 from openplotterSettings import gpio
+from openplotterSignalkInstaller import connections
 from .version import version
 
 class MyFrame(wx.Frame):
@@ -49,6 +50,11 @@ class MyFrame(wx.Frame):
 		self.toolbar1.AddSeparator()
 		toolGpio = self.toolbar1.AddTool(103, _('GPIO Map'), wx.Bitmap(self.currentdir+"/data/chip.png"))
 		self.Bind(wx.EVT_TOOL, self.OnToolGpio, toolGpio)
+		self.toolbar1.AddSeparator()
+		self.aproveSK = self.toolbar1.AddTool(105, _('Approve device'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.Bind(wx.EVT_TOOL, self.onAproveSK, self.aproveSK)
+		self.connectionSK = self.toolbar1.AddTool(106, _('Allowed devices'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.Bind(wx.EVT_TOOL, self.onConnectionSK, self.connectionSK)
 		self.toolbar1.AddSeparator()
 		self.refresh = self.toolbar1.AddTool(104, _('Refresh'), wx.Bitmap(self.currentdir+"/data/refresh.png"))
 		self.Bind(wx.EVT_TOOL, self.onRefresh, self.refresh)
@@ -126,6 +132,16 @@ class MyFrame(wx.Frame):
 		res = dlg.ShowModal()
 		dlg.Destroy()
 
+	def onAproveSK(self,e):
+		if self.platform.skPort: 
+			url = self.platform.http+'localhost:'+self.platform.skPort+'/admin/#/security/access/requests'
+			webbrowser.open(url, new=2)
+
+	def onConnectionSK(self,e):
+		if self.platform.skPort: 
+			url = self.platform.http+'localhost:'+self.platform.skPort+'/admin/#/security/devices'
+			webbrowser.open(url, new=2)
+
 	def pageDigital(self):
 		text1 = wx.StaticText(self.digital, label=_('Coming soon.'))
 
@@ -139,20 +155,6 @@ class MyFrame(wx.Frame):
 		vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
 		vbox.AddStretchSpacer(1)
 		self.digital.SetSizer(vbox)
-
-	def pageOneW(self):
-		text1 = wx.StaticText(self.oneW, label=_('Coming soon.'))
-
-		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-		hbox1.AddStretchSpacer(1)
-		hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
-		hbox1.AddStretchSpacer(1)
-
-		vbox = wx.BoxSizer(wx.VERTICAL)
-		vbox.AddStretchSpacer(1)
-		vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
-		vbox.AddStretchSpacer(1)
-		self.oneW.SetSizer(vbox)
 
 	def pagePulses(self):
 		text1 = wx.StaticText(self.pulses, label=_('Coming soon.'))
@@ -179,15 +181,156 @@ class MyFrame(wx.Frame):
 			self.ShowStatusBarGREEN(_('Signal K server restarted'))
 
 	def onRefresh(self, e=0):
+		self.ShowStatusBarBLACK(' ')
 		try:
 			subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
 			self.toolbar33.ToggleTool(3301,True)
 		except: self.toolbar33.ToggleTool(3301,False)
 
-		self.SetStatusText('')
+		self.toolbar1.EnableTool(105,False)
+		skConnections = connections.Connections('GPIO')
+		result = skConnections.checkConnection()
+		if result[0] == 'pending':
+			self.toolbar1.EnableTool(105,True)
+			self.ShowStatusBarYELLOW(result[1]+_(' Press "Approve" and then "Refresh".'))
+		elif result[0] == 'error':
+			self.ShowStatusBarRED(result[1])
+		elif result[0] == 'repeat':
+			self.ShowStatusBarYELLOW(result[1]+_(' Press "Refresh".'))
+		elif result[0] == 'permissions':
+			self.ShowStatusBarYELLOW(result[1]+_(' Press "Allowed devices".'))
+		elif result[0] == 'approved':
+			self.ShowStatusBarGREEN(result[1])
 
 		self.readSeatalk()
+		self.readOneW()
 
+	###########################################################################
+
+	def pageOneW(self):
+		self.listOneW = wx.ListCtrl(self.oneW, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+		self.listOneW.InsertColumn(0, 'Device ID', width=150)
+		self.listOneW.InsertColumn(1, _('Signal K key'), width=300)
+		self.listOneW.InsertColumn(2, _('Rate'), width=100)
+		self.listOneW.InsertColumn(2, _('Offset'), width=100)
+		self.listOneW.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistOneWSelected)
+		self.listOneW.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistOneWDeselected)
+		self.listOneW.SetTextColour(wx.BLACK)
+
+		self.toolbar34 = wx.ToolBar(self.oneW, style=wx.TB_TEXT)
+		setOneWpin = self.toolbar34.AddTool(3401, _('Set 1W GPIO'), wx.Bitmap(self.currentdir+"/data/chip.png"))
+		self.Bind(wx.EVT_TOOL, self.onSetOneWpin, setOneWpin)
+		self.addOneWdevice = self.toolbar34.AddTool(3402, _('Add 1W Sensor'), wx.Bitmap(self.currentdir+"/data/openplotter-24.png"))
+		self.Bind(wx.EVT_TOOL, self.onAddOneWdevice, self.addOneWdevice)
+
+		self.toolbar4 = wx.ToolBar(self.oneW, style=wx.TB_TEXT | wx.TB_VERTICAL)
+		self.editOneWCon= self.toolbar4.AddTool(401, _('Edit Sensor'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+		self.Bind(wx.EVT_TOOL, self.onEditOneWCon, self.editOneWCon)
+		self.removeOneWCon = self.toolbar4.AddTool(402, _('Remove Sensor'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+		self.Bind(wx.EVT_TOOL, self.onRemoveOneWCon, self.removeOneWCon)
+
+		h1 = wx.BoxSizer(wx.HORIZONTAL)
+		h1.Add(self.listOneW, 1, wx.EXPAND, 0)
+		h1.Add(self.toolbar4, 0, wx.EXPAND, 0)
+
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(self.toolbar34, 0, wx.EXPAND, 0)
+		sizer.Add(h1, 1, wx.EXPAND, 0)
+
+		self.oneW.SetSizer(sizer)
+
+	def onSetOneWpin(self, e):
+		gpios = gpio.Gpio()
+		gpioBCM = '4'
+		config = '/boot/config.txt'
+		boot = '/boot'
+		try: file = open(config, 'r')
+		except:
+			config = '/boot/firmware/config.txt'
+			boot = '/boot/firmware'
+			file = open(config, 'r')
+		while True:
+			line = file.readline()
+			if not line: break
+			if 'dtoverlay=w1-gpio' in line:
+				items = line.split(',')
+				for i in items:
+					if 'gpiopin=' in i:
+						items2 = i.split('=')
+						gpioBCM = items2[1].strip()
+		file.close()
+		gpioBCM = 'GPIO '+gpioBCM
+		pin = '0'
+		for i in gpios.gpioMap:
+			if gpioBCM == i['BCM']: pin = i['physical']
+		dlg = gpio.GpioMap(['GPIO'], pin)
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			gpioBCM = dlg.selected['BCM'].replace('GPIO ','')
+			if gpioBCM:
+				file = open(config, 'r')
+				file1 = open('config.txt', 'w')
+				exists = False
+				while True:
+					line = file.readline()
+					if not line: break
+					if 'dtoverlay=w1-gpio' in line:
+						if gpioBCM == '4': line = 'dtoverlay=w1-gpio'
+						else: line = 'dtoverlay=w1-gpio,gpiopin='+gpioBCM
+					file1.write(line)
+				file.close()
+				file1.close()
+				if os.system('diff config.txt '+config+' > /dev/null'):
+					dlg = wx.MessageDialog(None, _(
+						'OpenPlotter will restart. Are you sure?'),
+						_('Question'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+					if dlg.ShowModal() == wx.ID_YES:
+						os.system(self.platform.admin+' mv config.txt '+boot)
+						os.system('shutdown -r now')
+					else: os.system('rm -f config.txt')
+				else: os.system('rm -f config.txt')
+		dlg.Destroy()
+
+	def onAddOneWdevice(self,e):
+		try: 
+			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+		except: 
+			self.ShowStatusBarRED(_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.'))
+
+	def onListlistOneWSelected(self,e):
+		self.onListlistOneWDeselected()
+		selected = self.listOneW.GetFirstSelected()
+		if selected == -1: return
+		self.toolbar4.EnableTool(401,True)
+		self.toolbar4.EnableTool(402,True)
+
+	def onListlistOneWDeselected(self,e=0):
+		self.toolbar4.EnableTool(401,False)
+		self.toolbar4.EnableTool(402,False)
+
+	def onEditOneWCon(self,e):
+		selected = self.listOneW.GetFirstSelected()
+		if selected == -1: return
+		#skId = self.listOneW.GetItemText(selected, 2)
+		try: 
+			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+		except: 
+			self.ShowStatusBarRED(_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.'))
+			return
+
+	def onRemoveOneWCon(self,e):
+		selected = self.listOneW.GetFirstSelected()
+		if selected == -1: return
+		#skId = self.listOneW.GetItemText(selected, 2)
+		pass
+		
+	def readOneW(self):
+		try: 
+			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+			self.toolbar34.EnableTool(3401,True)
+		except: 
+			self.toolbar34.EnableTool(3401,False)
+		self.onListlistOneWDeselected()
 
 
 	###########################################################################
@@ -204,7 +347,7 @@ class MyFrame(wx.Frame):
 		self.toolbar33 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT)
 		enableSeatalk = self.toolbar33.AddCheckTool(3301, _('Enable Seatalk 1 reception'), wx.Bitmap(self.currentdir+"/data/seatalk.png"))
 		self.Bind(wx.EVT_TOOL, self.onEnableSeatalk, enableSeatalk)
-		self.addSeatalkCon = self.toolbar33.AddTool(3302, _('Add SK Connection'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.addSeatalkCon = self.toolbar33.AddTool(3302, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
 		self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
 
 		self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
@@ -389,9 +532,6 @@ class addSeatalkConn(wx.Dialog):
 		if res == wx.ID_OK:
 			self.gpio.SetValue(dlg.selected['BCM'])
 		dlg.Destroy()
-
-	def OnDelete(self,e):
-		self.EndModal(wx.ID_DELETE)
 
 ################################################################################
 
