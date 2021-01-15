@@ -18,6 +18,7 @@
 import time, os, sys, subprocess, ujson
 from openplotterSettings import language
 from openplotterSettings import platform
+from openplotterSignalkInstaller import connections
 
 class Start():
 	def __init__(self, conf, currentLanguage):
@@ -48,6 +49,7 @@ class Check():
 		black = ''
 		red = ''
 
+		#seatalk
 		try:
 			setting_file = platform2.skDir+'/settings.json'
 			with open(setting_file) as data_file:
@@ -66,7 +68,65 @@ class Check():
 			try:
 				subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
 				green = _('pigpiod running')
-			except: red = _('pigpiod not running')
+			except: red = ' ↳'+_('pigpiod not running')
 		else: black = _('pigpiod not running')
+
+		#1W
+		data = self.conf.get('GPIO', '1w')
+		try: oneWlist = eval(data)
+		except: oneWlist = {}
+		if oneWlist:
+			try: 
+				subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+				msg = _('1W enabled')
+				if not green: green = msg
+				else: green+= ' | '+msg
+			except:
+				msg =' ↳'+ _('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.')
+				if not red: red = msg
+				else: red+= '\n'+msg
+		else:
+			try: 
+				subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+				msg = _('1W enabled')
+				if not black: black = msg
+				else: black+= ' | '+msg
+			except:
+				msg = _('1W disabled')
+				if not black: black = msg
+				else: black+= ' | '+msg
+
+		#service
+		if oneWlist:
+			try:
+				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
+				msg = _('GPIO service running')
+				if not green: green = msg
+				else: green+= ' | '+msg
+			except:
+				msg = ' ↳'+_('GPIO service not running')
+				if not red: red = msg
+				else: red+= '\n'+msg
+		else:
+			try:
+				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
+				msg = ' ↳'+_('GPIO service running')
+				if not red: red = msg
+				else: red+= '\n'+msg
+			except:
+				msg = _('GPIO service not running')
+				if not black: black = msg
+				else: black+= ' | '+msg
+
+		#access
+		skConnections = connections.Connections('GPIO')
+		result = skConnections.checkConnection()
+		if result[0] == 'pending' or result[0] == 'error' or result[0] == 'repeat' or result[0] == 'permissions':
+			if not red: red = ' ↳'+result[1]
+			else: red+= '\n'+' ↳'+result[1]
+		if result[0] == 'approved' or result[0] == 'validated':
+			msg = _('Access to Signal K server validated')
+			if not green: green = msg
+			else: green+= ' | '+msg
 
 		return {'green': green,'black': black,'red': red}

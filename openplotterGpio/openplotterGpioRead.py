@@ -18,8 +18,9 @@
 import threading, time
 from openplotterSettings import conf
 from openplotterSettings import platform
-from w1thermsensor import W1ThermSensor
 from websocket import create_connection
+try: from w1thermsensor import W1ThermSensor
+except: pass
 
 class Process:
 	def __init__(self):
@@ -34,49 +35,63 @@ class Process:
 			headers = {'Authorization': 'Bearer '+token}
 			self.ws = create_connection(uri, header=headers)
 
-	def oneW(self):
+	def oneW(self,oneWlist):
+		ticks = {}
 		while True:
-			for sensor in W1ThermSensor.get_available_sensors():
-				path = 'sensors.'+sensor.id
-				SignalK = '{"updates":[{"$source":"OpenPlotter.GPIO.1W.'+sensor.id+'","values":[{"path":"'+path+'","value":'+str(sensor.get_temperature())+'}]}]}\n'
-				try: 
-					if self.ws: self.ws.send(SignalK)
-				except: 
-					if self.ws: self.ws.close()
-					self.ws = False
-					return
-	'''
-	def twoW(self):
-		while True:
-			for sensor in W1ThermSensor.get_available_sensors():
-				path = 'sensors2.'+sensor.id
-				SignalK = '{"updates":[{"$source":"OpenPlotter.GPIO.1W.'+sensor.id+'","values":[{"path":"'+path+'","value":'+str(sensor.get_temperature())+'}]}]}\n'
-				try: 
-					if self.ws: self.ws.send(SignalK)
-				except: 
-					if self.ws: self.ws.close()
-					self.ws = False
-					return
-	'''
+			time.sleep(0.1)
+			try:
+				for sensor in W1ThermSensor.get_available_sensors():
+					sid = sensor.id
+					if sid in oneWlist:
+						sk = oneWlist[sid]['sk']
+						if sk:
+							offset = oneWlist[sid]['offset']
+							value = str(offset+sensor.get_temperature(W1ThermSensor.KELVIN))
+							if not sid in ticks: ticks[sid] = time.time()
+							rate = oneWlist[sid]['rate']
+							now = time.time()
+							if now - ticks[sid] > rate:
+								SignalK = '{"updates":[{"$source":"OpenPlotter.GPIO.1W.'+sid+'","values":[{"path":"'+sk+'","value":'+value+'}]}]}\n'
+								try: 
+									if self.ws: 
+										self.ws.send(SignalK)
+										ticks[sid] = time.time()
+								except: 
+									if self.ws: self.ws.close()
+									self.ws = False
+									return
+			except: return
 
 def main():
-	process = Process()
-	process.connect()
-	x1 = threading.Thread(target=process.oneW, daemon=True)
-	x1.start()
-	#x2 = threading.Thread(target=process.twoW, daemon=True)
-	#x2.start()
-	while True:
-		if not process.ws: process.connect()
-		if not x1.is_alive():
-			x1.join()
-			x1 = threading.Thread(target=process.oneW, daemon=True)
+	conf2 = conf.Conf()
+	enableX1 = False
+	enableX2 = False
+
+	data = conf2.get('GPIO', '1w')
+	try: oneWlist = eval(data)
+	except: oneWlist = {}
+	for i in oneWlist:
+		if oneWlist[i]['sk']: enableX1 = True
+
+	if enableX1 or enableX2:
+		process = Process()
+		process.connect()
+
+		if enableX1:
+			x1 = threading.Thread(target=process.oneW, args=(oneWlist,), daemon=True)
 			x1.start()
-		#if not x2.is_alive():
-			#x2.join()
-			#x2 = threading.Thread(target=process.twoW, daemon=True)
-			#x2.start()
-		time.sleep(5)
+		#if enableX2:
+
+		while True:
+			if not process.ws: process.connect()
+			if enableX1:
+				if not x1.is_alive():
+					x1.join()
+					x1 = threading.Thread(target=process.oneW, args=(oneWlist,), daemon=True)
+					x1.start()
+			#if enableX2:
+			
+			time.sleep(5)
 
 
 if __name__ == '__main__':

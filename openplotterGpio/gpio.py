@@ -22,9 +22,15 @@ class Gpio:
 	def __init__(self,conf):
 		self.conf = conf
 		self.platform = platform.Platform()
+		self.gpio = gpio.Gpio()
+		self.gpioMap = self.gpio.gpioMap
 		self.used = [] # {'app':'xxx', 'id':'xxx', 'physical':'n'}
 
 	def usedGpios(self):
+		ground = False
+		power3 = False
+
+		#seatalk
 		try:
 			setting_file = self.platform.skDir+'/settings.json'
 			with open(setting_file) as data_file:
@@ -35,9 +41,6 @@ class Gpio:
 		else:
 			data = []
 		if data:
-			self.gpio = gpio.Gpio()
-			gpioMap = self.gpio.gpioMap
-			ground = False
 			for i in data:
 				dataType = ''
 				subOptions = ''
@@ -51,20 +54,53 @@ class Gpio:
 				if usedGpio:
 					if usedGpio[4] == '0': usedGpio = usedGpio.replace('0', ' ')
 					else: usedGpio = usedGpio.replace('GPIO', 'GPIO ')
-					for ii in gpioMap:
+					for ii in self.gpioMap:
 						if usedGpio == ii['BCM']:
 							ground = True
 							self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':ii['physical']})
-			if ground:
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'1'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'6'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'9'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'14'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'17'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'20'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'25'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'30'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'34'})
-				self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':'39'})
-				
+
+		#1W
+		try: subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+		except: pass
+		else:
+			gpioBCM = '4'
+			pin = '7'
+			config = '/boot/config.txt'
+			try: 
+				file = open(config, 'r')
+			except:
+				config = '/boot/firmware/config.txt'
+				file = open(config, 'r')
+			while True:
+				line = file.readline()
+				if not line: break
+				if 'dtoverlay=w1-gpio' in line:
+					items = line.split(',')
+					for i in items:
+						if 'gpiopin=' in i:
+							items2 = i.split('=')
+							gpioBCM = items2[1].strip()
+			file.close()
+			gpioBCM = 'GPIO '+gpioBCM
+			for i in self.gpioMap:
+				ground = True
+				power3 = True
+				if gpioBCM == i['BCM']: pin = i['physical']
+			self.used.append({'app':'GPIO', 'id':'1W', 'physical':pin})
+
+		#common
+		if power3:
+			self.used.append({'app':'GPIO', 'id':'power', 'physical':'1'})
+			self.used.append({'app':'GPIO', 'id':'power', 'physical':'17'})
+		if ground:
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'1'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'6'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'9'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'14'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'17'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'20'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'25'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'30'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'34'})
+			self.used.append({'app':'GPIO', 'id':'ground', 'physical':'39'})
 		return self.used

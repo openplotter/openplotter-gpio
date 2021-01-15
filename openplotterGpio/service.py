@@ -33,6 +33,7 @@ if sys.argv[1]=='openplotter-gpio-read':
 		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
 		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
 	if sys.argv[2]=='restart':
+		subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read'])
 		subprocess.call(['systemctl', 'restart', 'openplotter-gpio-read'])
 
 if sys.argv[1]=='sk':

@@ -32,8 +32,10 @@ def main():
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	print(_('Removing openplotter-gpio-read service...'))
+	print(_('Removing pigpiod and openplotter-gpio-read services...'))
 	try:
+		subprocess.call(['systemctl', 'disable', 'pigpiod'])
+		subprocess.call(['systemctl', 'stop', 'pigpiod'])
 		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
 		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
 		subprocess.call(['rm', '-f', '/etc/systemd/system/openplotter-gpio-read.service'])

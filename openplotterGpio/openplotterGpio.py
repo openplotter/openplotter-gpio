@@ -20,7 +20,10 @@ from openplotterSettings import conf
 from openplotterSettings import language
 from openplotterSettings import platform
 from openplotterSettings import gpio
+from openplotterSettings import selectKey
 from openplotterSignalkInstaller import connections
+try: from w1thermsensor import W1ThermSensor
+except: pass
 from .version import version
 
 class MyFrame(wx.Frame):
@@ -73,7 +76,7 @@ class MyFrame(wx.Frame):
 		self.il = wx.ImageList(24, 24)
 		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
 		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
-		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
+		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/temp.png", wx.BITMAP_TYPE_PNG))
 		img3 = self.il.Add(wx.Bitmap(self.currentdir+"/data/seatalk.png", wx.BITMAP_TYPE_PNG))
 		self.notebook.AssignImageList(self.il)
 		self.notebook.SetPageImage(0, img0)
@@ -205,14 +208,25 @@ class MyFrame(wx.Frame):
 		self.readSeatalk()
 		self.readOneW()
 
+	def onApply(self):
+		enable = False
+		if self.oneWlist: enable = True
+		if enable:
+			subprocess.Popen([self.platform.admin, 'python3', self.currentdir+'/service.py', 'openplotter-gpio-read', 'restart'])
+			self.ShowStatusBarGREEN(_('GPIO service is enabled'))
+		else:
+			subprocess.Popen([self.platform.admin, 'python3', self.currentdir+'/service.py', 'openplotter-gpio-read', 'stop'])
+			self.ShowStatusBarBLACK(_('There is nothing to send. GPIO service is disabled'))
+			
 	###########################################################################
 
 	def pageOneW(self):
 		self.listOneW = wx.ListCtrl(self.oneW, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-		self.listOneW.InsertColumn(0, 'Device ID', width=150)
-		self.listOneW.InsertColumn(1, _('Signal K key'), width=300)
-		self.listOneW.InsertColumn(2, _('Rate'), width=100)
-		self.listOneW.InsertColumn(2, _('Offset'), width=100)
+		self.listOneW.InsertColumn(0, _('Type'), width=80)
+		self.listOneW.InsertColumn(1, 'ID', width=110)
+		self.listOneW.InsertColumn(2, _('Signal K key'), width=370)
+		self.listOneW.InsertColumn(3, _('Rate'), width=75)
+		self.listOneW.InsertColumn(4, _('Offset'), width=75)
 		self.listOneW.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistOneWSelected)
 		self.listOneW.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistOneWDeselected)
 		self.listOneW.SetTextColour(wx.BLACK)
@@ -220,13 +234,11 @@ class MyFrame(wx.Frame):
 		self.toolbar34 = wx.ToolBar(self.oneW, style=wx.TB_TEXT)
 		setOneWpin = self.toolbar34.AddTool(3401, _('Set 1W GPIO'), wx.Bitmap(self.currentdir+"/data/chip.png"))
 		self.Bind(wx.EVT_TOOL, self.onSetOneWpin, setOneWpin)
-		self.addOneWdevice = self.toolbar34.AddTool(3402, _('Add 1W Sensor'), wx.Bitmap(self.currentdir+"/data/openplotter-24.png"))
-		self.Bind(wx.EVT_TOOL, self.onAddOneWdevice, self.addOneWdevice)
 
 		self.toolbar4 = wx.ToolBar(self.oneW, style=wx.TB_TEXT | wx.TB_VERTICAL)
-		self.editOneWCon= self.toolbar4.AddTool(401, _('Edit Sensor'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+		self.editOneWCon= self.toolbar4.AddTool(401, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
 		self.Bind(wx.EVT_TOOL, self.onEditOneWCon, self.editOneWCon)
-		self.removeOneWCon = self.toolbar4.AddTool(402, _('Remove Sensor'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+		self.removeOneWCon = self.toolbar4.AddTool(402, _('Clear'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
 		self.Bind(wx.EVT_TOOL, self.onRemoveOneWCon, self.removeOneWCon)
 
 		h1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -240,6 +252,11 @@ class MyFrame(wx.Frame):
 		self.oneW.SetSizer(sizer)
 
 	def onSetOneWpin(self, e):
+		try: 
+			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+		except: 
+			self.ShowStatusBarRED(_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.'))
+			return
 		gpios = gpio.Gpio()
 		gpioBCM = '4'
 		config = '/boot/config.txt'
@@ -291,12 +308,6 @@ class MyFrame(wx.Frame):
 				else: os.system('rm -f config.txt')
 		dlg.Destroy()
 
-	def onAddOneWdevice(self,e):
-		try: 
-			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
-		except: 
-			self.ShowStatusBarRED(_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.'))
-
 	def onListlistOneWSelected(self,e):
 		self.onListlistOneWDeselected()
 		selected = self.listOneW.GetFirstSelected()
@@ -311,27 +322,57 @@ class MyFrame(wx.Frame):
 	def onEditOneWCon(self,e):
 		selected = self.listOneW.GetFirstSelected()
 		if selected == -1: return
-		#skId = self.listOneW.GetItemText(selected, 2)
-		try: 
-			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
-		except: 
-			self.ShowStatusBarRED(_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.'))
-			return
+		sid = self.listOneW.GetItemText(selected, 1)
+		sk = self.listOneW.GetItemText(selected, 2)
+		rate = self.listOneW.GetItemText(selected, 3)
+		offset = self.listOneW.GetItemText(selected, 4)
+		dlg = edit1W(sid,sk,rate,offset)
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			sk = str(dlg.SKkey.GetValue())
+			rate = dlg.rate.GetValue()
+			if not rate: rate = 1.0
+			offset = dlg.offset.GetValue()
+			if not offset: offset = 0.0
+			if not sk: del self.oneWlist[sid]
+			else: self.oneWlist[sid] = {'sk':sk,'rate':float(rate),'offset':float(offset)}
+			self.conf.set('GPIO', '1w', str(self.oneWlist))
+			self.readOneW()
+			self.onApply()
+		dlg.Destroy()
 
 	def onRemoveOneWCon(self,e):
 		selected = self.listOneW.GetFirstSelected()
 		if selected == -1: return
-		#skId = self.listOneW.GetItemText(selected, 2)
-		pass
-		
-	def readOneW(self):
-		try: 
-			out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
-			self.toolbar34.EnableTool(3401,True)
-		except: 
-			self.toolbar34.EnableTool(3401,False)
-		self.onListlistOneWDeselected()
+		sid = self.listOneW.GetItemText(selected, 1)
+		del self.oneWlist[sid]
+		self.conf.set('GPIO', '1w', str(self.oneWlist))
+		self.readOneW()
+		self.onApply()
 
+	def readOneW(self):
+		self.listOneW.DeleteAllItems()
+		self.onListlistOneWDeselected()
+		data = self.conf.get('GPIO', '1w')
+		try: self.oneWlist = eval(data)
+		except: self.oneWlist = {}
+		try: out = subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
+		except:
+			if self.oneWlist:
+				for i in self.oneWlist:
+					self.listOneW.Append(['',i,self.oneWlist[i]['sk'],self.oneWlist[i]['rate'],self.oneWlist[i]['offset']])
+					self.listOneW.SetItemBackgroundColour(self.listOneW.GetItemCount()-1,(255,0,0))
+		else: 
+			for sensor in W1ThermSensor.get_available_sensors():
+				if sensor.id in self.oneWlist:
+					sk = self.oneWlist[sensor.id]['sk']
+					rate = self.oneWlist[sensor.id]['rate']
+					offset = self.oneWlist[sensor.id]['offset']
+				else:
+					sk = ''
+					rate = ''
+					offset = ''
+				self.listOneW.Append([sensor.type_name,sensor.id,sk,rate,offset])
 
 	###########################################################################
 
@@ -370,11 +411,11 @@ class MyFrame(wx.Frame):
 		if self.toolbar33.GetToolState(3301):
 			subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'seatalk', 'start'])
 			self.onRefresh()
-			self.ShowStatusBarGREEN(_('Seatalk 1 enabled'))
+			self.ShowStatusBarGREEN(_('Seatalk 1 service is enabled'))
 		else:
 			subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'seatalk', 'stop'])
 			self.onRefresh()
-			self.ShowStatusBarRED(_('Seatalk 1 disabled'))
+			self.ShowStatusBarBLACK(_('Seatalk 1 service is disabled'))
 
 	def onListlistSeatalkSelected(self,e):
 		self.onListlistSeatalkDeselected()
@@ -531,6 +572,78 @@ class addSeatalkConn(wx.Dialog):
 		res = dlg.ShowModal()
 		if res == wx.ID_OK:
 			self.gpio.SetValue(dlg.selected['BCM'])
+		dlg.Destroy()
+
+################################################################################
+
+class edit1W(wx.Dialog):
+	def __init__(self,sid,sk,rate,offset):
+		self.platform = platform.Platform()
+		title = _('Editing sensor ')+sid
+
+		wx.Dialog.__init__(self, None, title=title, size=(450, 180))
+		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+		panel = wx.Panel(self)
+
+		titl = wx.StaticText(panel, label=_('Signal K key'))
+		self.SKkey = wx.TextCtrl(panel)
+		self.SKkey.SetValue(sk)
+
+		self.edit_skkey = wx.Button(panel, label=_('Edit'))
+		self.edit_skkey.Bind(wx.EVT_BUTTON, self.onEditSkkey)
+
+		if not self.platform.skDir:
+			self.SKkey.Disable()
+			self.edit_skkey.Disable()
+
+		self.rate_list = ['1.0', '5.0', '30.0', '60.0', '300.0']
+		self.rate_label = wx.StaticText(panel, label=_('Rate (seconds)'))
+		self.rate = wx.ComboBox(panel, choices=self.rate_list, style=wx.CB_READONLY)
+		self.rate.SetValue(rate)
+
+		self.offset_label = wx.StaticText(panel, label=_('Offset'))
+		self.offset = wx.TextCtrl(panel)
+		self.offset.SetValue(offset)
+
+		cancelBtn = wx.Button(panel, wx.ID_CANCEL)
+		okBtn = wx.Button(panel, wx.ID_OK)
+
+		hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+		hbox2.Add(self.SKkey, 1, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		hbox2.Add(self.edit_skkey, 0, wx.RIGHT | wx.EXPAND, 5)
+
+		vbox1 = wx.BoxSizer(wx.HORIZONTAL)
+		vbox1.Add(self.rate_label, 0, wx.ALL | wx.EXPAND, 5)
+		vbox1.Add(self.rate, 1, wx.ALL| wx.EXPAND, 5)
+		vbox1.Add(self.offset_label, 0, wx.ALL| wx.EXPAND, 5)
+		vbox1.Add(self.offset, 1, wx.ALL | wx.EXPAND, 5)
+
+		hbox = wx.BoxSizer(wx.HORIZONTAL)
+		hbox.AddStretchSpacer(1)
+		hbox.Add(cancelBtn, 0, wx.EXPAND, 0)
+		hbox.Add(okBtn, 0, wx.LEFT | wx.EXPAND, 10)
+
+		vbox = wx.BoxSizer(wx.VERTICAL)
+		vbox.AddSpacer(5)
+		vbox.Add(titl, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 10)
+		vbox.AddSpacer(5)
+		vbox.Add(hbox2, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.AddSpacer(5)
+		vbox.Add(vbox1, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.AddStretchSpacer(1)
+		vbox.Add(hbox, 0, wx.ALL | wx.EXPAND, 10)
+
+		panel.SetSizer(vbox)
+		self.panel = panel
+
+		self.Centre() 
+
+	def onEditSkkey(self,e):
+		dlg = selectKey.SelectKey(self.SKkey.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.SKkey.SetValue(key)
 		dlg.Destroy()
 
 ################################################################################

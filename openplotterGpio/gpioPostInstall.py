@@ -18,7 +18,6 @@
 import os, sys, subprocess, uuid
 from openplotterSettings import conf
 from openplotterSettings import language
-from openplotterSignalkInstaller import connections
 from .version import version
 
 def main():
@@ -36,6 +35,7 @@ def main():
 
 	print(_('Checking access to Signal K...'))
 	try:
+		from openplotterSignalkInstaller import connections
 		skConnections = connections.Connections('GPIO')
 		result = skConnections.checkConnection()
 		if result[1]: print(result[1])
