@@ -1,3 +1,10 @@
+openplotter-gpio (2.1.0-alpha) bionic; urgency=medium
+
+  * Add 1W feature
+  * Update translations
+
+ -- Sailoog <info@sailoog.com>  Sun, 17 Jan 2021 13:06:22 +0100
+
 openplotter-gpio (2.0.0-alpha) bionic; urgency=medium
 
   * Add setalk 1 feature
