@@ -1,274 +1,277 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: openplotter-gpio\n"
+"Project-Id-Version: openplotter\n"
 "POT-Creation-Date: 2021-01-15 22:14+0100\n"
 "PO-Revision-Date: 2021-01-17 12:56+0100\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Language: en\n"
+"Language-Team: Polish\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-Basepath: ../../..\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Crowdin-Project: openplotter\n"
+"X-Crowdin-Project-ID: 289888\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: openplotter-gpio.po\n"
+"X-Crowdin-File-ID: 30\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: gpioPostInstall.py:30
 msgid "Installing python packages..."
-msgstr ""
+msgstr "Instalowanie pakietów Python..."
 
 #: gpioPostInstall.py:33 gpioPostInstall.py:42 gpioPostInstall.py:51
 #: gpioPostInstall.py:57 gpioPreUninstall.py:32 gpioPreUninstall.py:43
 #: gpioPreUninstall.py:49
 msgid "DONE"
-msgstr ""
+msgstr "GOTOWE"
 
 #: gpioPostInstall.py:34 gpioPostInstall.py:43 gpioPostInstall.py:52
 #: gpioPostInstall.py:58 gpioPreUninstall.py:33 gpioPreUninstall.py:44
 #: gpioPreUninstall.py:50
 msgid "FAILED: "
-msgstr ""
+msgstr "NIEPOWODZENIE: "
 
 #: gpioPostInstall.py:36
 msgid "Checking access to Signal K..."
-msgstr ""
+msgstr "Sprawdzanie dostępu do Signal K..."
 
 #: gpioPostInstall.py:45
 msgid "Adding openplotter-gpio-read service..."
-msgstr ""
+msgstr "Dodawanie usługi openplotter-gpio-read..."
 
 #: gpioPostInstall.py:54
 msgid "Setting version..."
-msgstr ""
+msgstr "Ustawianie wersji..."
 
 #: gpioPreUninstall.py:29
 msgid "Removing python packages..."
-msgstr ""
+msgstr "Odinstalowywanie pakietów Python..."
 
 #: gpioPreUninstall.py:35
 msgid "Removing pigpiod and openplotter-gpio-read services..."
-msgstr ""
+msgstr "Usuwanie pigpiod i usług openplotter-gpio-read..."
 
 #: gpioPreUninstall.py:46
 msgid "Removing version..."
-msgstr ""
+msgstr "Usuwanie wersji..."
 
 #: openplotterGpio.py:48
 msgid "Help"
-msgstr ""
+msgstr "Pomoc"
 
 #: openplotterGpio.py:51
 msgid "Settings"
-msgstr ""
+msgstr "Ustawienia"
 
 #: openplotterGpio.py:54
 msgid "GPIO Map"
-msgstr ""
+msgstr "Mapa GPIO"
 
 #: openplotterGpio.py:57
 msgid "Approve device"
-msgstr ""
+msgstr "Zatwierdź urządzenie"
 
 #: openplotterGpio.py:59
 msgid "Allowed devices"
-msgstr ""
+msgstr "Dozwolone urządzenia"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
-msgstr ""
+msgstr "Odśwież"
 
 #: openplotterGpio.py:72
 msgid "Digital"
-msgstr ""
+msgstr "Cyfrowy"
 
 #: openplotterGpio.py:73
 msgid "Pulses"
-msgstr ""
+msgstr "Impulsowy"
 
 #: openplotterGpio.py:149 openplotterGpio.py:163
 msgid "Coming soon."
-msgstr ""
+msgstr "Już wkrótce."
 
 #: openplotterGpio.py:178
 msgid "Restarting Signal K server... "
-msgstr ""
+msgstr "Ponowne uruchamianie serwera Signal K... "
 
 #: openplotterGpio.py:184
 msgid "Signal K server restarted"
-msgstr ""
+msgstr "Serwer Signal K został uruchomiony ponownie"
 
 #: openplotterGpio.py:198
 msgid " Press \"Approve\" and then \"Refresh\"."
-msgstr ""
+msgstr " Naciśnij \"Zatwierdź\", a następnie \"Odśwież\"."
 
 #: openplotterGpio.py:202
 msgid " Press \"Refresh\"."
-msgstr ""
+msgstr " Naciśnij \"Odśwież\"."
 
 #: openplotterGpio.py:204
 msgid " Press \"Allowed devices\"."
-msgstr ""
+msgstr " Naciśnij \"Dozwolone urządzenia\"."
 
 #: openplotterGpio.py:216
 msgid "GPIO service is enabled"
-msgstr ""
+msgstr "Usługa GPIO jest włączona"
 
 #: openplotterGpio.py:219
 msgid "There is nothing to send. GPIO service is disabled"
-msgstr ""
+msgstr "Nie ma nic do wysłania. Usługa GPIO jest wyłączona"
 
 #: openplotterGpio.py:225
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: openplotterGpio.py:227 openplotterGpio.py:588
 msgid "Signal K key"
-msgstr ""
+msgstr "Wyróżnik (key) Signal K"
 
 #: openplotterGpio.py:228
 msgid "Rate"
-msgstr ""
+msgstr "Interwał"
 
 #: openplotterGpio.py:229 openplotterGpio.py:604
 msgid "Offset"
-msgstr ""
+msgstr "Offset"
 
 #: openplotterGpio.py:235
 msgid "Set 1W GPIO"
-msgstr ""
+msgstr "Ustaw 1W GPIO"
 
 #: openplotterGpio.py:239 openplotterGpio.py:592
 msgid "Edit"
-msgstr ""
+msgstr "Edytuj"
 
 #: openplotterGpio.py:241
 msgid "Clear"
-msgstr ""
+msgstr "Wyczyść"
 
 #: openplotterGpio.py:258 startup.py:85
-msgid ""
-"Please enable 1W interface in Preferences -> Raspberry Pi configuration -> "
-"Interfaces."
-msgstr ""
+msgid "Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces."
+msgstr "Proszę włączyć interfejs 1W w Ustawienia -> Konfiguracja Raspberry Pi -> Interfejsy."
 
 #: openplotterGpio.py:302
 msgid "OpenPlotter will restart. Are you sure?"
-msgstr ""
+msgstr "OpenPlotter zostanie uruchomiony ponownie. Jesteś pewien?"
 
 #: openplotterGpio.py:303
 msgid "Question"
-msgstr ""
+msgstr "Pytanie"
 
 #: openplotterGpio.py:382 openplotterGpio.py:535
 msgid "Invert signal"
-msgstr ""
+msgstr "Odwróć sygnał"
 
 #: openplotterGpio.py:383
 msgid "SK connection ID"
-msgstr ""
+msgstr "ID połączenia SK"
 
 #: openplotterGpio.py:389
 msgid "Enable Seatalk 1 reception"
-msgstr ""
+msgstr "Włącz odbiór Seatalk 1"
 
 #: openplotterGpio.py:391
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #: openplotterGpio.py:395
 msgid "Edit Connection"
-msgstr ""
+msgstr "Edytuj połączenie"
 
 #: openplotterGpio.py:397
 msgid "Remove Connection"
-msgstr ""
+msgstr "Usuń połączenie"
 
 #: openplotterGpio.py:414
 msgid "Seatalk 1 service is enabled"
-msgstr ""
+msgstr "Usługa Seatalk 1 jest włączona"
 
 #: openplotterGpio.py:418
 msgid "Seatalk 1 service is disabled"
-msgstr ""
+msgstr "Usługa Seatalk 1 jest wyłączona"
 
 #: openplotterGpio.py:443
 msgid "Fill in all fields"
-msgstr ""
+msgstr "Wypełnij wszystkie pola"
 
 #: openplotterGpio.py:459
 msgid "Failed. Error creating connection in Signal K"
-msgstr ""
+msgstr "Niepowodzenie. Błąd podczas tworzenia połączenia w Signal K"
 
 #: openplotterGpio.py:462
 msgid "Please install \"Signal K Installer\" OpenPlotter app"
-msgstr ""
+msgstr "Proszę zainstaluj komponent OpenPlotter \"Signal K Installer\""
 
 #: openplotterGpio.py:481
 msgid "Failed. Error removing connection in Signal K"
-msgstr ""
+msgstr "Niepowodzenie. Błąd podczas usuwania połączenia w Signal K"
 
 #: openplotterGpio.py:502
 msgid "no"
-msgstr ""
+msgstr "nie"
 
 #: openplotterGpio.py:512
 msgid "yes"
-msgstr ""
+msgstr "tak"
 
 #: openplotterGpio.py:521
 msgid "Add SK Connection"
-msgstr ""
+msgstr "Dodaj połączenie SK"
 
 #: openplotterGpio.py:526
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: openplotterGpio.py:532
 msgid "Select"
-msgstr ""
+msgstr "Wybierz"
 
 #: openplotterGpio.py:582
 msgid "Editing sensor "
-msgstr ""
+msgstr "Edycja czujnika "
 
 #: openplotterGpio.py:600
 msgid "Rate (seconds)"
-msgstr ""
+msgstr "Interwał (sekundy)"
 
 #: ports.py:31
 msgid "Port used by pigpiod to convert Seatalk 1"
-msgstr ""
+msgstr "Port używany przez pigpiod do konwersji Seatalk 1"
 
 #: startup.py:44
 msgid "Checking GPIO..."
-msgstr ""
+msgstr "Sprawdzanie GPIO..."
 
 #: startup.py:70
 msgid "pigpiod running"
-msgstr ""
+msgstr "pigpiod uruchomiony"
 
 #: startup.py:71 startup.py:72
 msgid "pigpiod not running"
-msgstr ""
+msgstr "pigpiod nieuruchomiony"
 
 #: startup.py:81 startup.py:91
 msgid "1W enabled"
-msgstr ""
+msgstr "1W włączone"
 
 #: startup.py:95
 msgid "1W disabled"
-msgstr ""
+msgstr "1W wyłączone"
 
 #: startup.py:103 startup.py:113
 msgid "GPIO service running"
-msgstr ""
+msgstr "Usługa GPIO włączona"
 
 #: startup.py:107 startup.py:117
 msgid "GPIO service not running"
-msgstr ""
+msgstr "Usługa GPIO wyłączona"
 
 #: startup.py:128
 msgid "Access to Signal K server validated"
-msgstr ""
+msgstr "Dostęp do serwera Signal K zatwierdzony"
