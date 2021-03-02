@@ -28,7 +28,7 @@ class Ports:
 	def usedPorts(self):
 		try:
 			subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
-			self.connections.append({'id':'Seatalk1', 'description':_('Port used by pigpiod to convert Seatalk 1'), 'data':'Seatalk 1', 'type':'TCP', 'mode':'server', 'address':'localhost', 'port':'8888', 'editable':'0'})
+			self.connections.append({'id':'GPIO', 'description':'GPIO (pigpiod)', 'data':'', 'type':'TCP', 'mode':'server', 'address':'localhost', 'port':'8888', 'editable':'0'})
 		except: pass
 
 		return self.connections

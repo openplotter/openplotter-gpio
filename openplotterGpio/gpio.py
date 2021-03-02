@@ -88,6 +88,22 @@ class Gpio:
 				if gpioBCM == i['BCM']: pin = i['physical']
 			self.used.append({'app':'GPIO', 'id':'1W', 'physical':pin})
 
+		# pulses
+		data = self.conf.get('GPIO', 'pulses')
+		try: pulselist = eval(data)
+		except: pulselist = {}
+		for i in pulselist:
+			items = i.split('-')
+			if items[0] == 'localhost':
+				gpioBCM = 'GPIO '+items[1]
+				for ii in self.gpioMap:
+					ground = True
+					power3 = True
+					if gpioBCM == ii['BCM']: pin = ii['physical']
+				self.used.append({'app':'GPIO', 'id':'pulses', 'physical':pin})
+
+		# TODO gpio
+		
 		#common
 		if power3:
 			self.used.append({'app':'GPIO', 'id':'power', 'physical':'1'})

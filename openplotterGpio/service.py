@@ -17,14 +17,6 @@
 
 import sys, subprocess
 
-if sys.argv[1]=='seatalk':
-	if sys.argv[2]=='start':
-		subprocess.call(['systemctl', 'enable', 'pigpiod'])
-		subprocess.call(['systemctl', 'start', 'pigpiod'])
-	if sys.argv[2]=='stop':
-		subprocess.call(['systemctl', 'disable', 'pigpiod'])
-		subprocess.call(['systemctl', 'stop', 'pigpiod'])
-
 if sys.argv[1]=='openplotter-gpio-read':
 	if sys.argv[2]=='start':
 		subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read'])

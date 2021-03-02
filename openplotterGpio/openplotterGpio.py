@@ -74,8 +74,8 @@ class MyFrame(wx.Frame):
 		self.notebook.AddPage(self.oneW, '1W')
 		self.notebook.AddPage(self.seatalk, ' Seatalk 1')
 		self.il = wx.ImageList(24, 24)
-		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
-		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/openplotter-24.png", wx.BITMAP_TYPE_PNG))
+		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/digital.png", wx.BITMAP_TYPE_PNG))
+		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/pulses.png", wx.BITMAP_TYPE_PNG))
 		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/temp.png", wx.BITMAP_TYPE_PNG))
 		img3 = self.il.Add(wx.Bitmap(self.currentdir+"/data/seatalk.png", wx.BITMAP_TYPE_PNG))
 		self.notebook.AssignImageList(self.il)
@@ -88,6 +88,8 @@ class MyFrame(wx.Frame):
 		vbox.Add(self.toolbar1, 0, wx.EXPAND)
 		vbox.Add(self.notebook, 1, wx.EXPAND)
 		self.SetSizer(vbox)
+
+		if not self.platform.isRPI: self.toolbar1.EnableTool(103,False)
 
 		self.pageDigital()
 		self.pageOneW()
@@ -159,20 +161,6 @@ class MyFrame(wx.Frame):
 		vbox.AddStretchSpacer(1)
 		self.digital.SetSizer(vbox)
 
-	def pagePulses(self):
-		text1 = wx.StaticText(self.pulses, label=_('Coming soon.'))
-
-		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-		hbox1.AddStretchSpacer(1)
-		hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
-		hbox1.AddStretchSpacer(1)
-
-		vbox = wx.BoxSizer(wx.VERTICAL)
-		vbox.AddStretchSpacer(1)
-		vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
-		vbox.AddStretchSpacer(1)
-		self.pulses.SetSizer(vbox)
-
 	def restart_SK(self, msg):
 		if self.platform.skDir:
 			if msg == 0: msg = _('Restarting Signal K server... ')
@@ -187,8 +175,7 @@ class MyFrame(wx.Frame):
 		self.ShowStatusBarBLACK(' ')
 		try:
 			subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
-			self.toolbar33.ToggleTool(3301,True)
-		except: self.toolbar33.ToggleTool(3301,False)
+		except: self.ShowStatusBarRED('pigpiod is disabled')
 
 		self.toolbar1.EnableTool(105,False)
 		skConnections = connections.Connections('GPIO')
@@ -207,6 +194,7 @@ class MyFrame(wx.Frame):
 
 		self.readSeatalk()
 		self.readOneW()
+		self.readPulses()
 
 	def onApply(self):
 		enable = False
@@ -217,39 +205,116 @@ class MyFrame(wx.Frame):
 		else:
 			subprocess.Popen([self.platform.admin, 'python3', self.currentdir+'/service.py', 'openplotter-gpio-read', 'stop'])
 			self.ShowStatusBarBLACK(_('There is nothing to send. GPIO service is disabled'))
-			
+
+	###########################################################################
+
+	def pagePulses(self):
+		self.listPulses = wx.ListCtrl(self.pulses, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+		self.listPulses.InsertColumn(0, 'GPIO', width=100)
+		self.listPulses.InsertColumn(1, _('Invert signal'), width=200)
+		self.listPulses.InsertColumn(2, _('SK connection ID'), width=270)
+		self.listPulses.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistPulsesSelected)
+		self.listPulses.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistPulsesDeselected)
+		self.listPulses.SetTextColour(wx.BLACK)
+
+		self.toolbar5 = wx.ToolBar(self.pulses, style=wx.TB_TEXT | wx.TB_VERTICAL)
+		self.addPulses = self.toolbar5.AddTool(503, _('Add'), wx.Bitmap(self.currentdir+"/data/chip.png"))
+		self.Bind(wx.EVT_TOOL, self.onAddPulses, self.addPulses)
+		self.editPulses= self.toolbar5.AddTool(501, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+		self.Bind(wx.EVT_TOOL, self.onEditPulses, self.editPulses)
+		self.removePulses = self.toolbar5.AddTool(502, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+		self.Bind(wx.EVT_TOOL, self.onRemovePulses, self.removePulses)
+
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer.Add(self.listPulses, 1, wx.EXPAND, 0)
+		sizer.Add(self.toolbar5, 0, wx.EXPAND, 0)
+
+		self.pulses.SetSizer(sizer)
+
+	def onListlistPulsesSelected(self,e):
+		self.onListlistPulsesDeselected()
+		selected = self.listPulses.GetFirstSelected()
+		if selected == -1: return
+		self.toolbar5.EnableTool(501,True)
+		self.toolbar5.EnableTool(502,True)
+
+	def onListlistPulsesDeselected(self,e=0):
+		self.toolbar5.EnableTool(501,False)
+		self.toolbar5.EnableTool(502,False)
+
+	def onAddPulses(self,e):
+		edit = {}
+		dlg = editPulses(edit)
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			pass
+			'''
+			sk = str(dlg.SKkey.GetValue())
+			rate = dlg.rate.GetValue()
+			if not rate: rate = 1.0
+			offset = dlg.offset.GetValue()
+			if not offset: offset = 0.0
+			if not sk: del self.oneWlist[sid]
+			else: self.oneWlist[sid] = {'sk':sk,'rate':float(rate),'offset':float(offset)}
+			self.conf.set('GPIO', '1w', str(self.oneWlist))
+			self.readPulses()
+			self.onApply()
+			'''
+		dlg.Destroy()
+
+	def onEditPulses(self,e):
+		pass
+
+	def onRemovePulses(self,e):
+		pass
+
+	def readPulses(self):
+		pass
+
 	###########################################################################
 
 	def pageOneW(self):
-		self.listOneW = wx.ListCtrl(self.oneW, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-		self.listOneW.InsertColumn(0, _('Type'), width=80)
-		self.listOneW.InsertColumn(1, 'ID', width=110)
-		self.listOneW.InsertColumn(2, _('Signal K key'), width=370)
-		self.listOneW.InsertColumn(3, _('Rate'), width=75)
-		self.listOneW.InsertColumn(4, _('Offset'), width=75)
-		self.listOneW.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistOneWSelected)
-		self.listOneW.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistOneWDeselected)
-		self.listOneW.SetTextColour(wx.BLACK)
+		if self.platform.isRPI:
+			self.listOneW = wx.ListCtrl(self.oneW, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+			self.listOneW.InsertColumn(0, _('Type'), width=80)
+			self.listOneW.InsertColumn(1, 'ID', width=110)
+			self.listOneW.InsertColumn(2, _('Signal K key'), width=370)
+			self.listOneW.InsertColumn(3, _('Rate'), width=75)
+			self.listOneW.InsertColumn(4, _('Offset'), width=75)
+			self.listOneW.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistOneWSelected)
+			self.listOneW.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistOneWDeselected)
+			self.listOneW.SetTextColour(wx.BLACK)
 
-		self.toolbar34 = wx.ToolBar(self.oneW, style=wx.TB_TEXT)
-		setOneWpin = self.toolbar34.AddTool(3401, _('Set 1W GPIO'), wx.Bitmap(self.currentdir+"/data/chip.png"))
-		self.Bind(wx.EVT_TOOL, self.onSetOneWpin, setOneWpin)
+			self.toolbar34 = wx.ToolBar(self.oneW, style=wx.TB_TEXT)
+			setOneWpin = self.toolbar34.AddTool(3401, _('Set 1W GPIO'), wx.Bitmap(self.currentdir+"/data/chip.png"))
+			self.Bind(wx.EVT_TOOL, self.onSetOneWpin, setOneWpin)
 
-		self.toolbar4 = wx.ToolBar(self.oneW, style=wx.TB_TEXT | wx.TB_VERTICAL)
-		self.editOneWCon= self.toolbar4.AddTool(401, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
-		self.Bind(wx.EVT_TOOL, self.onEditOneWCon, self.editOneWCon)
-		self.removeOneWCon = self.toolbar4.AddTool(402, _('Clear'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
-		self.Bind(wx.EVT_TOOL, self.onRemoveOneWCon, self.removeOneWCon)
+			self.toolbar4 = wx.ToolBar(self.oneW, style=wx.TB_TEXT | wx.TB_VERTICAL)
+			self.editOneWCon= self.toolbar4.AddTool(401, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+			self.Bind(wx.EVT_TOOL, self.onEditOneWCon, self.editOneWCon)
+			self.removeOneWCon = self.toolbar4.AddTool(402, _('Clear'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+			self.Bind(wx.EVT_TOOL, self.onRemoveOneWCon, self.removeOneWCon)
 
-		h1 = wx.BoxSizer(wx.HORIZONTAL)
-		h1.Add(self.listOneW, 1, wx.EXPAND, 0)
-		h1.Add(self.toolbar4, 0, wx.EXPAND, 0)
+			h1 = wx.BoxSizer(wx.HORIZONTAL)
+			h1.Add(self.listOneW, 1, wx.EXPAND, 0)
+			h1.Add(self.toolbar4, 0, wx.EXPAND, 0)
 
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(self.toolbar34, 0, wx.EXPAND, 0)
-		sizer.Add(h1, 1, wx.EXPAND, 0)
+			sizer = wx.BoxSizer(wx.VERTICAL)
+			sizer.Add(self.toolbar34, 0, wx.EXPAND, 0)
+			sizer.Add(h1, 1, wx.EXPAND, 0)
 
-		self.oneW.SetSizer(sizer)
+			self.oneW.SetSizer(sizer)
+		else:
+			text1 = wx.StaticText(self.oneW, label=_('This feature is only for Raspberry Pi'))
+			hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+			hbox1.AddStretchSpacer(1)
+			hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
+			hbox1.AddStretchSpacer(1)
+			vbox = wx.BoxSizer(wx.VERTICAL)
+			vbox.AddStretchSpacer(1)
+			vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
+			vbox.AddStretchSpacer(1)
+			self.oneW.SetSizer(vbox)
 
 	def onSetOneWpin(self, e):
 		try: 
@@ -292,8 +357,8 @@ class MyFrame(wx.Frame):
 					line = file.readline()
 					if not line: break
 					if 'dtoverlay=w1-gpio' in line:
-						if gpioBCM == '4': line = 'dtoverlay=w1-gpio'
-						else: line = 'dtoverlay=w1-gpio,gpiopin='+gpioBCM
+						if gpioBCM == '4': line = 'dtoverlay=w1-gpio\n'
+						else: line = 'dtoverlay=w1-gpio,gpiopin='+gpioBCM+'\n'
 					file1.write(line)
 				file.close()
 				file1.close()
@@ -368,54 +433,60 @@ class MyFrame(wx.Frame):
 					sk = self.oneWlist[sensor.id]['sk']
 					rate = self.oneWlist[sensor.id]['rate']
 					offset = self.oneWlist[sensor.id]['offset']
+					self.listOneW.Append([sensor.type.name,sensor.id,sk,rate,offset])
+					self.listOneW.SetItemBackgroundColour(self.listOneW.GetItemCount()-1,(255,220,100))
 				else:
 					sk = ''
 					rate = ''
 					offset = ''
-				self.listOneW.Append([sensor.type_name,sensor.id,sk,rate,offset])
+					self.listOneW.Append([sensor.type.name,sensor.id,sk,rate,offset])
+			if self.oneWlist:
+				for i in self.oneWlist:
+					exist = False
+					for sensor in W1ThermSensor.get_available_sensors():
+						if i == sensor.id:
+							exist = True
+							break
+					if not exist:
+						self.listOneW.Append(['',i,self.oneWlist[i]['sk'],self.oneWlist[i]['rate'],self.oneWlist[i]['offset']])
+						self.listOneW.SetItemBackgroundColour(self.listOneW.GetItemCount()-1,(255,0,0))
 
 	###########################################################################
 
 	def pageSeatalk(self):
-		self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-		self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
-		self.listSeatalk.InsertColumn(1, _('Invert signal'), width=200)
-		self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=270)
-		self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
-		self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
-		self.listSeatalk.SetTextColour(wx.BLACK)
+		if self.platform.isRPI:
+			self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+			self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
+			self.listSeatalk.InsertColumn(1, _('Invert signal'), width=200)
+			self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=270)
+			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
+			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
+			self.listSeatalk.SetTextColour(wx.BLACK)
 
-		self.toolbar33 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT)
-		enableSeatalk = self.toolbar33.AddCheckTool(3301, _('Enable Seatalk 1 reception'), wx.Bitmap(self.currentdir+"/data/seatalk.png"))
-		self.Bind(wx.EVT_TOOL, self.onEnableSeatalk, enableSeatalk)
-		self.addSeatalkCon = self.toolbar33.AddTool(3302, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
-		self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
+			self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
+			self.addSeatalkCon = self.toolbar3.AddTool(303, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+			self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
+			self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+			self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
+			self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+			self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
 
-		self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
-		self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit Connection'), wx.Bitmap(self.currentdir+"/data/edit.png"))
-		self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
-		self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove Connection'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
-		self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
+			sizer = wx.BoxSizer(wx.HORIZONTAL)
+			sizer.Add(self.listSeatalk, 1, wx.EXPAND, 0)
+			sizer.Add(self.toolbar3, 0, wx.EXPAND, 0)
 
-		h1 = wx.BoxSizer(wx.HORIZONTAL)
-		h1.Add(self.listSeatalk, 1, wx.EXPAND, 0)
-		h1.Add(self.toolbar3, 0, wx.EXPAND, 0)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(self.toolbar33, 0, wx.EXPAND, 0)
-		sizer.Add(h1, 1, wx.EXPAND, 0)
-
-		self.seatalk.SetSizer(sizer)
-
-	def onEnableSeatalk(self, e):
-		if self.toolbar33.GetToolState(3301):
-			subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'seatalk', 'start'])
-			self.onRefresh()
-			self.ShowStatusBarGREEN(_('Seatalk 1 service is enabled'))
+			self.seatalk.SetSizer(sizer)
 		else:
-			subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'seatalk', 'stop'])
-			self.onRefresh()
-			self.ShowStatusBarBLACK(_('Seatalk 1 service is disabled'))
+			text1 = wx.StaticText(self.seatalk, label=_('This feature is only for Raspberry Pi.'))
+			hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+			hbox1.AddStretchSpacer(1)
+			hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
+			hbox1.AddStretchSpacer(1)
+			vbox = wx.BoxSizer(wx.VERTICAL)
+			vbox.AddStretchSpacer(1)
+			vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
+			vbox.AddStretchSpacer(1)
+			self.seatalk.SetSizer(vbox)
 
 	def onListlistSeatalkSelected(self,e):
 		self.onListlistSeatalkDeselected()
@@ -511,7 +582,7 @@ class MyFrame(wx.Frame):
 						gpioInvert = subOptions['gpioInvert']
 						if gpioInvert: gpioInvert2 = _('yes')
 					self.listSeatalk.Append([gpio,gpioInvert2,skId])
-					if self.toolbar33.GetToolState(3301) and enabled: self.listSeatalk.SetItemBackgroundColour(self.listSeatalk.GetItemCount()-1,(255,220,100))
+					if enabled: self.listSeatalk.SetItemBackgroundColour(self.listSeatalk.GetItemCount()-1,(255,220,100))
 			except: pass
 
 ################################################################################
@@ -644,6 +715,277 @@ class edit1W(wx.Dialog):
 		if res == wx.OK:
 			key = dlg.selected_key.replace(':','.')
 			self.SKkey.SetValue(key)
+		dlg.Destroy()
+
+################################################################################
+
+class editPulses(wx.Dialog):
+	def __init__(self,edit):
+		if edit: title = _('Editing GPIO pulses')
+		else: title = _('Adding GPIO pulses')
+
+		wx.Dialog.__init__(self, None, title=title, size=(800, 370))
+		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+		panel = wx.Panel(self)
+
+		'''
+		titl = wx.StaticText(panel, label=_('Signal K key'))
+		self.SKkey = wx.TextCtrl(panel)
+		self.SKkey.SetValue(sk)
+
+		self.edit_skkey = wx.Button(panel, label=_('Edit'))
+		self.edit_skkey.Bind(wx.EVT_BUTTON, self.onEditSkkey)
+
+		if not self.platform.skDir:
+			self.SKkey.Disable()
+			self.edit_skkey.Disable()
+
+		self.rate_list = ['1.0', '5.0', '30.0', '60.0', '300.0']
+		self.rate_label = wx.StaticText(panel, label=_('Rate (seconds)'))
+		self.rate = wx.ComboBox(panel, choices=self.rate_list, style=wx.CB_READONLY)
+		self.rate.SetValue(rate)
+		'''
+		self.localhost = wx.CheckBox(panel, label=_('localhost'))
+		self.localhost.Bind(wx.EVT_CHECKBOX, self.onLocalhost)
+		self.host = wx.TextCtrl(panel)
+		if edit: 
+			if edit['host'] == 'localhost': 
+				self.localhost.SetValue(True)
+				self.host.Disable()
+			else: 
+				self.host.SetValue(edit['host'])
+				self.host.Enable()
+		else: 
+			self.localhost.SetValue(True)
+			self.host.Disable()
+		self.gpio = wx.TextCtrl(panel, style=wx.CB_READONLY)
+		selectGpio =wx.Button(panel, label='GPIO')
+		selectGpio.Bind(wx.EVT_BUTTON, self.onSelectGpio)
+		if edit: self.gpio.SetValue(edit['gpio'])
+
+		rateLabel = wx.StaticText(panel, label=_('Rate (seconds)'))
+		self.rate = wx.TextCtrl(panel)
+		if edit: self.rate.SetValue(str(edit['rate']))
+		else: self.rate.SetValue('1')
+
+		pulsesLabel = wx.StaticText(panel, label=_('Pulses per revolution'))
+		self.pulses = wx.TextCtrl(panel)
+		if edit: self.pulses.SetValue(str(edit['pulsesPerRev']))
+		else: self.pulses.SetValue('1')
+
+		weightingLabel = wx.StaticText(panel, label=_('Weighting'))
+		self.weighting = wx.TextCtrl(panel)
+		if edit: self.weighting.SetValue(str(edit['weighting']))
+		else: self.weighting.SetValue('0')
+
+		minRPMLabel = wx.StaticText(panel, label=_('Min RPM'))
+		self.minRPM = wx.TextCtrl(panel)
+		if edit: self.minRPM.SetValue(str(edit['minRPM']))
+		else: self.minRPM.SetValue('5')
+
+		vline1 = wx.StaticLine(panel)
+
+		revolutionsSKLabel = wx.StaticText(panel, label=_('Revolutions (Hz)'))
+		self.revolutionsSK = wx.TextCtrl(panel)
+		revolutionsSKedit = wx.Button(panel, label='Signal K')
+		revolutionsSKedit.Bind(wx.EVT_BUTTON, self.onRevolutionsSKedit)
+		if edit: self.revolutionsSK.SetValue(str(edit['revolutionsSK']))
+
+		counterSKLabel = wx.StaticText(panel, label=_('Revolutions counter'))
+		self.counterSK = wx.TextCtrl(panel)
+		counterSKedit = wx.Button(panel, label='Signal K')
+		counterSKedit.Bind(wx.EVT_BUTTON, self.onCounterSKedit)
+		if edit: self.counterSK.SetValue(str(edit['counterSK']))
+
+		resetSKLabel = wx.StaticText(panel, label=_('Reset (counter, distance)'))
+		self.resetSK = wx.TextCtrl(panel)
+		resetSKedit = wx.Button(panel, label='Signal K')
+		resetSKedit.Bind(wx.EVT_BUTTON, self.onResetSKedit)
+		if edit: self.resetSK.SetValue(str(edit['resetSK']))
+
+		vline2 = wx.StaticLine(panel)
+
+		radiusLabel = wx.StaticText(panel, label=_('Radius (m)'))
+		self.radius = wx.TextCtrl(panel)
+		if edit: self.radius.SetValue(str(edit['radius']))
+
+		speedSKLabel = wx.StaticText(panel, label=_('Speed (m/s)'))
+		self.speedSK = wx.TextCtrl(panel)
+		speedSKedit = wx.Button(panel, label='Signal K')
+		speedSKedit.Bind(wx.EVT_BUTTON, self.onSpeedSKedit)
+		if edit: self.speedSK.SetValue(str(edit['speedSK']))
+
+		calibrationLabel = wx.StaticText(panel, label=_('Speed calibration'))
+		self.calibration = wx.TextCtrl(panel)
+		if edit: self.calibration.SetValue(str(edit['calibration']))
+		else: self.calibration.SetValue('1.0')
+
+		distanceSKLabel = wx.StaticText(panel, label=_('Distance (m)'))
+		self.distanceSK = wx.TextCtrl(panel)
+		distanceSKedit = wx.Button(panel, label='Signal K')
+		distanceSKedit.Bind(wx.EVT_BUTTON, self.onDistanceSKedit)
+		if edit: self.distanceSK.SetValue(str(edit['distanceSK']))
+
+		cancelBtn = wx.Button(panel, wx.ID_CANCEL)
+		okBtn = wx.Button(panel, wx.ID_OK)
+
+		column1h00 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h00.Add(self.localhost, 0, wx.ALL | wx.EXPAND, 5)
+		column1h00.Add(self.host, 1, wx.ALL | wx.EXPAND, 5)
+
+		column1h0 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h0.Add(self.gpio, 0, wx.ALL | wx.EXPAND, 5)
+		column1h0.Add(selectGpio, 0, wx.ALL | wx.EXPAND, 5)
+
+		column1h1 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h1.Add(rateLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column1h1.Add(self.rate, 0, wx.ALL | wx.EXPAND, 5)
+
+		column1h2 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h2.Add(pulsesLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column1h2.Add(self.pulses, 0, wx.ALL | wx.EXPAND, 5)
+
+		column1h3 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h3.Add(weightingLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column1h3.Add(self.weighting, 0, wx.ALL | wx.EXPAND, 5)
+
+		column1h4 = wx.BoxSizer(wx.HORIZONTAL)
+		column1h4.Add(minRPMLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column1h4.Add(self.minRPM, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2h0 = wx.BoxSizer(wx.HORIZONTAL)
+		column2h0.Add(self.revolutionsSK, 1, wx.ALL | wx.EXPAND, 5)
+		column2h0.Add(revolutionsSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2h1 = wx.BoxSizer(wx.HORIZONTAL)
+		column2h1.Add(self.counterSK, 1, wx.ALL | wx.EXPAND, 5)
+		column2h1.Add(counterSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2h2 = wx.BoxSizer(wx.HORIZONTAL)
+		column2h2.Add(self.resetSK, 1, wx.ALL | wx.EXPAND, 5)
+		column2h2.Add(resetSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column3h0 = wx.BoxSizer(wx.HORIZONTAL)
+		column3h0.Add(radiusLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column3h0.Add(self.radius, 0, wx.ALL | wx.EXPAND, 5)
+
+		column3h1 = wx.BoxSizer(wx.HORIZONTAL)
+		column3h1.Add(self.speedSK, 1, wx.ALL | wx.EXPAND, 5)
+		column3h1.Add(speedSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column3h2 = wx.BoxSizer(wx.HORIZONTAL)
+		column3h2.Add(self.distanceSK, 1, wx.ALL | wx.EXPAND, 5)
+		column3h2.Add(distanceSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column3h3 = wx.BoxSizer(wx.HORIZONTAL)
+		column3h3.Add(calibrationLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column3h3.Add(self.calibration, 0, wx.ALL | wx.EXPAND, 5)
+
+		column1 = wx.BoxSizer(wx.VERTICAL)
+		column1.Add(column1h00, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h0, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h1, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h2, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h3, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h4, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2 = wx.BoxSizer(wx.VERTICAL)
+		column2.AddSpacer(10)
+		column2.Add(revolutionsSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column2.Add(column2h0, 0, wx.ALL | wx.EXPAND, 5)
+		column2.AddSpacer(5)
+		column2.Add(counterSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column2.Add(column2h1, 0, wx.ALL | wx.EXPAND, 5)
+		column2.AddSpacer(5)
+		column2.Add(resetSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column2.Add(column2h2, 0, wx.ALL | wx.EXPAND, 5)
+
+		column3 = wx.BoxSizer(wx.VERTICAL)
+		column3.Add(column3h0, 0, wx.ALL | wx.EXPAND, 5)
+		column3.AddSpacer(5)
+		column3.Add(speedSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column3.Add(column3h1, 0, wx.ALL | wx.EXPAND, 5)
+		column3.AddSpacer(5)
+		column3.Add(column3h3, 0, wx.ALL | wx.EXPAND, 5)
+		column3.AddSpacer(5)
+		column3.Add(distanceSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column3.Add(column3h2, 0, wx.ALL | wx.EXPAND, 5)
+
+		hbox = wx.BoxSizer(wx.HORIZONTAL)
+		hbox.Add(column1, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
+		hbox.Add(vline1, 0, wx.EXPAND, 0)
+		hbox.Add(column2, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
+		hbox.Add(vline2, 0, wx.EXPAND, 0)
+		hbox.Add(column3, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
+
+		actionbox = wx.BoxSizer(wx.HORIZONTAL)
+		actionbox.AddStretchSpacer(1)
+		actionbox.Add(cancelBtn, 0, wx.EXPAND, 0)
+		actionbox.Add(okBtn, 0, wx.LEFT | wx.EXPAND, 10)
+
+		vbox = wx.BoxSizer(wx.VERTICAL)
+		vbox.AddSpacer(5)
+		vbox.Add(hbox, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.AddStretchSpacer(1)
+		vbox.Add(actionbox, 0, wx.ALL | wx.EXPAND, 10)
+
+		panel.SetSizer(vbox)
+		self.panel = panel
+
+		self.Centre() 
+
+	def onLocalhost(self,e):
+		if self.localhost.GetValue(): self.host.Disable()
+		else: self.host.Enable()
+		self.gpio.SetValue('')
+
+	def onSelectGpio(self,e):
+		#gpios = gpio.Gpio()
+		if self.localhost.GetValue(): dlg = gpio.GpioMap(['GPIO'],'0')
+		else: dlg = gpio.GpioMap(['GPIO'],'0', self.host.GetValue())
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			self.gpio.SetValue(dlg.selected['BCM'])
+		dlg.Destroy()
+
+	def onRevolutionsSKedit(self,e):
+		dlg = selectKey.SelectKey(self.revolutionsSK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.revolutionsSK.SetValue(key)
+		dlg.Destroy()
+
+	def onCounterSKedit(self,e):
+		dlg = selectKey.SelectKey(self.counterSK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.counterSK.SetValue(key)
+		dlg.Destroy()
+
+	def onResetSKedit(self,e):
+		dlg = selectKey.SelectKey(self.resetSK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.resetSK.SetValue(key)
+		dlg.Destroy()
+
+	def onSpeedSKedit(self,e):
+		dlg = selectKey.SelectKey(self.speedSK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.speedSK.SetValue(key)
+		dlg.Destroy()
+
+	def onDistanceSKedit(self,e):
+		dlg = selectKey.SelectKey(self.distanceSK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.distanceSK.SetValue(key)
 		dlg.Destroy()
 
 ################################################################################

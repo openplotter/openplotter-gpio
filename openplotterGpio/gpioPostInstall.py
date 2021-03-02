@@ -29,7 +29,7 @@ def main():
 
 	print(_('Installing python packages...'))
 	try:
-		subprocess.call(['pip3', 'install', 'w1thermsensor', 'websocket-client'])
+		subprocess.call(['pip3', 'install', 'w1thermsensor>=2.0.0', 'websocket-client'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
@@ -48,6 +48,14 @@ def main():
 		fo.write( '[Service]\nExecStart=openplotter-gpio-read\nStandardOutput=syslog\nStandardError=syslog\nUser='+conf2.user+'\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target')
 		fo.close()
 		subprocess.call(['systemctl', 'daemon-reload'])
+		subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read'])
+		print(_('DONE'))
+	except Exception as e: print(_('FAILED: ')+str(e))
+
+	print(_('Enabling pigpiod service...'))
+	try:
+		subprocess.call(['systemctl', 'enable', 'pigpiod'])
+		subprocess.call(['systemctl', 'restart', 'pigpiod'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 

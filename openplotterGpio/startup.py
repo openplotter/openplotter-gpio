@@ -49,6 +49,12 @@ class Check():
 		black = ''
 		red = ''
 
+		#pigpiod
+		try:
+			subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
+			green = _('pigpiod running')
+		except: red = ' ↳'+_('pigpiod not running')
+
 		#seatalk
 		try:
 			setting_file = platform2.skDir+'/settings.json'
@@ -65,11 +71,13 @@ class Check():
 				if i['pipeElements'][0]['options']['type'] == 'Seatalk' and i['enabled']: seatalkExists = True
 			except: pass
 		if seatalkExists:
-			try:
-				subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
-				green = _('pigpiod running')
-			except: red = ' ↳'+_('pigpiod not running')
-		else: black = _('pigpiod not running')
+			msg = _('Seatalk 1 enabled')
+			if not green: green = msg
+			else: green+= ' | '+msg
+		else: 
+			msg = _('Seatalk 1 disabled')
+			if not black: black = msg
+			else: black+= ' | '+msg
 
 		#1W
 		data = self.conf.get('GPIO', '1w')
@@ -96,8 +104,21 @@ class Check():
 				if not black: black = msg
 				else: black+= ' | '+msg
 
+		#pulses
+		data = self.conf.get('GPIO', 'pulses')
+		try: pulseslist = eval(data)
+		except: pulseslist = {}
+		if pulseslist:
+			msg = _('pulses enabled')
+			if not green: green = msg
+			else: green+= ' | '+msg
+		else:
+			msg = _('pulses disabled')
+			if not black: black = msg
+			else: black+= ' | '+msg
+
 		#service
-		if oneWlist:
+		if oneWlist or pulseslist:
 			try:
 				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
 				msg = _('GPIO service running')
