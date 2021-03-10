@@ -1,3 +1,11 @@
+openplotter-gpio (2.2.0-alpha) bionic; urgency=medium
+
+  * Improve seatalk 1
+  * Improve 1W
+  * Add pulses
+
+ -- Sailoog <info@sailoog.com>  Wed, 10 Mar 2021 18:41:26 +0100
+
 openplotter-gpio (2.1.0-alpha) bionic; urgency=medium
 
   * Add 1W feature
