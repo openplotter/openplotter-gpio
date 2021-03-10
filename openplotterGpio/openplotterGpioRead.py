@@ -72,9 +72,11 @@ class Process:
 	def __init__(self):
 		self.ws = False
 		self.instances = {}
+		self.conf = conf.Conf()
+		if self.conf.get('GENERAL', 'debug') == 'yes': self.debug = True
+		else: self.debug = False
 
 	def connect(self):
-		self.conf = conf.Conf()
 		self.platform = platform.Platform()
 		uri = self.platform.ws+'localhost:'+self.platform.skPort+'/signalk/v1/stream?subscribe=none'
 		token = self.conf.get('GPIO', 'token')
@@ -108,66 +110,66 @@ class Process:
 									self.ws = False
 									return
 			except Exception as e: 
-				print(_('1W error: ')+str(e))
+				if self.debug: print('1W error: '+str(e))
 				return
 
 	def pulse(self,pulselist):
 		self.instances = {}
-		try:
-			for i in pulselist:
-				if pulselist[i]['revCounter'] or pulselist[i]['revolutions'] or pulselist[i]['linearSpeed'] or pulselist[i]['distance']:
+		for i in pulselist:
+			if pulselist[i]['revCounter'] or pulselist[i]['revolutions'] or pulselist[i]['linearSpeed'] or pulselist[i]['distance']:
+				try:
 					items = i.split('-')
 					host = items[0]
 					gpio = items[1]
 					pi = pigpio.pi(host)
 					self.instances[i] = {'pi': pi ,'instance': rpmReader(pi, int(gpio), pulses_per_rev=pulselist[i]['pulsesPerRev'], weighting=pulselist[i]['weighting'], min_RPM=pulselist[i]['minRPM'])}
-		except: return
+				except Exception as e: 
+					if self.debug: print('Creating pulses error: '+str(e))
 
-		ticks = {}
-		while True:
-			time.sleep(0.1)
-			try:
-				for i in pulselist:
-					values = ''
-					if not i in ticks: ticks[i] = time.time()
-					rate = pulselist[i]['rate']
-					radius = pulselist[i]['radius']
-					calibration = pulselist[i]['calibration']
-					rpm = self.instances[i]['instance'].RPM()
-					counter = self.instances[i]['instance'].counter
-					hertz = rpm/60
-					rps = rpm*(math.pi/30)
-					if radius: 
-						lSpeed = rps*radius
-						distance = counter*(2*math.pi*radius)
-						linearSpeedSK = pulselist[i]['linearSpeed']
-						if linearSpeedSK: values += '{"path":"'+linearSpeedSK+'","value":'+str(lSpeed*calibration)+'},'
-						distanceSK = pulselist[i]['distance']
-						if distanceSK: values += '{"path":"'+distanceSK+'","value":'+str(distance)+'},'
-					revolutionsSK = pulselist[i]['revolutions']
-					if revolutionsSK: values += '{"path":"'+revolutionsSK+'","value":'+str(hertz)+'},'
-					revCounterSK = pulselist[i]['revCounter']
-					if revCounterSK: values += '{"path":"'+revCounterSK+'","value":'+str(counter)+'},'
-					if time.time() - ticks[i] > rate:
-						if values:		
-							SignalK='{"updates":[{"$source":"OpenPlotter.GPIO.pulses.'+i+'","values":['
-							SignalK+=values[0:-1]+']}]}\n'	
-							try: 
-								if self.ws: 
-									self.ws.send(SignalK)
-									ticks[i] = time.time()
-							except: 
-								if self.ws: self.ws.close()
-								self.ws = False
-								break
-			except Exception as e: 
-				print(_('Pulses error: ')+str(e))
-				break
+		if self.instances:
+			ticks = {}
+			while True:
+				time.sleep(0.1)
+				try:
+					for i in pulselist:
+						values = ''
+						if not i in ticks: ticks[i] = time.time()
+						rate = pulselist[i]['rate']
+						radius = pulselist[i]['radius']
+						calibration = pulselist[i]['calibration']
+						rpm = self.instances[i]['instance'].RPM()
+						counter = self.instances[i]['instance'].counter
+						hertz = rpm/60
+						rps = rpm*(math.pi/30)
+						if radius: 
+							lSpeed = rps*radius
+							distance = counter*(2*math.pi*radius)
+							linearSpeedSK = pulselist[i]['linearSpeed']
+							if linearSpeedSK: values += '{"path":"'+linearSpeedSK+'","value":'+str(lSpeed*calibration)+'},'
+							distanceSK = pulselist[i]['distance']
+							if distanceSK: values += '{"path":"'+distanceSK+'","value":'+str(distance)+'},'
+						revolutionsSK = pulselist[i]['revolutions']
+						if revolutionsSK: values += '{"path":"'+revolutionsSK+'","value":'+str(hertz)+'},'
+						revCounterSK = pulselist[i]['revCounter']
+						if revCounterSK: values += '{"path":"'+revCounterSK+'","value":'+str(counter)+'},'
+						if time.time() - ticks[i] > rate:
+							if values:		
+								SignalK='{"updates":[{"$source":"OpenPlotter.GPIO.pulses.'+i+'","values":['
+								SignalK+=values[0:-1]+']}]}\n'	
+								try: 
+									if self.ws: 
+										self.ws.send(SignalK)
+										ticks[i] = time.time()
+								except: 
+									if self.ws: self.ws.close()
+									self.ws = False
+									break
+				except Exception as e: 
+					if self.debug: print('Reading pulses error: '+str(e))
 
 		for i in self.instances:
 			self.instances[i]['instance'].cancel()
 			self.instances[i]['pi'].stop()
-		self.instances = {}
 
 	def subscribe(self,pulselist):
 		paths = ''
@@ -220,7 +222,7 @@ class Process:
 														self.ws = False
 														return												
 			except Exception as e: 
-				print(_('resetCounter error: ')+str(e))
+				if self.debug: print('resetCounter error: '+str(e))
 				return
 
 ############################################################################################
@@ -237,13 +239,13 @@ def main():
 	for i in oneWlist:
 		if oneWlist[i]['sk']: enableX1 = True
 
-	# {"host-xx":{"rate": 1,"pulsesPerRev": 1, "weighting": 0.0, "minRPM": 5, "revCounter": "aaa.aaa", "resetCounter": "bbb.bbb", "revolutions": "ccc.ccc", "radius": 0.16, "calibration": 1, "linearSpeed": "ddd.ddd", "distance": "eee.eee"}, ...}
 	data = conf2.get('GPIO', 'pulses')
 	try: pulselist = eval(data)
 	except: pulselist = {}
 	for i in pulselist:
 		if pulselist[i]['revCounter'] or pulselist[i]['revolutions'] or pulselist[i]['linearSpeed'] or pulselist[i]['distance']: enableX2 = True
-		if pulselist[i]['resetCounter']: enableX3 = True
+		if pulselist[i]['revCounter'] or pulselist[i]['distance']:
+			if pulselist[i]['resetCounter']: enableX3 = True
 
 	if enableX1 or enableX2 or enableX3:
 		process = Process()
