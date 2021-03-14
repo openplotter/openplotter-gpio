@@ -105,12 +105,13 @@ class Process:
 									if self.ws: 
 										self.ws.send(SignalK)
 										ticks[sid] = time.time()
+									else: return
 								except: 
 									if self.ws: self.ws.close()
 									self.ws = False
 									return
 			except Exception as e: 
-				if self.debug: print('1W error: '+str(e))
+				if self.debug: print('Reading GPIO 1W error: '+str(e))
 				return
 
 	def pulse(self,pulselist):
@@ -122,9 +123,10 @@ class Process:
 					host = items[0]
 					gpio = items[1]
 					pi = pigpio.pi(host)
+					if not pi.connected: continue
 					self.instances[i] = {'pi': pi ,'instance': rpmReader(pi, int(gpio), pulses_per_rev=pulselist[i]['pulsesPerRev'], weighting=pulselist[i]['weighting'], min_RPM=pulselist[i]['minRPM'])}
 				except Exception as e: 
-					if self.debug: print('Creating pulses error: '+str(e))
+					if self.debug: print('Creating GPIO pulses error: '+str(e))
 
 		if self.instances:
 			ticks = {}
@@ -160,16 +162,22 @@ class Process:
 									if self.ws: 
 										self.ws.send(SignalK)
 										ticks[i] = time.time()
+									else:
+										for i in self.instances:
+											self.instances[i]['instance'].cancel()
+											self.instances[i]['pi'].stop()
+											self.instances = {}
+										return
 								except: 
 									if self.ws: self.ws.close()
 									self.ws = False
-									break
+									for i in self.instances:
+										self.instances[i]['instance'].cancel()
+										self.instances[i]['pi'].stop()
+										self.instances = {}
+									return
 				except Exception as e: 
-					if self.debug: print('Reading pulses error: '+str(e))
-
-		for i in self.instances:
-			self.instances[i]['instance'].cancel()
-			self.instances[i]['pi'].stop()
+					if self.debug: print('Reading GPIO pulses error: '+str(e))
 
 	def subscribe(self,pulselist):
 		paths = ''
@@ -185,6 +193,7 @@ class Process:
 			SignalK+=paths[0:-1]+']}\n'	
 			try: 
 				if self.ws: self.ws.send(SignalK)
+				else: return
 			except: 
 				if self.ws: self.ws.close()
 				self.ws = False
@@ -195,6 +204,7 @@ class Process:
 			try:
 				try: 
 					if self.ws: result = self.ws.recv()
+					else: return
 				except: 
 					if self.ws: self.ws.close()
 					self.ws = False
@@ -217,13 +227,59 @@ class Process:
 													SignalK = '{"updates":[{"$source":"'+source+'","values":[{"path":"'+value['path']+'","value": false}]}]}\n'
 													try: 
 														if self.ws: self.ws.send(SignalK)
+														else: return
 													except: 
 														if self.ws: self.ws.close()
 														self.ws = False
 														return												
 			except Exception as e: 
-				if self.debug: print('resetCounter error: '+str(e))
+				if self.debug: print('Reading GPIO pulses resetCounter error: '+str(e))
 				return
+
+	def digital(self,digitalList):
+		instances2 = {}
+		for i in digitalList:
+			if digitalList[i]['sk']:
+				try:
+					items = i.split('-')
+					host = items[0]
+					gpio = int(items[1])
+					pi = pigpio.pi(host)
+					if not pi.connected: continue
+					pi.set_mode(gpio, pigpio.INPUT)
+					if digitalList[i]['pull'] == 'up': pi.set_pull_up_down(gpio, pigpio.PUD_UP)
+					if digitalList[i]['pull'] == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
+					instances2[i] = {'pi': pi, 'gpio': gpio, 'sk': digitalList[i]['sk'], 'init': digitalList[i]['init'], 'old':'init'}
+				except Exception as e: 
+					if self.debug: print('Creating GPIO digital error: '+str(e))
+
+		if instances2:
+			while True:
+				for i in instances2:
+					try:
+						level = instances2[i]['pi'].read(instances2[i]['gpio'])
+						if instances2[i]['old'] != level:
+							SignalK = '{"updates":[{"$source":"OpenPlotter.GPIO.digital.'+i+'","values":[{"path":"'+instances2[i]['sk']+'","value": '+str(level)+'}]}]}\n'
+							try: 
+								if self.ws:
+									if instances2[i]['old'] == 'init' and not instances2[i]['init']: pass
+									else:
+										self.ws.send(SignalK)
+										self.ws.send(SignalK) #in case of non continuous data we send data twice to force the exception if the pipe is broken
+									instances2[i]['old'] = level
+								else:
+									for i in instances2:
+										instances2[i]['pi'].stop()
+									return
+							except:
+								if self.ws: self.ws.close()
+								self.ws = False
+								for i in instances2:
+									instances2[i]['pi'].stop()
+								return
+					except Exception as e: 
+						if self.debug: print('Reading GPIO digital error: '+str(e))
+				time.sleep(0.01)
 
 ############################################################################################
 
@@ -232,6 +288,7 @@ def main():
 	enableX1 = False
 	enableX2 = False
 	enableX3 = False
+	enableX4 = False
 
 	data = conf2.get('GPIO', '1w')
 	try: oneWlist = eval(data)
@@ -247,9 +304,18 @@ def main():
 		if pulselist[i]['revCounter'] or pulselist[i]['distance']:
 			if pulselist[i]['resetCounter']: enableX3 = True
 
-	if enableX1 or enableX2 or enableX3:
+	#digital = {'localhost-21': {'pull': 'up/down', 'sk': 'gpio.status', 'init': True/False}}
+	data = conf2.get('GPIO', 'digital')
+	try: digitalList = eval(data)
+	except: digitalList = {}
+	for i in digitalList:
+		if digitalList[i]['sk']: enableX4 = True
+
+	if enableX1 or enableX2 or enableX3 or enableX4:
 		process = Process()
-		process.connect()
+		try: process.connect()
+		except Exception as e: 
+			if self.debug: print('Error connecting to SK: '+str(e))
 
 		if enableX1:
 			x1 = threading.Thread(target=process.oneW, args=(oneWlist,), daemon=True)
@@ -260,9 +326,15 @@ def main():
 		if enableX3:
 			x3 = threading.Thread(target=process.subscribe, args=(pulselist,), daemon=True)
 			x3.start()
+		if enableX4:
+			x4 = threading.Thread(target=process.digital, args=(digitalList,), daemon=True)
+			x4.start()
 
 		while True:
-			if not process.ws: process.connect()
+			if not process.ws: 
+				try: process.connect()
+				except Exception as e: 
+					if self.debug: print('Error connecting to SK: '+str(e))
 			if enableX1:
 				if not x1.is_alive():
 					x1.join()
@@ -278,6 +350,11 @@ def main():
 					x3.join()
 					x3 = threading.Thread(target=process.subscribe, args=(pulselist,), daemon=True)
 					x3.start()
+			if enableX4:
+				if not x4.is_alive():
+					x4.join()
+					x4 = threading.Thread(target=process.digital, args=(digitalList,), daemon=True)
+					x4.start()
 			time.sleep(5)
 
 if __name__ == '__main__':
