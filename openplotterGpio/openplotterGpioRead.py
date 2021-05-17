@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import threading, time, pigpio, math, ujson
+import threading, time, pigpio, math, ujson, ssl
 from openplotterSettings import conf
 from openplotterSettings import platform
 from websocket import create_connection
@@ -82,7 +82,7 @@ class Process:
 		token = self.conf.get('GPIO', 'token')
 		if token:
 			headers = {'Authorization': 'Bearer '+token}
-			self.ws = create_connection(uri, header=headers)
+			self.ws = create_connection(uri, header=headers, sslopt={"cert_reqs": ssl.CERT_NONE})
 
 	def oneW(self,oneWlist):
 		ticks = {}
@@ -315,7 +315,7 @@ def main():
 		process = Process()
 		try: process.connect()
 		except Exception as e: 
-			if self.debug: print('Error connecting to SK: '+str(e))
+			if process.debug: print('Error connecting to SK: '+str(e))
 
 		if enableX1:
 			x1 = threading.Thread(target=process.oneW, args=(oneWlist,), daemon=True)
@@ -334,7 +334,7 @@ def main():
 			if not process.ws: 
 				try: process.connect()
 				except Exception as e: 
-					if self.debug: print('Error connecting to SK: '+str(e))
+					if process.debug: print('Error connecting to SK: '+str(e))
 			if enableX1:
 				if not x1.is_alive():
 					x1.join()
