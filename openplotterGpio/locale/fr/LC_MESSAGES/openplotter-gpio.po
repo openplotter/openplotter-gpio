@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-03-10 14:21+0100\n"
-"PO-Revision-Date: 2021-03-10 18:38+0100\n"
+"POT-Creation-Date: 2021-05-20 20:01+0200\n"
+"PO-Revision-Date: 2021-05-20 20:05+0200\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -22,15 +22,15 @@ msgstr ""
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
-msgstr ""
+msgstr "GPIO"
 
 #: data/openplotter-gpio.desktop:5
 msgid "openplotter-gpio"
-msgstr ""
+msgstr "openplotter-gpio"
 
 #: gpioPostInstall.py:30
 msgid "Installing python packages..."
-msgstr "Installation des paquets Python..."
+msgstr "Suppression des paquets python..."
 
 #: gpioPostInstall.py:33 gpioPostInstall.py:42 gpioPostInstall.py:52
 #: gpioPostInstall.py:59 gpioPostInstall.py:65 gpioPreUninstall.py:32
@@ -45,8 +45,8 @@ msgid "FAILED: "
 msgstr "ÉCHEC: "
 
 #: gpioPostInstall.py:36
-msgid "Checking access to Signal K..."
-msgstr "Vérification de l'accès à Signal K..."
+msgid "Checking access to Signal K server..."
+msgstr ""
 
 #: gpioPostInstall.py:45
 msgid "Adding openplotter-gpio-read service..."
@@ -54,7 +54,7 @@ msgstr "Ajout du service openplotter-gpio-read..."
 
 #: gpioPostInstall.py:55
 msgid "Enabling pigpiod service..."
-msgstr ""
+msgstr "Activation du service pigpiod..."
 
 #: gpioPostInstall.py:62
 msgid "Setting version..."
@@ -104,268 +104,282 @@ msgstr "Numérique"
 msgid "Pulses"
 msgstr "Impulsions"
 
-#: openplotterGpio.py:151
-msgid "Coming soon."
-msgstr "À venir bientôt."
+#: openplotterGpio.py:75
+msgid " Seatalk-1 input"
+msgstr ""
 
-#: openplotterGpio.py:166
+#: openplotterGpio.py:152
 msgid "Restarting Signal K server... "
 msgstr "Redémarrage du serveur Signal K... "
 
-#: openplotterGpio.py:172
+#: openplotterGpio.py:158
 msgid "Signal K server restarted"
 msgstr "Serveur Signal K redémarré"
 
-#: openplotterGpio.py:185
+#: openplotterGpio.py:171
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Appuyez sur « Approuver », puis « Actualiser »."
 
-#: openplotterGpio.py:189
+#: openplotterGpio.py:175
 msgid " Press \"Refresh\"."
 msgstr " Appuyez sur \"Actualiser\"."
 
-#: openplotterGpio.py:191
+#: openplotterGpio.py:177
 msgid " Press \"Allowed devices\"."
 msgstr " Appuyez sur \"Périphériques autorisés\"."
 
-#: openplotterGpio.py:205
+#: openplotterGpio.py:193
 msgid "GPIO service is enabled"
 msgstr "Le service GPIO est activé"
 
-#: openplotterGpio.py:208
+#: openplotterGpio.py:196
 msgid "There is nothing to send. GPIO service is disabled"
 msgstr "Il n'y a rien à envoyer. Le service GPIO est désactivé"
 
-#: openplotterGpio.py:214
+#: openplotterGpio.py:202 openplotterGpio.py:300
 msgid "Host"
+msgstr "Hôte"
+
+#: openplotterGpio.py:206 openplotterGpio.py:1208
+msgid "Send initial state"
 msgstr ""
 
-#: openplotterGpio.py:216
-msgid "Revolutions"
-msgstr ""
-
-#: openplotterGpio.py:217
-msgid "Counter"
-msgstr ""
-
-#: openplotterGpio.py:218
-msgid "Reset"
-msgstr ""
-
-#: openplotterGpio.py:219
-msgid "Speed"
-msgstr ""
-
-#: openplotterGpio.py:220
-msgid "Distance"
-msgstr ""
-
-#: openplotterGpio.py:226 openplotterGpio.py:511
+#: openplotterGpio.py:212 openplotterGpio.py:312 openplotterGpio.py:597
 msgid "Add"
 msgstr "Ajouter"
 
-#: openplotterGpio.py:228 openplotterGpio.py:337 openplotterGpio.py:513
-#: openplotterGpio.py:709
+#: openplotterGpio.py:214 openplotterGpio.py:314 openplotterGpio.py:423
+#: openplotterGpio.py:599 openplotterGpio.py:795
 msgid "Edit"
 msgstr "Modifier"
 
-#: openplotterGpio.py:230 openplotterGpio.py:515
+#: openplotterGpio.py:216 openplotterGpio.py:316 openplotterGpio.py:601
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
-#: openplotterGpio.py:323
-msgid "Type"
-msgstr "Type"
-
-#: openplotterGpio.py:325 openplotterGpio.py:705
-msgid "Signal K key"
-msgstr "Clé Signal K"
-
-#: openplotterGpio.py:326
-msgid "Rate"
-msgstr "Fréquence"
-
-#: openplotterGpio.py:327 openplotterGpio.py:721
-msgid "Offset"
-msgstr "Décalage"
-
-#: openplotterGpio.py:333
-msgid "Set 1W GPIO"
-msgstr "Définir 1W GPIO"
-
-#: openplotterGpio.py:339
-msgid "Clear"
-msgstr "Effacer"
-
-#: openplotterGpio.py:352
-msgid "This feature is only for Raspberry Pi"
-msgstr ""
-
-#: openplotterGpio.py:367 startup.py:93
-msgid "Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces."
-msgstr "Veuillez activer l'interface 1W dans Préférences -> Configuration Raspberry Pi -> Interfaces."
-
-#: openplotterGpio.py:411
-msgid "OpenPlotter will restart. Are you sure?"
-msgstr "OpenPlotter va redémarrer. D'accord?"
-
-#: openplotterGpio.py:412
-msgid "Question"
-msgstr "Question"
-
-#: openplotterGpio.py:504 openplotterGpio.py:651
-msgid "Invert signal"
-msgstr "Inverser le signal"
-
-#: openplotterGpio.py:505
-msgid "SK connection ID"
-msgstr "Identifiant de connexion SK"
-
-#: openplotterGpio.py:524
-msgid "This feature is only for Raspberry Pi."
-msgstr ""
-
-#: openplotterGpio.py:558
-msgid "Fill in all fields"
-msgstr "Remplissez tous les champs"
-
-#: openplotterGpio.py:574
-msgid "Failed. Error creating connection in Signal K"
-msgstr "Échec. Erreur lors de la création de la connexion sur Signal K"
-
-#: openplotterGpio.py:577
-msgid "Please install \"Signal K Installer\" OpenPlotter app"
-msgstr "Veuillez installer l'appli d'OpenPlotter \"Installateur Signal K\""
-
-#: openplotterGpio.py:596
-msgid "Failed. Error removing connection in Signal K"
-msgstr "Échec. Erreur lors de la suppression de la connexion sur Signal K"
-
-#: openplotterGpio.py:617
-msgid "no"
-msgstr "non"
-
-#: openplotterGpio.py:627
+#: openplotterGpio.py:291 openplotterGpio.py:713
 msgid "yes"
 msgstr "oui"
 
-#: openplotterGpio.py:637
+#: openplotterGpio.py:292 openplotterGpio.py:703
+msgid "no"
+msgstr "non"
+
+#: openplotterGpio.py:302
+msgid "Revolutions"
+msgstr "Révolutions"
+
+#: openplotterGpio.py:303
+msgid "Counter"
+msgstr "Compteur"
+
+#: openplotterGpio.py:304
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: openplotterGpio.py:305
+msgid "Speed"
+msgstr "Vitesse"
+
+#: openplotterGpio.py:306
+msgid "Distance"
+msgstr "Distance"
+
+#: openplotterGpio.py:409
+msgid "Type"
+msgstr "Type"
+
+#: openplotterGpio.py:411 openplotterGpio.py:791
+msgid "Signal K key"
+msgstr "Clé Signal K"
+
+#: openplotterGpio.py:412
+msgid "Rate"
+msgstr "Fréquence"
+
+#: openplotterGpio.py:413 openplotterGpio.py:807
+msgid "Offset"
+msgstr "Décalage"
+
+#: openplotterGpio.py:419
+msgid "Set 1W GPIO"
+msgstr "Définir 1W GPIO"
+
+#: openplotterGpio.py:425
+msgid "Clear"
+msgstr "Effacer"
+
+#: openplotterGpio.py:438
+msgid "This feature is only for Raspberry Pi"
+msgstr "Cette fonctionnalité concerne uniquement le Raspberry Pi"
+
+#: openplotterGpio.py:453 startup.py:93
+msgid "Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces."
+msgstr "Veuillez activer l'interface 1W dans Préférences -> Configuration Raspberry Pi -> Interfaces."
+
+#: openplotterGpio.py:497
+msgid "OpenPlotter will restart. Are you sure?"
+msgstr "OpenPlotter va redémarrer. D'accord?"
+
+#: openplotterGpio.py:498
+msgid "Question"
+msgstr "Question"
+
+#: openplotterGpio.py:590 openplotterGpio.py:737
+msgid "Invert signal"
+msgstr "Inverser le signal"
+
+#: openplotterGpio.py:591
+msgid "SK connection ID"
+msgstr "Identifiant de connexion SK"
+
+#: openplotterGpio.py:610
+msgid "This feature is only for Raspberry Pi."
+msgstr "Cette fonctionnalité concerne uniquement le Raspberry Pi."
+
+#: openplotterGpio.py:644
+msgid "Fill in all fields"
+msgstr "Remplissez tous les champs"
+
+#: openplotterGpio.py:660
+msgid "Failed. Error creating connection in Signal K"
+msgstr "Échec. Erreur lors de la création de la connexion sur Signal K"
+
+#: openplotterGpio.py:663
+msgid "Please install \"Signal K Installer\" OpenPlotter app"
+msgstr "Veuillez installer l'appli d'OpenPlotter \"Installateur Signal K\""
+
+#: openplotterGpio.py:682
+msgid "Failed. Error removing connection in Signal K"
+msgstr "Échec. Erreur lors de la suppression de la connexion sur Signal K"
+
+#: openplotterGpio.py:723
 msgid "Add SK Connection"
 msgstr "Ajouter une connexion SK"
 
-#: openplotterGpio.py:642
+#: openplotterGpio.py:728
 msgid "ID"
 msgstr "Identifiant"
 
-#: openplotterGpio.py:648
+#: openplotterGpio.py:734
 msgid "Select"
 msgstr "Sélectionner"
 
-#: openplotterGpio.py:699
+#: openplotterGpio.py:785
 msgid "Editing sensor "
 msgstr "Édition du capteur "
 
-#: openplotterGpio.py:717 openplotterGpio.py:796
+#: openplotterGpio.py:803 openplotterGpio.py:882
 msgid "Rate (seconds)"
 msgstr "Période (secondes)"
 
-#: openplotterGpio.py:771
+#: openplotterGpio.py:857
 msgid "Editing GPIO pulses"
-msgstr ""
+msgstr "Édition des pulsations GPIO"
 
-#: openplotterGpio.py:772
+#: openplotterGpio.py:858
 msgid "Adding GPIO pulses"
-msgstr ""
+msgstr "Ajout des pulsations GPIO"
 
-#: openplotterGpio.py:778
+#: openplotterGpio.py:864 openplotterGpio.py:1180
 msgid "localhost"
-msgstr ""
+msgstr "localhost"
 
-#: openplotterGpio.py:801
+#: openplotterGpio.py:887
 msgid "Pulses per revolution"
-msgstr ""
+msgstr "Pulsations par révolution"
 
-#: openplotterGpio.py:806
+#: openplotterGpio.py:892
 msgid "Weighting"
-msgstr ""
+msgstr "Pesée"
 
-#: openplotterGpio.py:811
+#: openplotterGpio.py:897
 msgid "Min RPM"
-msgstr ""
+msgstr "RPM min"
 
-#: openplotterGpio.py:818
+#: openplotterGpio.py:904
 msgid "Revolutions (Hz)"
-msgstr ""
+msgstr "Révolutions (Hz)"
 
-#: openplotterGpio.py:824
+#: openplotterGpio.py:910
 msgid "Revolutions counter"
-msgstr ""
+msgstr "Compteur de révolutions"
 
-#: openplotterGpio.py:830
+#: openplotterGpio.py:916
 msgid "Reset (counter, distance)"
-msgstr ""
+msgstr "Réinitialiser (compteur, distance)"
 
-#: openplotterGpio.py:838
+#: openplotterGpio.py:924
 msgid "Radius (m)"
-msgstr ""
+msgstr "Rayon (m)"
 
-#: openplotterGpio.py:842
+#: openplotterGpio.py:928
 msgid "Speed (m/s)"
-msgstr ""
+msgstr "Vitesse (m/s)"
 
-#: openplotterGpio.py:848
+#: openplotterGpio.py:934
 msgid "Speed calibration"
-msgstr ""
+msgstr "Calibration de la vitesse"
 
-#: openplotterGpio.py:853
+#: openplotterGpio.py:939
 msgid "Distance (m)"
-msgstr ""
+msgstr "Distance (m)"
 
-#: openplotterGpio.py:859
+#: openplotterGpio.py:945
 msgid "Set defaults"
-msgstr ""
+msgstr "Mettre valeurs par défaut"
 
-#: openplotterGpio.py:979 openplotterGpio.py:1046
+#: openplotterGpio.py:1065 openplotterGpio.py:1132 openplotterGpio.py:1259
+#: openplotterGpio.py:1287
 msgid "Enter the host name."
-msgstr ""
+msgstr "Saisir le nom de l'hôte."
 
-#: openplotterGpio.py:979 openplotterGpio.py:1046 openplotterGpio.py:1049
-#: openplotterGpio.py:1053 openplotterGpio.py:1057 openplotterGpio.py:1061
-#: openplotterGpio.py:1065 openplotterGpio.py:1069 openplotterGpio.py:1074
-#: openplotterGpio.py:1078
+#: openplotterGpio.py:1065 openplotterGpio.py:1132 openplotterGpio.py:1135
+#: openplotterGpio.py:1139 openplotterGpio.py:1143 openplotterGpio.py:1147
+#: openplotterGpio.py:1151 openplotterGpio.py:1155 openplotterGpio.py:1160
+#: openplotterGpio.py:1164 openplotterGpio.py:1259 openplotterGpio.py:1287
+#: openplotterGpio.py:1290
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
-#: openplotterGpio.py:1049
+#: openplotterGpio.py:1135 openplotterGpio.py:1290
 msgid "Enter the GPIO."
-msgstr ""
+msgstr "Saisissez le GPIO."
 
-#: openplotterGpio.py:1053
+#: openplotterGpio.py:1139
 msgid "\"Rate\" value has to be a number."
-msgstr ""
+msgstr "La valeur \"Taux\" doit être un nombre."
 
-#: openplotterGpio.py:1057
+#: openplotterGpio.py:1143
 msgid "\"Pulses per revolution\" value has to be a number."
-msgstr ""
+msgstr "La valeur \"Pulsions par révolution\" doit être un nombre."
 
-#: openplotterGpio.py:1061
+#: openplotterGpio.py:1147
 msgid "\"Weighting\" value has to be a number."
-msgstr ""
+msgstr "La valeur \"Pesée\" doit être un nombre."
 
-#: openplotterGpio.py:1065
+#: openplotterGpio.py:1151
 msgid "\"Min RPM\" value has to be a number."
-msgstr ""
+msgstr "La valeur \"RPM min\" doit être un nombre."
 
-#: openplotterGpio.py:1069
+#: openplotterGpio.py:1155
 msgid "To get \"Speed\" or \"Distance\" enter the radius."
-msgstr ""
+msgstr "Pour obtenir \"Vitesse\" ou \"Distance\" entrez le rayon."
 
-#: openplotterGpio.py:1074
+#: openplotterGpio.py:1160
 msgid "\"Radius\" value has to be a number."
+msgstr "La valeur \"Rayon\" doit être un nombre."
+
+#: openplotterGpio.py:1164
+msgid "\"Speed calibration\" value has to be a number."
+msgstr "La valeur \"Calibrage de vitesse\" doit être un nombre."
+
+#: openplotterGpio.py:1173
+msgid "Editing GPIO digital"
 msgstr ""
 
-#: openplotterGpio.py:1078
-msgid "\"Speed calibration\" value has to be a number."
+#: openplotterGpio.py:1174
+msgid "Adding GPIO digital"
 msgstr ""
 
 #: startup.py:44
@@ -382,11 +396,11 @@ msgstr "pigpiod est désactivé"
 
 #: startup.py:74
 msgid "Seatalk 1 enabled"
-msgstr ""
+msgstr "Seatalk 1 activé"
 
 #: startup.py:78
 msgid "Seatalk 1 disabled"
-msgstr ""
+msgstr "Seatalk 1 désactivé"
 
 #: startup.py:89 startup.py:99
 msgid "1W enabled"
@@ -398,20 +412,28 @@ msgstr "1W désactivé"
 
 #: startup.py:112
 msgid "pulses enabled"
-msgstr ""
+msgstr "impulsions activées"
 
 #: startup.py:116
 msgid "pulses disabled"
+msgstr "impulsions désactivées"
+
+#: startup.py:125
+msgid "digital enabled"
 msgstr ""
 
-#: startup.py:124 startup.py:134
+#: startup.py:129
+msgid "digital disabled"
+msgstr ""
+
+#: startup.py:137 startup.py:147
 msgid "GPIO service running"
 msgstr "Service GPIO en exécution"
 
-#: startup.py:128 startup.py:138
+#: startup.py:141 startup.py:151
 msgid "GPIO service not running"
 msgstr "Le service GPIO est à l'arrêt"
 
-#: startup.py:149
+#: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr "Accès au serveur Signal K validé"
