@@ -1,11 +1,11 @@
-openplotter-gpio (2.3.0-beta) bionic; urgency=medium
+openplotter-gpio (2.3.1-beta) bionic; urgency=medium
 
   * Add digital feature
   * Allow connection to SSL SK server
   * Fix errors
   * Update translation
 
- -- Sailoog <sailoog@sailoog.com>  Thu, 20 May 2021 20:09:02 +0200
+ -- Sailoog <info@sailoog.com>  Thu, 20 May 2021 20:09:02 +0200
 
 openplotter-gpio (2.2.0-alpha) bionic; urgency=medium
 
