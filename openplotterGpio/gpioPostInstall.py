@@ -33,7 +33,7 @@ def main():
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	print(_('Checking access to Signal K...'))
+	print(_('Checking access to Signal K server...'))
 	try:
 		from openplotterSignalkInstaller import connections
 		skConnections = connections.Connections('GPIO')

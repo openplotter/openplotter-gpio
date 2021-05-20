@@ -304,7 +304,6 @@ def main():
 		if pulselist[i]['revCounter'] or pulselist[i]['distance']:
 			if pulselist[i]['resetCounter']: enableX3 = True
 
-	#digital = {'localhost-21': {'pull': 'up/down', 'sk': 'gpio.status', 'init': True/False}}
 	data = conf2.get('GPIO', 'digital')
 	try: digitalList = eval(data)
 	except: digitalList = {}

@@ -72,7 +72,7 @@ class MyFrame(wx.Frame):
 		self.notebook.AddPage(self.digital, _('Digital'))
 		self.notebook.AddPage(self.pulses, _('Pulses'))
 		self.notebook.AddPage(self.oneW, '1W')
-		self.notebook.AddPage(self.seatalk, ' Seatalk 1')
+		self.notebook.AddPage(self.seatalk, _(' Seatalk-1 input'))
 		self.il = wx.ImageList(24, 24)
 		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/digital.png", wx.BITMAP_TYPE_PNG))
 		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/pulses.png", wx.BITMAP_TYPE_PNG))
@@ -147,20 +147,6 @@ class MyFrame(wx.Frame):
 			url = self.platform.http+'localhost:'+self.platform.skPort+'/admin/#/security/devices'
 			webbrowser.open(url, new=2)
 
-	def pageDigital(self):
-		text1 = wx.StaticText(self.digital, label=_('Coming soon.'))
-
-		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-		hbox1.AddStretchSpacer(1)
-		hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
-		hbox1.AddStretchSpacer(1)
-
-		vbox = wx.BoxSizer(wx.VERTICAL)
-		vbox.AddStretchSpacer(1)
-		vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
-		vbox.AddStretchSpacer(1)
-		self.digital.SetSizer(vbox)
-
 	def restart_SK(self, msg):
 		if self.platform.skDir:
 			if msg == 0: msg = _('Restarting Signal K server... ')
@@ -195,17 +181,117 @@ class MyFrame(wx.Frame):
 		self.readSeatalk()
 		self.readOneW()
 		self.readPulses()
+		self.readDigital()
 
 	def onApply(self):
 		enable = False
 		if self.oneWlist: enable = True
 		if self.gpioPulses: enable = True
+		if self.gpioDigital: enable = True
 		if enable:
 			subprocess.Popen([self.platform.admin, 'python3', self.currentdir+'/service.py', 'openplotter-gpio-read', 'restart'])
 			self.ShowStatusBarGREEN(_('GPIO service is enabled'))
 		else:
 			subprocess.Popen([self.platform.admin, 'python3', self.currentdir+'/service.py', 'openplotter-gpio-read', 'stop'])
 			self.ShowStatusBarBLACK(_('There is nothing to send. GPIO service is disabled'))
+
+	###########################################################################
+
+	def pageDigital(self):
+		self.listDigital = wx.ListCtrl(self.digital, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+		self.listDigital.InsertColumn(0, _('Host'), width=75)
+		self.listDigital.InsertColumn(1, 'GPIO', width=80)
+		self.listDigital.InsertColumn(2, 'Pull', width=80)
+		self.listDigital.InsertColumn(3, 'Signal K key', width=300)
+		self.listDigital.InsertColumn(4, _('Send initial state'), width=150)
+		self.listDigital.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListDigitalSelected)
+		self.listDigital.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListDigitalDeselected)
+		self.listDigital.SetTextColour(wx.BLACK)
+
+		self.toolbar6 = wx.ToolBar(self.digital, style=wx.TB_TEXT | wx.TB_VERTICAL)
+		self.addDigital = self.toolbar6.AddTool(603, _('Add'), wx.Bitmap(self.currentdir+"/data/chip.png"))
+		self.Bind(wx.EVT_TOOL, self.onAddDigital, self.addDigital)
+		self.editDigital= self.toolbar6.AddTool(601, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+		self.Bind(wx.EVT_TOOL, self.onEditDigital, self.editDigital)
+		self.removeDigital= self.toolbar6.AddTool(602, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+		self.Bind(wx.EVT_TOOL, self.onRemoveDigital, self.removeDigital)
+
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer.Add(self.listDigital, 1, wx.EXPAND, 0)
+		sizer.Add(self.toolbar6, 0, wx.EXPAND, 0)
+
+		self.digital.SetSizer(sizer)
+
+	def onListDigitalSelected(self,e):
+		self.onListDigitalDeselected()
+		selected = self.listDigital.GetFirstSelected()
+		if selected == -1: return
+		self.toolbar6.EnableTool(601,True)
+		self.toolbar6.EnableTool(602,True)
+
+	def onListDigitalDeselected(self,e=0):
+		self.toolbar6.EnableTool(601,False)
+		self.toolbar6.EnableTool(602,False)
+
+	def onAddDigital(self,e):
+		edit = {}
+		self.setDigital(edit)
+
+	def onEditDigital(self,e):
+		selected = self.listDigital.GetFirstSelected()
+		if selected == -1: return
+		host = self.listDigital.GetItemText(selected, 0)
+		gpio = self.listDigital.GetItemText(selected, 1)
+		index = host+'-'+gpio
+		edit = {"host": host, "gpio": gpio, "pull": self.gpioDigital[index]['pull'], "sk": self.gpioDigital[index]['sk'], "init": self.gpioDigital[index]['init']}
+		self.setDigital(edit)
+
+	def setDigital(self,edit):
+		dlg = editDigital(edit)
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			if dlg.localhost.GetValue(): host = 'localhost'
+			else: host = dlg.host.GetValue()
+			gpio = dlg.gpio.GetValue()
+			index = host+'-'+gpio
+			if edit:
+				oldIndex = edit['host']+'-'+edit['gpio']
+				if oldIndex != index: del self.gpioDigital[oldIndex]
+			pull = str(dlg.pull.GetValue())
+			sk = str(dlg.SK.GetValue())
+			init = dlg.init.GetValue()
+			self.gpioDigital[index] = {"pull": pull, "sk": sk, "init": init}
+			self.conf.set('GPIO', 'digital', str(self.gpioDigital))
+			self.readDigital()
+			self.onApply()
+		dlg.Destroy()
+
+	def onRemoveDigital(self,e):
+		selected = self.listDigital.GetFirstSelected()
+		if selected == -1: return
+		host = self.listDigital.GetItemText(selected, 0)
+		gpio = self.listDigital.GetItemText(selected, 1)
+		index = host+'-'+gpio
+		del self.gpioDigital[index]
+		self.conf.set('GPIO', 'digital', str(self.gpioDigital))
+		self.readDigital()
+		self.onApply()
+
+	def readDigital(self):
+		self.listDigital.DeleteAllItems()
+		self.onListDigitalDeselected()
+		data = self.conf.get('GPIO', 'digital')
+		try: self.gpioDigital = eval(data)
+		except: self.gpioDigital = {}
+		if self.gpioDigital:
+			for i in self.gpioDigital:
+				items = i.split('-')
+				host = items[0]
+				gpio = items[1]
+				if self.gpioDigital[i]['init']: init = _('yes')
+				else: init = _('no')
+				self.listDigital.Append([host, gpio, self.gpioDigital[i]['pull'], self.gpioDigital[i]['sk'], init])
+				if self.gpioDigital[i]['sk']: self.listDigital.SetItemBackgroundColour(self.listDigital.GetItemCount()-1,(255,220,100))
 
 	###########################################################################
 
@@ -1077,6 +1163,133 @@ class editPulses(wx.Dialog):
 		except:
 			wx.MessageBox(_('"Speed calibration" value has to be a number.'), _('Error'), wx.OK | wx.ICON_ERROR)
 			return
+		self.EndModal(wx.ID_OK)
+
+################################################################################
+
+class editDigital(wx.Dialog):
+
+	def __init__(self,edit):
+		if edit: title = _('Editing GPIO digital')
+		else: title = _('Adding GPIO digital')
+
+		wx.Dialog.__init__(self, None, title=title, size=(400, 240))
+		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+		panel = wx.Panel(self)
+
+		self.localhost = wx.CheckBox(panel, label=_('localhost'))
+		self.localhost.Bind(wx.EVT_CHECKBOX, self.onLocalhost)
+		self.host = wx.TextCtrl(panel)
+		if edit: 
+			if edit['host'] == 'localhost': 
+				self.localhost.SetValue(True)
+				self.host.Disable()
+			else: 
+				self.host.SetValue(edit['host'])
+				self.host.Enable()
+		else: 
+			self.localhost.SetValue(True)
+			self.host.Disable()
+		self.gpio = wx.TextCtrl(panel, style=wx.CB_READONLY)
+		selectGpio =wx.Button(panel, label='GPIO')
+		selectGpio.Bind(wx.EVT_BUTTON, self.onSelectGpio)
+		if edit: self.gpio.SetValue(edit['gpio'])
+
+		pullLabel= wx.StaticText(panel, label = 'Pull')
+		self.pull = wx.ComboBox(panel, choices = ['up','down'], style=wx.CB_READONLY)
+		if edit: self.pull.SetValue(edit['pull'])
+		else: self.pull.SetValue('down')
+
+		self.SK = wx.TextCtrl(panel)
+		SKedit = wx.Button(panel, label='Signal K key')
+		SKedit.Bind(wx.EVT_BUTTON, self.onSKedit)
+		if edit: self.SK.SetValue(str(edit['sk']))
+
+		self.init = wx.CheckBox(panel, label=_('Send initial state'))
+		if edit: self.init.SetValue(edit['init'])
+		else: self.init.SetValue(True)
+
+		cancelBtn = wx.Button(panel, wx.ID_CANCEL)
+		okBtn = wx.Button(panel, wx.ID_OK)
+		okBtn.Bind(wx.EVT_BUTTON, self.ok)
+
+		h1 = wx.BoxSizer(wx.HORIZONTAL)
+		h1.Add(self.localhost, 0, wx.ALL | wx.EXPAND, 5)
+		h1.Add(self.host, 1, wx.ALL | wx.EXPAND, 5)
+
+		h2 = wx.BoxSizer(wx.HORIZONTAL)
+		h2.Add(self.gpio, 1, wx.ALL | wx.EXPAND, 5)
+		h2.Add(selectGpio, 0, wx.ALL | wx.EXPAND, 5)
+		h2.AddSpacer(10)
+		h2.Add(pullLabel, 0,  wx.UP | wx.EXPAND, 10)
+		h2.AddSpacer(5)
+		h2.Add(self.pull, 1, wx.ALL | wx.EXPAND, 5)
+
+		h3 = wx.BoxSizer(wx.HORIZONTAL)
+		h3.Add(self.SK, 1, wx.ALL | wx.EXPAND, 5)
+		h3.Add(SKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		actionbox = wx.BoxSizer(wx.HORIZONTAL)
+		actionbox.AddStretchSpacer(1)
+		actionbox.Add(cancelBtn, 0, wx.LEFT | wx.EXPAND, 10)
+		actionbox.Add(okBtn, 0, wx.LEFT | wx.EXPAND, 10)
+
+		vbox = wx.BoxSizer(wx.VERTICAL)
+		vbox.AddSpacer(5)
+		vbox.Add(h1, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.Add(h2, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.Add(h3, 0, wx.RIGHT | wx.LEFT | wx.EXPAND, 5)
+		vbox.Add(self.init, 0, wx.UP | wx.LEFT | wx.EXPAND, 10)
+		vbox.AddStretchSpacer(1)
+		vbox.Add(actionbox, 0, wx.ALL | wx.EXPAND, 10)
+
+		panel.SetSizer(vbox)
+		self.panel = panel
+
+		self.Centre() 
+
+	def onLocalhost(self,e):
+		if self.localhost.GetValue(): self.host.Disable()
+		else: self.host.Enable()
+		self.gpio.SetValue('')
+
+	def onSelectGpio(self,e):
+		if not self.localhost.GetValue():
+			if not self.host.GetValue():
+				wx.MessageBox(_('Enter the host name.'), _('Error'), wx.OK | wx.ICON_ERROR)
+				return
+		gpioPin = '0'
+		gpioBCM = self.gpio.GetValue()
+		if gpioBCM:
+			gpioBCM = 'GPIO '+gpioBCM
+			gpios = gpio.Gpio()
+			for i in gpios.gpioMap:
+				if gpioBCM == i['BCM']: gpioPin = i['physical']
+		if self.localhost.GetValue(): dlg = gpio.GpioMap(['GPIO'],gpioPin)
+		else: dlg = gpio.GpioMap(['GPIO'],gpioPin, self.host.GetValue())
+		res = dlg.ShowModal()
+		if res == wx.ID_OK:
+			gpioBCM = dlg.selected['BCM'].replace('GPIO ','')
+			self.gpio.SetValue(gpioBCM)
+		dlg.Destroy()
+
+	def onSKedit(self,e):
+		dlg = selectKey.SelectKey(self.SK.GetValue(),0)
+		res = dlg.ShowModal()
+		if res == wx.OK:
+			key = dlg.selected_key.replace(':','.')
+			self.SK.SetValue(key)
+		dlg.Destroy()
+
+	def ok(self,e):
+		if not self.localhost.GetValue():
+			if not self.host.GetValue():
+				wx.MessageBox(_('Enter the host name.'), _('Error'), wx.OK | wx.ICON_ERROR)
+				return
+		if not self.gpio.GetValue():
+			wx.MessageBox(_('Enter the GPIO.'), _('Error'), wx.OK | wx.ICON_ERROR)
+			return
+
 		self.EndModal(wx.ID_OK)
 
 ################################################################################

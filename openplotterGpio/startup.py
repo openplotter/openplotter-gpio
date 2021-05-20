@@ -117,8 +117,21 @@ class Check():
 			if not black: black = msg
 			else: black+= ' | '+msg
 
+		#digital
+		data = self.conf.get('GPIO', 'digital')
+		try: digitalList = eval(data)
+		except: digitalList = {}
+		if digitalList:
+			msg = _('digital enabled')
+			if not green: green = msg
+			else: green+= ' | '+msg
+		else:
+			msg = _('digital disabled')
+			if not black: black = msg
+			else: black+= ' | '+msg
+
 		#service
-		if oneWlist or pulseslist:
+		if oneWlist or pulseslist or digitalList:
 			try:
 				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
 				msg = _('GPIO service running')

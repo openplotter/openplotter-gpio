@@ -83,12 +83,13 @@ class Gpio:
 			file.close()
 			gpioBCM = 'GPIO '+gpioBCM
 			for i in self.gpioMap:
-				ground = True
-				power3 = True
-				if gpioBCM == i['BCM']: pin = i['physical']
-			self.used.append({'app':'GPIO', 'id':'1W', 'physical':pin})
+				if gpioBCM == i['BCM']:
+					ground = True
+					power3 = True
+					pin = i['physical']
+					self.used.append({'app':'GPIO', 'id':'1W', 'physical':pin})
 
-		# pulses
+		#pulses
 		data = self.conf.get('GPIO', 'pulses')
 		try: pulselist = eval(data)
 		except: pulselist = {}
@@ -97,12 +98,26 @@ class Gpio:
 			if items[0] == 'localhost':
 				gpioBCM = 'GPIO '+items[1]
 				for ii in self.gpioMap:
-					ground = True
-					power3 = True
-					if gpioBCM == ii['BCM']: pin = ii['physical']
-				self.used.append({'app':'GPIO', 'id':'pulses', 'physical':pin})
+					if gpioBCM == ii['BCM']:
+						ground = True
+						power3 = True
+						pin = ii['physical']
+						self.used.append({'app':'GPIO', 'id':'pulses', 'physical':pin})
 
-		# TODO gpio
+		#digital
+		data = self.conf.get('GPIO', 'digital')
+		try: digitalList = eval(data)
+		except: digitalList = {}
+		for i in digitalList:
+			items = i.split('-')
+			if items[0] == 'localhost':
+				gpioBCM = 'GPIO '+items[1]
+				for ii in self.gpioMap:
+					if gpioBCM == ii['BCM']:
+						ground = True
+						power3 = True
+						pin = ii['physical']
+						self.used.append({'app':'GPIO', 'id':'digital', 'physical':pin})
 		
 		#common
 		if power3:
