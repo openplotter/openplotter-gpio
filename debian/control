@@ -10,6 +10,6 @@ X-Python3-Version: >= 3.2
 Package: openplotter-gpio
 Architecture: all
 Multi-Arch: foreign
-Depends: ${misc:Depends}, ${python3:Depends}, openplotter-settings (>=2.6.3), openplotter-signalk-installer (>=2.4.0), pigpio, python3-pigpio
+Depends: ${misc:Depends}, ${python3:Depends}, openplotter-settings (>=2.6.3), openplotter-signalk-installer (>=2.4.1), pigpio, python3-pigpio
 Description: OpenPlotter app to get data from GPIO
  OpenPlotter app to get data from GPIO
