@@ -39,6 +39,7 @@ class rpmReader:
 		self._high_tick = None
 		self._period = None
 		pi.set_mode(gpio, pigpio.INPUT)
+		#pi.set_pull_up_down(gpio, pigpio.PUD_UP)
 		self._cb = pi.callback(gpio, pigpio.RISING_EDGE, self._cbf)
 		pi.set_watchdog(gpio, self._watchdog)
 
@@ -166,7 +167,7 @@ class Process:
 										for i in self.instances:
 											self.instances[i]['instance'].cancel()
 											self.instances[i]['pi'].stop()
-											self.instances = {}
+										self.instances = {}
 										return
 								except: 
 									if self.ws: self.ws.close()
@@ -174,7 +175,7 @@ class Process:
 									for i in self.instances:
 										self.instances[i]['instance'].cancel()
 										self.instances[i]['pi'].stop()
-										self.instances = {}
+									self.instances = {}
 									return
 				except Exception as e: 
 					if self.debug: print('Reading GPIO pulses error: '+str(e))
@@ -248,7 +249,8 @@ class Process:
 					if not pi.connected: continue
 					pi.set_mode(gpio, pigpio.INPUT)
 					if digitalList[i]['pull'] == 'up': pi.set_pull_up_down(gpio, pigpio.PUD_UP)
-					if digitalList[i]['pull'] == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
+					elif digitalList[i]['pull'] == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
+					else: pi.set_pull_up_down(gpio, pigpio.PUD_OFF)
 					instances2[i] = {'pi': pi, 'gpio': gpio, 'sk': digitalList[i]['sk'], 'init': digitalList[i]['init'], 'old':'init'}
 				except Exception as e: 
 					if self.debug: print('Creating GPIO digital error: '+str(e))
@@ -270,12 +272,14 @@ class Process:
 								else:
 									for i in instances2:
 										instances2[i]['pi'].stop()
+									instances2 = {}
 									return
 							except:
 								if self.ws: self.ws.close()
 								self.ws = False
 								for i in instances2:
 									instances2[i]['pi'].stop()
+								instances2 = {}
 								return
 					except Exception as e: 
 						if self.debug: print('Reading GPIO digital error: '+str(e))

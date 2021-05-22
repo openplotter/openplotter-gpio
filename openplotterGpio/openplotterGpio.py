@@ -201,8 +201,8 @@ class MyFrame(wx.Frame):
 		self.listDigital = wx.ListCtrl(self.digital, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
 		self.listDigital.InsertColumn(0, _('Host'), width=75)
 		self.listDigital.InsertColumn(1, 'GPIO', width=80)
-		self.listDigital.InsertColumn(2, 'Pull', width=80)
-		self.listDigital.InsertColumn(3, 'Signal K key', width=300)
+		self.listDigital.InsertColumn(2, _('Internal pull resistor'), width=170)
+		self.listDigital.InsertColumn(3, 'Signal K key', width=220)
 		self.listDigital.InsertColumn(4, _('Send initial state'), width=150)
 		self.listDigital.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListDigitalSelected)
 		self.listDigital.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListDigitalDeselected)
@@ -1173,7 +1173,7 @@ class editDigital(wx.Dialog):
 		if edit: title = _('Editing GPIO digital')
 		else: title = _('Adding GPIO digital')
 
-		wx.Dialog.__init__(self, None, title=title, size=(400, 240))
+		wx.Dialog.__init__(self, None, title=title, size=(500, 240))
 		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
 		panel = wx.Panel(self)
 
@@ -1195,10 +1195,10 @@ class editDigital(wx.Dialog):
 		selectGpio.Bind(wx.EVT_BUTTON, self.onSelectGpio)
 		if edit: self.gpio.SetValue(edit['gpio'])
 
-		pullLabel= wx.StaticText(panel, label = 'Pull')
-		self.pull = wx.ComboBox(panel, choices = ['up','down'], style=wx.CB_READONLY)
+		pullLabel= wx.StaticText(panel, label = _('internal pull resistor'))
+		self.pull = wx.ComboBox(panel, choices = [_('none'),'up','down'], style=wx.CB_READONLY)
 		if edit: self.pull.SetValue(edit['pull'])
-		else: self.pull.SetValue('down')
+		else: self.pull.SetValue('up')
 
 		self.SK = wx.TextCtrl(panel)
 		SKedit = wx.Button(panel, label='Signal K key')
