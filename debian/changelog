@@ -1,3 +1,11 @@
+openplotter-gpio (2.3.2-beta) bionic; urgency=medium
+
+  * Add "none" to internal pull resistors for digital sensors
+  * Add internal pull resistors to pulse sensors
+  * Update translations
+
+ -- Sailoog <info@sailoog.com>  Sat, 22 May 2021 20:58:09 +0200
+
 openplotter-gpio (2.3.1-beta) bionic; urgency=medium
 
   * Add digital feature
