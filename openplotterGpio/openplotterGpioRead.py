@@ -23,7 +23,7 @@ try: from w1thermsensor import W1ThermSensor, Unit
 except: pass
 
 class rpmReader:
-	def __init__(self, pi, gpio, pulses_per_rev=1.0, weighting=0.0, min_RPM=5.0):
+	def __init__(self, pi, gpio, pulses_per_rev=1.0, weighting=0.0, min_RPM=5.0, pull='down'):
 		self.pi = pi
 		self.gpio = gpio
 		self.pulses_per_rev = pulses_per_rev
@@ -39,7 +39,9 @@ class rpmReader:
 		self._high_tick = None
 		self._period = None
 		pi.set_mode(gpio, pigpio.INPUT)
-		#pi.set_pull_up_down(gpio, pigpio.PUD_UP)
+		if pull== 'up': pi.set_pull_up_down(gpio, pigpio.PUD_UP)
+		elif pull == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
+		else: pi.set_pull_up_down(gpio, pigpio.PUD_OFF)
 		self._cb = pi.callback(gpio, pigpio.RISING_EDGE, self._cbf)
 		pi.set_watchdog(gpio, self._watchdog)
 
@@ -125,7 +127,7 @@ class Process:
 					gpio = items[1]
 					pi = pigpio.pi(host)
 					if not pi.connected: continue
-					self.instances[i] = {'pi': pi ,'instance': rpmReader(pi, int(gpio), pulses_per_rev=pulselist[i]['pulsesPerRev'], weighting=pulselist[i]['weighting'], min_RPM=pulselist[i]['minRPM'])}
+					self.instances[i] = {'pi': pi ,'instance': rpmReader(pi, int(gpio), pulses_per_rev=pulselist[i]['pulsesPerRev'], weighting=pulselist[i]['weighting'], min_RPM=pulselist[i]['minRPM'], pull=pulselist[i]['pull'])}
 				except Exception as e: 
 					if self.debug: print('Creating GPIO pulses error: '+str(e))
 

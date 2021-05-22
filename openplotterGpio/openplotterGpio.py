@@ -343,7 +343,7 @@ class MyFrame(wx.Frame):
 		host = self.listPulses.GetItemText(selected, 0)
 		gpio = self.listPulses.GetItemText(selected, 1)
 		index = host+'-'+gpio
-		edit = {"host": host, "gpio": gpio, "rate": self.gpioPulses[index]['rate'],"pulsesPerRev": self.gpioPulses[index]['pulsesPerRev'], "weighting": self.gpioPulses[index]['weighting'], "minRPM": self.gpioPulses[index]['minRPM'], "counterSK": self.gpioPulses[index]['revCounter'], "resetSK": self.gpioPulses[index]['resetCounter'], "revolutionsSK": self.gpioPulses[index]['revolutions'], "radius": self.gpioPulses[index]['radius'], "calibration": self.gpioPulses[index]['calibration'], "speedSK": self.gpioPulses[index]['linearSpeed'], "distanceSK": self.gpioPulses[index]['distance']}
+		edit = {"host": host, "gpio": gpio, "rate": self.gpioPulses[index]['rate'],"pulsesPerRev": self.gpioPulses[index]['pulsesPerRev'],"pull": self.gpioPulses[index]['pull'], "weighting": self.gpioPulses[index]['weighting'], "minRPM": self.gpioPulses[index]['minRPM'], "counterSK": self.gpioPulses[index]['revCounter'], "resetSK": self.gpioPulses[index]['resetCounter'], "revolutionsSK": self.gpioPulses[index]['revolutions'], "radius": self.gpioPulses[index]['radius'], "calibration": self.gpioPulses[index]['calibration'], "speedSK": self.gpioPulses[index]['linearSpeed'], "distanceSK": self.gpioPulses[index]['distance']}
 		self.setPulses(edit)
 
 	def setPulses(self,edit):
@@ -359,6 +359,7 @@ class MyFrame(wx.Frame):
 				if oldIndex != index: del self.gpioPulses[oldIndex]
 			rate = float(dlg.rate.GetValue())
 			pulsesPerRev = int(dlg.pulses.GetValue())
+			pull = str(dlg.pull.GetValue())
 			weighting = float(dlg.weighting.GetValue())
 			minRPM = int(dlg.minRPM.GetValue())
 			revCounter = str(dlg.counterSK.GetValue())
@@ -369,7 +370,7 @@ class MyFrame(wx.Frame):
 			calibration = float(dlg.calibration.GetValue())
 			linearSpeed = str(dlg.speedSK.GetValue())
 			distance = str(dlg.distanceSK.GetValue())
-			self.gpioPulses[index] = {"rate": rate, "pulsesPerRev": pulsesPerRev, "weighting": weighting, "minRPM": minRPM, "revCounter": revCounter, "resetCounter": resetCounter, "revolutions": revolutions, "radius": radius, "calibration": calibration, "linearSpeed": linearSpeed, "distance": distance}
+			self.gpioPulses[index] = {"rate": rate, "pulsesPerRev": pulsesPerRev, "pull": pull, "weighting": weighting, "minRPM": minRPM, "revCounter": revCounter, "resetCounter": resetCounter, "revolutions": revolutions, "radius": radius, "calibration": calibration, "linearSpeed": linearSpeed, "distance": distance}
 			self.conf.set('GPIO', 'pulses', str(self.gpioPulses))
 			self.readPulses()
 			self.onApply()
@@ -889,6 +890,13 @@ class editPulses(wx.Dialog):
 		if edit: self.pulses.SetValue(str(edit['pulsesPerRev']))
 		else: self.pulses.SetValue('1')
 
+		pullLabel= wx.StaticText(panel, label = _('internal pull resistor'))
+		self.pull = wx.ComboBox(panel, choices = [_('none'),'up','down'], style=wx.CB_READONLY)
+		if edit: self.pull.SetValue(edit['pull'])
+		else: self.pull.SetValue('down')
+
+		vline1 = wx.StaticLine(panel)
+
 		weightingLabel = wx.StaticText(panel, label=_('Weighting'))
 		self.weighting = wx.TextCtrl(panel)
 		if edit: self.weighting.SetValue(str(edit['weighting']))
@@ -898,8 +906,6 @@ class editPulses(wx.Dialog):
 		self.minRPM = wx.TextCtrl(panel)
 		if edit: self.minRPM.SetValue(str(edit['minRPM']))
 		else: self.minRPM.SetValue('5')
-
-		vline1 = wx.StaticLine(panel)
 
 		revolutionsSKLabel = wx.StaticText(panel, label=_('Revolutions (Hz)'))
 		self.revolutionsSK = wx.TextCtrl(panel)
@@ -965,12 +971,8 @@ class editPulses(wx.Dialog):
 		column1h2.Add(self.pulses, 0, wx.ALL | wx.EXPAND, 5)
 
 		column1h3 = wx.BoxSizer(wx.HORIZONTAL)
-		column1h3.Add(weightingLabel, 0, wx.ALL | wx.EXPAND, 5)
-		column1h3.Add(self.weighting, 0, wx.ALL | wx.EXPAND, 5)
-
-		column1h4 = wx.BoxSizer(wx.HORIZONTAL)
-		column1h4.Add(minRPMLabel, 0, wx.ALL | wx.EXPAND, 5)
-		column1h4.Add(self.minRPM, 0, wx.ALL | wx.EXPAND, 5)
+		column1h3.Add(pullLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column1h3.Add(self.pull, 0, wx.ALL | wx.EXPAND, 5)
 
 		column2h0 = wx.BoxSizer(wx.HORIZONTAL)
 		column2h0.Add(self.revolutionsSK, 1, wx.ALL | wx.EXPAND, 5)
@@ -983,6 +985,14 @@ class editPulses(wx.Dialog):
 		column2h2 = wx.BoxSizer(wx.HORIZONTAL)
 		column2h2.Add(self.resetSK, 1, wx.ALL | wx.EXPAND, 5)
 		column2h2.Add(resetSKedit, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2h3 = wx.BoxSizer(wx.HORIZONTAL)
+		column2h3.Add(weightingLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column2h3.Add(self.weighting, 0, wx.ALL | wx.EXPAND, 5)
+
+		column2h4 = wx.BoxSizer(wx.HORIZONTAL)
+		column2h4.Add(minRPMLabel, 0, wx.ALL | wx.EXPAND, 5)
+		column2h4.Add(self.minRPM, 0, wx.ALL | wx.EXPAND, 5)
 
 		column3h0 = wx.BoxSizer(wx.HORIZONTAL)
 		column3h0.Add(radiusLabel, 0, wx.ALL | wx.EXPAND, 5)
@@ -1006,10 +1016,10 @@ class editPulses(wx.Dialog):
 		column1.Add(column1h1, 0, wx.ALL | wx.EXPAND, 5)
 		column1.Add(column1h2, 0, wx.ALL | wx.EXPAND, 5)
 		column1.Add(column1h3, 0, wx.ALL | wx.EXPAND, 5)
-		column1.Add(column1h4, 0, wx.ALL | wx.EXPAND, 5)
 
 		column2 = wx.BoxSizer(wx.VERTICAL)
-		column2.AddSpacer(10)
+		column2.Add(column2h3, 0, wx.ALL | wx.EXPAND, 5)
+		column2.Add(column2h4, 0, wx.ALL | wx.EXPAND, 5)
 		column2.Add(revolutionsSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
 		column2.Add(column2h0, 0, wx.ALL | wx.EXPAND, 5)
 		column2.AddSpacer(5)
@@ -1122,6 +1132,7 @@ class editPulses(wx.Dialog):
 	def onDefaults(self,e):
 		self.rate.SetValue('1')
 		self.pulses.SetValue('1')
+		self.pull.SetValue('down')
 		self.weighting.SetValue('0')
 		self.minRPM.SetValue('5')
 		self.calibration.SetValue('1.0')
@@ -1198,7 +1209,7 @@ class editDigital(wx.Dialog):
 		pullLabel= wx.StaticText(panel, label = _('internal pull resistor'))
 		self.pull = wx.ComboBox(panel, choices = [_('none'),'up','down'], style=wx.CB_READONLY)
 		if edit: self.pull.SetValue(edit['pull'])
-		else: self.pull.SetValue('up')
+		else: self.pull.SetValue('down')
 
 		self.SK = wx.TextCtrl(panel)
 		SKedit = wx.Button(panel, label='Signal K key')
