@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-05-22 20:51+0200\n"
-"PO-Revision-Date: 2021-05-22 20:56+0200\n"
+"POT-Creation-Date: 2021-06-02 20:54+0200\n"
+"PO-Revision-Date: 2022-11-18 17:27\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: fi\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -85,12 +85,12 @@ msgid "GPIO Map"
 msgstr "GPIO Kartta"
 
 #: openplotterGpio.py:57
-msgid "Approve device"
-msgstr "Hyväksy laite"
+msgid "Approve"
+msgstr "Hyväksy"
 
 #: openplotterGpio.py:59
-msgid "Allowed devices"
-msgstr "Sallitut laitteet"
+msgid "Allowed"
+msgstr "Sallittu"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -125,8 +125,8 @@ msgid " Press \"Refresh\"."
 msgstr " Paina \"Päivitä\"."
 
 #: openplotterGpio.py:177
-msgid " Press \"Allowed devices\"."
-msgstr " Paina \"Sallittut laitteet\"."
+msgid " Press \"Allowed\"."
+msgstr " Paina \"Sallittu\"."
 
 #: openplotterGpio.py:193
 msgid "GPIO service is enabled"
@@ -142,7 +142,7 @@ msgstr "Palvelin"
 
 #: openplotterGpio.py:204
 msgid "Internal pull resistor"
-msgstr ""
+msgstr "Sisäinen vetovastus"
 
 #: openplotterGpio.py:206 openplotterGpio.py:1219
 msgid "Send initial state"
@@ -295,11 +295,11 @@ msgstr "Pulsseja kierrosta kohti"
 
 #: openplotterGpio.py:893 openplotterGpio.py:1209
 msgid "internal pull resistor"
-msgstr ""
+msgstr "sisäinen vetovastus"
 
 #: openplotterGpio.py:894 openplotterGpio.py:1210
 msgid "none"
-msgstr ""
+msgstr "tyhjä"
 
 #: openplotterGpio.py:900
 msgid "Weighting"
@@ -449,3 +449,4 @@ msgstr "GPIO palvelu ei ole käynnissä"
 #: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr "Pääsy Signal K palvelimeen vahvistettu"
+

@@ -29,7 +29,7 @@ def main():
 
 	print(_('Installing python packages...'))
 	try:
-		subprocess.call(['pip3', 'install', 'w1thermsensor>=2.0.0', 'websocket-client'])
+		subprocess.call(['pip3', 'install', 'w1thermsensor>=2.0.0', 'websocket-client', '-U'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 

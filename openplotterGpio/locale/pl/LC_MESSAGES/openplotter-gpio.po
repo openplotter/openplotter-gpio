@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-05-22 20:51+0200\n"
-"PO-Revision-Date: 2021-05-22 20:56+0200\n"
+"POT-Creation-Date: 2021-06-02 20:54+0200\n"
+"PO-Revision-Date: 2022-11-18 17:27\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: pl\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -85,12 +85,12 @@ msgid "GPIO Map"
 msgstr "Mapa GPIO"
 
 #: openplotterGpio.py:57
-msgid "Approve device"
-msgstr "Zatwierdź urządzenie"
+msgid "Approve"
+msgstr "Zatwierdź"
 
 #: openplotterGpio.py:59
-msgid "Allowed devices"
-msgstr "Dozwolone urządzenia"
+msgid "Allowed"
+msgstr "Dozwolone"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -125,8 +125,8 @@ msgid " Press \"Refresh\"."
 msgstr " Naciśnij \"Odśwież\"."
 
 #: openplotterGpio.py:177
-msgid " Press \"Allowed devices\"."
-msgstr " Naciśnij \"Dozwolone urządzenia\"."
+msgid " Press \"Allowed\"."
+msgstr " Naciśnij \"Dozwolone\"."
 
 #: openplotterGpio.py:193
 msgid "GPIO service is enabled"
@@ -142,7 +142,7 @@ msgstr "Host"
 
 #: openplotterGpio.py:204
 msgid "Internal pull resistor"
-msgstr ""
+msgstr "Wewnętrzny rezystor podciągający"
 
 #: openplotterGpio.py:206 openplotterGpio.py:1219
 msgid "Send initial state"
@@ -295,11 +295,11 @@ msgstr "Impulsów na obrót"
 
 #: openplotterGpio.py:893 openplotterGpio.py:1209
 msgid "internal pull resistor"
-msgstr ""
+msgstr "wewnętrzny rezystor podciągający"
 
 #: openplotterGpio.py:894 openplotterGpio.py:1210
 msgid "none"
-msgstr ""
+msgstr "brak"
 
 #: openplotterGpio.py:900
 msgid "Weighting"
@@ -449,3 +449,4 @@ msgstr "Usługa GPIO wyłączona"
 #: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr "Dostęp do serwera Signal K zatwierdzony"
+

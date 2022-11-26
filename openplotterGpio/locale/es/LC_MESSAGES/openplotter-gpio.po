@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-05-22 20:51+0200\n"
-"PO-Revision-Date: 2021-05-22 20:56+0200\n"
+"POT-Creation-Date: 2021-06-02 20:54+0200\n"
+"PO-Revision-Date: 2022-11-25 11:05\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -85,12 +85,12 @@ msgid "GPIO Map"
 msgstr "Mapa GPIO"
 
 #: openplotterGpio.py:57
-msgid "Approve device"
-msgstr "Aprobar dispositivo"
+msgid "Approve"
+msgstr "Aprobado"
 
 #: openplotterGpio.py:59
-msgid "Allowed devices"
-msgstr "Dispositivos permitidos"
+msgid "Allowed"
+msgstr "Permitido"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -125,8 +125,8 @@ msgid " Press \"Refresh\"."
 msgstr " Pulsa actualizar."
 
 #: openplotterGpio.py:177
-msgid " Press \"Allowed devices\"."
-msgstr " Pulse \"Dispositivos permitidos\"."
+msgid " Press \"Allowed\"."
+msgstr " Pulse \"Permitido\"."
 
 #: openplotterGpio.py:193
 msgid "GPIO service is enabled"
@@ -142,7 +142,7 @@ msgstr "Servidor"
 
 #: openplotterGpio.py:204
 msgid "Internal pull resistor"
-msgstr ""
+msgstr "Resistencia pull interna"
 
 #: openplotterGpio.py:206 openplotterGpio.py:1219
 msgid "Send initial state"
@@ -295,11 +295,11 @@ msgstr "Pulsos por revolución"
 
 #: openplotterGpio.py:893 openplotterGpio.py:1209
 msgid "internal pull resistor"
-msgstr ""
+msgstr "resistencia pull interna"
 
 #: openplotterGpio.py:894 openplotterGpio.py:1210
 msgid "none"
-msgstr ""
+msgstr "nada"
 
 #: openplotterGpio.py:900
 msgid "Weighting"
@@ -449,3 +449,4 @@ msgstr "Servicio GPIO no se está ejecutando"
 #: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr "Acceso al servidor de Signal K validado"
+

@@ -53,7 +53,7 @@ class Check():
 		try:
 			subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
 			green = _('pigpiod running')
-		except: red = ' ↳'+_('pigpiod not running')
+		except: red = _('pigpiod not running')
 
 		#seatalk
 		try:
@@ -90,9 +90,9 @@ class Check():
 				if not green: green = msg
 				else: green+= ' | '+msg
 			except:
-				msg =' ↳'+ _('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.')
+				msg =_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.')
 				if not red: red = msg
-				else: red+= '\n'+msg
+				else: red+= '\n    '+msg
 		else:
 			try: 
 				subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
@@ -138,15 +138,15 @@ class Check():
 				if not green: green = msg
 				else: green+= ' | '+msg
 			except:
-				msg = ' ↳'+_('GPIO service not running')
+				msg = _('GPIO service not running')
 				if not red: red = msg
-				else: red+= '\n'+msg
+				else: red+= '\n    '+msg
 		else:
 			try:
 				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
-				msg = ' ↳'+_('GPIO service running')
+				msg = _('GPIO service running')
 				if not red: red = msg
-				else: red+= '\n'+msg
+				else: red+= '\n    '+msg
 			except:
 				msg = _('GPIO service not running')
 				if not black: black = msg
@@ -156,8 +156,8 @@ class Check():
 		skConnections = connections.Connections('GPIO')
 		result = skConnections.checkConnection()
 		if result[0] == 'pending' or result[0] == 'error' or result[0] == 'repeat' or result[0] == 'permissions':
-			if not red: red = ' ↳'+result[1]
-			else: red+= '\n'+' ↳'+result[1]
+			if not red: red = result[1]
+			else: red+= '\n    '+result[1]
 		if result[0] == 'approved' or result[0] == 'validated':
 			msg = _('Access to Signal K server validated')
 			if not green: green = msg

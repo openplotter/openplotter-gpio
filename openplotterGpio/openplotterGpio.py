@@ -54,9 +54,9 @@ class MyFrame(wx.Frame):
 		toolGpio = self.toolbar1.AddTool(103, _('GPIO Map'), wx.Bitmap(self.currentdir+"/data/chip.png"))
 		self.Bind(wx.EVT_TOOL, self.OnToolGpio, toolGpio)
 		self.toolbar1.AddSeparator()
-		self.aproveSK = self.toolbar1.AddTool(105, _('Approve device'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.aproveSK = self.toolbar1.AddTool(105, _('Approve'), wx.Bitmap(self.currentdir+"/data/sk.png"))
 		self.Bind(wx.EVT_TOOL, self.onAproveSK, self.aproveSK)
-		self.connectionSK = self.toolbar1.AddTool(106, _('Allowed devices'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.connectionSK = self.toolbar1.AddTool(106, _('Allowed'), wx.Bitmap(self.currentdir+"/data/sk.png"))
 		self.Bind(wx.EVT_TOOL, self.onConnectionSK, self.connectionSK)
 		self.toolbar1.AddSeparator()
 		self.refresh = self.toolbar1.AddTool(104, _('Refresh'), wx.Bitmap(self.currentdir+"/data/refresh.png"))
@@ -174,7 +174,7 @@ class MyFrame(wx.Frame):
 		elif result[0] == 'repeat':
 			self.ShowStatusBarYELLOW(result[1]+_(' Press "Refresh".'))
 		elif result[0] == 'permissions':
-			self.ShowStatusBarYELLOW(result[1]+_(' Press "Allowed devices".'))
+			self.ShowStatusBarYELLOW(result[1]+_(' Press "Allowed".'))
 		elif result[0] == 'approved':
 			self.ShowStatusBarGREEN(result[1])
 

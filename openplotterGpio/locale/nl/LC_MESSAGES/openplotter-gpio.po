@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-05-22 20:51+0200\n"
-"PO-Revision-Date: 2021-05-22 20:56+0200\n"
+"POT-Creation-Date: 2021-06-02 20:54+0200\n"
+"PO-Revision-Date: 2021-06-03 16:54\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -85,11 +85,11 @@ msgid "GPIO Map"
 msgstr ""
 
 #: openplotterGpio.py:57
-msgid "Approve device"
+msgid "Approve"
 msgstr ""
 
 #: openplotterGpio.py:59
-msgid "Allowed devices"
+msgid "Allowed"
 msgstr ""
 
 #: openplotterGpio.py:62
@@ -125,7 +125,7 @@ msgid " Press \"Refresh\"."
 msgstr ""
 
 #: openplotterGpio.py:177
-msgid " Press \"Allowed devices\"."
+msgid " Press \"Allowed\"."
 msgstr ""
 
 #: openplotterGpio.py:193
@@ -449,3 +449,4 @@ msgstr ""
 #: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr ""
+

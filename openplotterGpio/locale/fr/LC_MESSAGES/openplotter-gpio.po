@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-05-22 20:51+0200\n"
-"PO-Revision-Date: 2021-05-22 20:56+0200\n"
+"POT-Creation-Date: 2021-06-02 20:54+0200\n"
+"PO-Revision-Date: 2022-09-10 09:58\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -30,7 +30,7 @@ msgstr "openplotter-gpio"
 
 #: gpioPostInstall.py:30
 msgid "Installing python packages..."
-msgstr "Suppression des paquets python..."
+msgstr "Installation des paquets Python..."
 
 #: gpioPostInstall.py:33 gpioPostInstall.py:42 gpioPostInstall.py:52
 #: gpioPostInstall.py:59 gpioPostInstall.py:65 gpioPreUninstall.py:32
@@ -46,7 +46,7 @@ msgstr "ÉCHEC: "
 
 #: gpioPostInstall.py:36
 msgid "Checking access to Signal K server..."
-msgstr ""
+msgstr "Vérification de l'accès au serveur Signal K..."
 
 #: gpioPostInstall.py:45
 msgid "Adding openplotter-gpio-read service..."
@@ -85,12 +85,12 @@ msgid "GPIO Map"
 msgstr "Carte GPIO"
 
 #: openplotterGpio.py:57
-msgid "Approve device"
-msgstr "Appouver ce périphérique"
+msgid "Approve"
+msgstr "Aprouver"
 
 #: openplotterGpio.py:59
-msgid "Allowed devices"
-msgstr "Autoriser ce périphérique"
+msgid "Allowed"
+msgstr "Autorisé"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -106,7 +106,7 @@ msgstr "Impulsions"
 
 #: openplotterGpio.py:75
 msgid " Seatalk-1 input"
-msgstr ""
+msgstr " Seatalk-1 input"
 
 #: openplotterGpio.py:152
 msgid "Restarting Signal K server... "
@@ -125,8 +125,8 @@ msgid " Press \"Refresh\"."
 msgstr " Appuyez sur \"Actualiser\"."
 
 #: openplotterGpio.py:177
-msgid " Press \"Allowed devices\"."
-msgstr " Appuyez sur \"Périphériques autorisés\"."
+msgid " Press \"Allowed\"."
+msgstr " Appuyez sur \"Autorisé\"."
 
 #: openplotterGpio.py:193
 msgid "GPIO service is enabled"
@@ -142,11 +142,11 @@ msgstr "Hôte"
 
 #: openplotterGpio.py:204
 msgid "Internal pull resistor"
-msgstr ""
+msgstr "Resistance de rappel interne"
 
 #: openplotterGpio.py:206 openplotterGpio.py:1219
 msgid "Send initial state"
-msgstr ""
+msgstr "Envoyer l'état initial"
 
 #: openplotterGpio.py:212 openplotterGpio.py:312 openplotterGpio.py:598
 msgid "Add"
@@ -295,11 +295,11 @@ msgstr "Pulsations par révolution"
 
 #: openplotterGpio.py:893 openplotterGpio.py:1209
 msgid "internal pull resistor"
-msgstr ""
+msgstr "resistance de rappel interne"
 
 #: openplotterGpio.py:894 openplotterGpio.py:1210
 msgid "none"
-msgstr ""
+msgstr "aucun"
 
 #: openplotterGpio.py:900
 msgid "Weighting"
@@ -388,11 +388,11 @@ msgstr "La valeur \"Calibrage de vitesse\" doit être un nombre."
 
 #: openplotterGpio.py:1184
 msgid "Editing GPIO digital"
-msgstr ""
+msgstr "Édition de GPIO numérique"
 
 #: openplotterGpio.py:1185
 msgid "Adding GPIO digital"
-msgstr ""
+msgstr "Ajout de GPIO numérique"
 
 #: startup.py:44
 msgid "Checking GPIO..."
@@ -424,19 +424,19 @@ msgstr "1W désactivé"
 
 #: startup.py:112
 msgid "pulses enabled"
-msgstr "impulsions activées"
+msgstr "pulsations activées"
 
 #: startup.py:116
 msgid "pulses disabled"
-msgstr "impulsions désactivées"
+msgstr "pulsations désactivées"
 
 #: startup.py:125
 msgid "digital enabled"
-msgstr ""
+msgstr "mode numérique activé"
 
 #: startup.py:129
 msgid "digital disabled"
-msgstr ""
+msgstr "mode numérique désactivé"
 
 #: startup.py:137 startup.py:147
 msgid "GPIO service running"
@@ -449,3 +449,4 @@ msgstr "Le service GPIO est à l'arrêt"
 #: startup.py:162
 msgid "Access to Signal K server validated"
 msgstr "Accès au serveur Signal K validé"
+

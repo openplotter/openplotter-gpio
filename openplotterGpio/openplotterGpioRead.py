@@ -181,6 +181,7 @@ class Process:
 									return
 				except Exception as e: 
 					if self.debug: print('Reading GPIO pulses error: '+str(e))
+					return
 
 	def subscribe(self,pulselist):
 		paths = ''
@@ -285,6 +286,7 @@ class Process:
 								return
 					except Exception as e: 
 						if self.debug: print('Reading GPIO digital error: '+str(e))
+						return
 				time.sleep(0.01)
 
 ############################################################################################
