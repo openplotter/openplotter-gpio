@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# This file is part of Openplotter.
-# Copyright (C) 2020 by Sailoog <https://github.com/openplotter/openplotter-gpio>
-#                     
+# This file is part of OpenPlotter.
+# Copyright (C) 2022 by Sailoog <https://github.com/openplotter/openplotter-gpio>
+#
 # Openplotter is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import time, os, sys, subprocess, ujson
+import os, sys, subprocess, ujson, time
 from openplotterSettings import language
 from openplotterSettings import platform
 from openplotterSignalkInstaller import connections
@@ -26,12 +26,32 @@ class Start():
 		currentdir = os.path.dirname(os.path.abspath(__file__))
 		language.Language(currentdir,'openplotter-gpio',currentLanguage)
 		
-		self.initialMessage = ''
-
-	def start(self): 
+		self.initialMessage = _('Starting GPIO...')
+		
+	def start(self):
 		green = ''
 		black = ''
 		red = ''
+
+		if self.conf.get('GENERAL', 'rescue') != 'yes':
+			data = self.conf.get('GPIO', '1w')
+			try: oneWlist = eval(data)
+			except: oneWlist = {}
+			data = self.conf.get('GPIO', 'pulses')
+			try: pulseslist = eval(data)
+			except: pulseslist = {}
+			data = self.conf.get('GPIO', 'digital')
+			try: digitalList = eval(data)
+			except: digitalList = {}
+			if oneWlist or pulseslist or digitalList:
+				subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
+				subprocess.Popen('openplotter-gpio-read')
+				black = _('GPIO started')
+			else:
+				black = _('No GPIO defined')
+		else:
+			black = _('GPIO is in rescue mode')
+			subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
 
 		return {'green': green,'black': black,'red': red}
 
@@ -52,9 +72,13 @@ class Check():
 		#pigpiod
 		try:
 			subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
-			green = _('pigpiod running')
-		except: red = _('pigpiod not running')
-
+			msg = _('pigpiod running')
+			if not green: green = msg
+			else: green+= ' | '+msg
+		except: 
+			msg = _('pigpiod not running')
+			if red: red += '\n   '+msg
+			else: red = msg
 		#seatalk
 		try:
 			setting_file = platform2.skDir+'/settings.json'
@@ -71,11 +95,11 @@ class Check():
 				if i['pipeElements'][0]['options']['type'] == 'Seatalk' and i['enabled']: seatalkExists = True
 			except: pass
 		if seatalkExists:
-			msg = _('Seatalk 1 enabled')
-			if not green: green = msg
-			else: green+= ' | '+msg
+			msg = _('Seatalk1 enabled')
+			if not black: black = msg
+			else: black+= ' | '+msg
 		else: 
-			msg = _('Seatalk 1 disabled')
+			msg = _('Seatalk1 disabled')
 			if not black: black = msg
 			else: black+= ' | '+msg
 
@@ -87,12 +111,12 @@ class Check():
 			try: 
 				subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
 				msg = _('1W enabled')
-				if not green: green = msg
-				else: green+= ' | '+msg
+				if not black: black = msg
+				else: black+= ' | '+msg
 			except:
 				msg =_('Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces.')
-				if not red: red = msg
-				else: red+= '\n    '+msg
+				if red: red += '\n   '+msg
+				else: red = msg
 		else:
 			try: 
 				subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
@@ -110,8 +134,8 @@ class Check():
 		except: pulseslist = {}
 		if pulseslist:
 			msg = _('pulses enabled')
-			if not green: green = msg
-			else: green+= ' | '+msg
+			if not black: black = msg
+			else: black+= ' | '+msg
 		else:
 			msg = _('pulses disabled')
 			if not black: black = msg
@@ -123,34 +147,47 @@ class Check():
 		except: digitalList = {}
 		if digitalList:
 			msg = _('digital enabled')
-			if not green: green = msg
-			else: green+= ' | '+msg
+			if not black: black = msg
+			else: black+= ' | '+msg
 		else:
 			msg = _('digital disabled')
 			if not black: black = msg
 			else: black+= ' | '+msg
 
 		#service
-		if oneWlist or pulseslist or digitalList:
-			try:
-				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
-				msg = _('GPIO service running')
-				if not green: green = msg
-				else: green+= ' | '+msg
-			except:
-				msg = _('GPIO service not running')
-				if not red: red = msg
-				else: red+= '\n    '+msg
+		if self.conf.get('GENERAL', 'rescue') == 'yes':
+			subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
+			msg = _('GPIO is in rescue mode')
+			if red: red += '\n   '+msg
+			else: red = msg
 		else:
-			try:
-				subprocess.check_output(['systemctl', 'is-active', 'openplotter-gpio-read']).decode(sys.stdin.encoding)
-				msg = _('GPIO service running')
-				if not red: red = msg
-				else: red+= '\n    '+msg
-			except:
-				msg = _('GPIO service not running')
-				if not black: black = msg
-				else: black+= ' | '+msg
+			test = subprocess.check_output(['ps','aux']).decode(sys.stdin.encoding)
+			if oneWlist or pulseslist or digitalList:
+				if 'openplotter-gpio-read' in test: 
+					msg = _('openplotter-gpio-read running')
+					if not green: green = msg
+					else: green+= ' | '+msg
+				else:
+					subprocess.Popen('openplotter-gpio-read')
+					time.sleep(1)
+					test = subprocess.check_output(['ps','aux']).decode(sys.stdin.encoding)
+					if 'openplotter-gpio-read' in test: 
+						msg = _('openplotter-gpio-read running')
+						if not green: green = msg
+						else: green+= ' | '+msg
+					else:
+						msg = _('openplotter-gpio-read not running')
+						if red: red += '\n   '+msg
+						else: red = msg
+			else:
+				if 'openplotter-gpio-read' in test: 
+					msg = _('openplotter-gpio-read running')
+					if red: red += '\n   '+msg
+					else: red = msg
+				else:
+					msg = _('openplotter-gpio-read not running')
+					if not black: black = msg
+					else: black+= ' | '+msg
 
 		#access
 		skConnections = connections.Connections('GPIO')
@@ -160,7 +197,7 @@ class Check():
 			else: red+= '\n    '+result[1]
 		if result[0] == 'approved' or result[0] == 'validated':
 			msg = _('Access to Signal K server validated')
-			if not green: green = msg
-			else: green+= ' | '+msg
+			if not black: black = msg
+			else: black+= ' | '+msg
 
 		return {'green': green,'black': black,'red': red}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# This file is part of Openplotter.
-# Copyright (C) 2021 by Sailoog <https://github.com/openplotter/openplotter-gpio>
+# This file is part of OpenPlotter.
+# Copyright (C) 2022 by Sailoog <https://github.com/openplotter/openplotter-gpio>
 #
 # Openplotter is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import threading, time, pigpio, math, ujson, ssl
+import threading, time, pigpio, math, ujson, ssl, subprocess
 from openplotterSettings import conf
 from openplotterSettings import platform
 from websocket import create_connection
@@ -243,7 +243,7 @@ class Process:
 	def digital(self,digitalList):
 		instances2 = {}
 		for i in digitalList:
-			if digitalList[i]['sk']:
+			if digitalList[i]['mode'] == 'in':
 				try:
 					items = i.split('-')
 					host = items[0]
@@ -254,7 +254,7 @@ class Process:
 					if digitalList[i]['pull'] == 'up': pi.set_pull_up_down(gpio, pigpio.PUD_UP)
 					elif digitalList[i]['pull'] == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
 					else: pi.set_pull_up_down(gpio, pigpio.PUD_OFF)
-					instances2[i] = {'pi': pi, 'gpio': gpio, 'sk': digitalList[i]['sk'], 'init': digitalList[i]['init'], 'old':'init'}
+					instances2[i] = {'pi': pi, 'gpio': gpio, 'high': digitalList[i]['high'], 'low': digitalList[i]['low'], 'init': digitalList[i]['init'], 'old':'init'}
 				except Exception as e: 
 					if self.debug: print('Creating GPIO digital error: '+str(e))
 
@@ -264,28 +264,32 @@ class Process:
 					try:
 						level = instances2[i]['pi'].read(instances2[i]['gpio'])
 						if instances2[i]['old'] != level:
-							SignalK = '{"updates":[{"$source":"OpenPlotter.GPIO.digital.'+i+'","values":[{"path":"'+instances2[i]['sk']+'","value": '+str(level)+'}]}]}\n'
-							try: 
-								if self.ws:
-									if instances2[i]['old'] == 'init' and not instances2[i]['init']: pass
-									else:
-										self.ws.send(SignalK)
-										self.ws.send(SignalK) #in case of non continuous data we send data twice to force the exception if the pipe is broken
-									instances2[i]['old'] = level
-								else:
-									for i in instances2:
-										instances2[i]['pi'].stop()
-									instances2 = {}
-									return
-							except:
-								if self.ws: self.ws.close()
-								self.ws = False
-								for i in instances2:
-									instances2[i]['pi'].stop()
-								instances2 = {}
-								return
+							if instances2[i]['old'] == 'init' and not instances2[i]['init']: pass
+							else:
+								command = ['set-notification']
+								if level == 0: 
+									if instances2[i]['low']['visual']: command.append('-v')
+									if instances2[i]['low']['sound']: command.append('-s')
+								if level == 1: 
+									if instances2[i]['high']['visual']: command.append('-v')
+									if instances2[i]['high']['sound']: command.append('-s')
+								command.append('notifications.GPIO'+str(instances2[i]['gpio']))
+								if level == 0: 
+									command.append(instances2[i]['low']['state'])
+									command.append(instances2[i]['low']['message'])
+								if level == 1: 
+									command.append(instances2[i]['high']['state'])
+									command.append(instances2[i]['high']['message'])
+								process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+								out, err = process.communicate()
+								if err:
+									if self.debug: print('Error sending GPIO notification: '+str(err))
+							instances2[i]['old'] = level
 					except Exception as e: 
 						if self.debug: print('Reading GPIO digital error: '+str(e))
+						for i in instances2:
+							instances2[i]['pi'].stop()
+						instances2 = {}
 						return
 				time.sleep(0.01)
 
@@ -315,8 +319,7 @@ def main():
 	data = conf2.get('GPIO', 'digital')
 	try: digitalList = eval(data)
 	except: digitalList = {}
-	for i in digitalList:
-		if digitalList[i]['sk']: enableX4 = True
+	if digitalList: enableX4 = True
 
 	if enableX1 or enableX2 or enableX3 or enableX4:
 		process = Process()

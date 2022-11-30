@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# This file is part of Openplotter.
-# Copyright (C) 2020 by Sailoog <https://github.com/openplotter/openplotter-myapp>
+# This file is part of OpenPlotter.
+# Copyright (C) 2022 by Sailoog <https://github.com/openplotter/openplotter-gpio>
 #
 # Openplotter is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,15 @@ def main():
 
 	print(_('Installing python packages...'))
 	try:
-		subprocess.call(['pip3', 'install', 'w1thermsensor>=2.0.0', 'websocket-client', '-U'])
+		subprocess.call(['pip3', 'install', 'w1thermsensor', 'websocket-client', '-U'])
+		print(_('DONE'))
+	except Exception as e: print(_('FAILED: ')+str(e))
+
+	print(_('Enabling pigpiod service...'))
+	try:
+		subprocess.call(['systemctl', 'enable', 'pigpiod'])
+		subprocess.call(['systemctl', 'restart', 'pigpiod'])
+		subprocess.call(['systemctl', 'daemon-reload'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
@@ -40,23 +48,6 @@ def main():
 		result = skConnections.checkConnection()
 		if result[1]: print(result[1])
 		else: print(_('DONE'))
-	except Exception as e: print(_('FAILED: ')+str(e))
-
-	print(_('Adding openplotter-gpio-read service...'))
-	try:
-		fo = open('/etc/systemd/system/openplotter-gpio-read.service', "w")
-		fo.write( '[Service]\nExecStart=openplotter-gpio-read\nStandardOutput=syslog\nStandardError=syslog\nUser='+conf2.user+'\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target')
-		fo.close()
-		subprocess.call(['systemctl', 'daemon-reload'])
-		subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read'])
-		print(_('DONE'))
-	except Exception as e: print(_('FAILED: ')+str(e))
-
-	print(_('Enabling pigpiod service...'))
-	try:
-		subprocess.call(['systemctl', 'enable', 'pigpiod'])
-		subprocess.call(['systemctl', 'restart', 'pigpiod'])
-		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
 	print(_('Setting version...'))

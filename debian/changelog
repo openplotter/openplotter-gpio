@@ -1,3 +1,9 @@
+openplotter-gpio (3.0.15-alpha) bullseye; urgency=medium
+
+  * v3 alpha
+
+ -- Sailoog <info@sailoog.com>  Sat, 26 Nov 2022 13:48:18 +0100
+
 openplotter-gpio (2.3.2-beta) bionic; urgency=medium
 
   * Add "none" to internal pull resistors for digital sensors

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# This file is part of Openplotter.
-# Copyright (C) 2020 by Sailoog <https://github.com/openplotter/openplotter-gpio>
+# This file is part of OpenPlotter.
+# Copyright (C) 2022 by Sailoog <https://github.com/openplotter/openplotter-gpio>
 #
 # Openplotter is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,13 +32,11 @@ def main():
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	print(_('Removing pigpiod and openplotter-gpio-read services...'))
+	print(_('Removing pigpiod service...'))
 	try:
+		subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
 		subprocess.call(['systemctl', 'disable', 'pigpiod'])
 		subprocess.call(['systemctl', 'stop', 'pigpiod'])
-		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
-		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
-		subprocess.call(['rm', '-f', '/etc/systemd/system/openplotter-gpio-read.service'])
 		subprocess.call(['systemctl', 'daemon-reload'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))

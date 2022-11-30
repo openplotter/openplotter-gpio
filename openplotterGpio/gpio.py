@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# This file is part of Openplotter.
-# Copyright (C) 2020 by Sailoog <https://github.com/openplotter/openplotter-gpio>
-#                     
+# This file is part of OpenPlotter.
+# Copyright (C) 2022 by Sailoog <https://github.com/openplotter/openplotter-gpio>
+#
 # Openplotter is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
+
 import subprocess, sys, ujson
 from openplotterSettings import gpio
 from openplotterSettings import platform
@@ -57,7 +58,7 @@ class Gpio:
 					for ii in self.gpioMap:
 						if usedGpio == ii['BCM']:
 							ground = True
-							self.used.append({'app':'GPIO', 'id':'Seatalk 1', 'physical':ii['physical']})
+							self.used.append({'app':'GPIO', 'id':'Seatalk1', 'physical':ii['physical']})
 
 		#1W
 		try: subprocess.check_output('ls /sys/bus/w1/', shell=True).decode(sys.stdin.encoding)
@@ -114,11 +115,14 @@ class Gpio:
 				gpioBCM = 'GPIO '+items[1]
 				for ii in self.gpioMap:
 					if gpioBCM == ii['BCM']:
-						ground = True
-						power3 = True
 						pin = ii['physical']
-						self.used.append({'app':'GPIO', 'id':'digital', 'physical':pin})
-		
+						if digitalList[i]['mode'] == 'in':
+							ground = True
+							power3 = True
+							self.used.append({'app':'GPIO', 'id':'digital input', 'physical':pin})
+						elif digitalList[i]['mode'] == 'out':
+							ground = True
+							self.used.append({'app':'GPIO', 'id':'digital output', 'physical':pin})
 		#common
 		if power3:
 			self.used.append({'app':'GPIO', 'id':'power', 'physical':'1'})
