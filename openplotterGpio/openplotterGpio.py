@@ -22,7 +22,8 @@ from openplotterSettings import platform
 from openplotterSettings import gpio
 from openplotterSettings import selectKey
 from openplotterSignalkInstaller import connections
-from w1thermsensor import W1ThermSensor
+try: from w1thermsensor import W1ThermSensor
+except: pass
 from .version import version
 
 class MyFrame(wx.Frame):
@@ -124,7 +125,7 @@ class MyFrame(wx.Frame):
 
 	def onTabChange(self, event):
 		#TODO
-		if self.notebook.GetSelection() == 1 or self.notebook.GetSelection() == 3: self.ShowStatusBarRED('Coming soon')
+		if self.notebook.GetSelection() == 1: self.ShowStatusBarRED('Coming soon')
 		else:
 			try:
 				self.SetStatusText('')
@@ -169,7 +170,7 @@ class MyFrame(wx.Frame):
 	def onRefresh(self, e=0):
 		self.ShowStatusBarBLACK(' ')
 
-		#self.readSeatalk()
+		self.readSeatalk()
 		self.readOneW()
 		#self.readPulses()
 		self.readDigital()
@@ -650,8 +651,6 @@ class MyFrame(wx.Frame):
 	###########################################################################
 
 	def pageSeatalk(self):
-		pass
-		'''
 		if self.platform.isRPI:
 			self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
 			self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
@@ -685,7 +684,7 @@ class MyFrame(wx.Frame):
 			vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
 			vbox.AddStretchSpacer(1)
 			self.seatalk.SetSizer(vbox)
-		'''
+
 	def onListlistSeatalkSelected(self,e):
 		self.onListlistSeatalkDeselected()
 		selected = self.listSeatalk.GetFirstSelected()
