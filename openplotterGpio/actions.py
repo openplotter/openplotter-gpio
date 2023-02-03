@@ -26,6 +26,7 @@ class Actions:
 		if self.conf.get('GENERAL', 'debug') == 'yes': self.debug = True
 		else: self.debug = False
 		self.available = []
+
 		data = self.conf.get('GPIO', 'digital')
 		try: digitalList = eval(data)
 		except: digitalList = {}
@@ -38,33 +39,49 @@ class Actions:
 					self.available.append({'ID':i+'-high','name': host+'-'+'GPIO'+gpio+': '+_('turn it high'),"module": "openplotterGpio",'data':True,'default':'state=alert\nmessage=GPIO'+gpio+' is high\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
 					self.available.append({'ID':i+'-low','name': host+'-'+'GPIO'+gpio+': '+_('turn it low'),"module": "openplotterGpio",'data':True,'default':'state=normal\nmessage=GPIO'+gpio+' is low\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
 
+		data = self.conf.get('GPIO', 'pulses')
+		try: pulsesList = eval(data)
+		except: pulsesList = {}
+		if pulsesList:
+			for i in pulsesList:
+				if pulsesList[i]['revCounter'] or pulsesList[i]['distance']:
+					self.available.append({'ID':i+'-reset','name': 'GPIO'+i+': '+_('reset counter and distance'),"module": "openplotterGpio",'data':False,'default':'','help':''})
+
 	def run(self,action,data):
 		try:
-			items = action.split('-')
-			host = items[0]
-			gpio = int(items[1])
-			turn = items[2]
-
-			pi = pigpio.pi(host)
-			pi.set_mode(gpio, pigpio.OUTPUT)
-			if turn == 'high': pi.write(gpio,1)
-			elif turn == 'low': pi.write(gpio,0)
-			pi.stop()
-
-			key = 'notifications.GPIO'+str(gpio)
+			
 			state = ''
 			message = ''
 			sound = False
 			visual = False
-			lines = data.split('\n')
-			for i in lines:
-				line = i.split('=')
-				if line[0].strip() == 'state': state = line[1].strip()
-				elif line[0].strip() == 'message': message = line[1].strip()
-				elif line[0].strip() == 'sound':
-					if line[1].strip()=="yes": sound = True
-				elif line[0].strip() == 'visual':
-					if line[1].strip()=="yes": visual = True
+
+			if '-high' in action or '-low' in action:
+				items = action.split('-')
+				host = items[0]
+				gpio = int(items[1])
+				turn = items[2]
+				pi = pigpio.pi(host)
+				pi.set_mode(gpio, pigpio.OUTPUT)
+				if turn == 'high': pi.write(gpio,1)
+				elif turn == 'low': pi.write(gpio,0)
+				pi.stop()
+				key = 'notifications.GPIO'+str(gpio)
+				lines = data.split('\n')
+				for i in lines:
+					line = i.split('=')
+					if line[0].strip() == 'state': state = line[1].strip()
+					elif line[0].strip() == 'message': message = line[1].strip()
+					elif line[0].strip() == 'sound':
+						if line[1].strip()=="yes": sound = True
+					elif line[0].strip() == 'visual':
+						if line[1].strip()=="yes": visual = True
+			elif '-reset' in action:
+				items = action.split('-')
+				gpio = items[0]
+				key = 'notifications.GPIO'+gpio+'.reset'
+				state = 'normal'
+				message = 'request'
+
 			command = ['set-notification']
 			if sound: command.append('-s')
 			if visual: command.append('-v')
@@ -77,7 +94,7 @@ class Actions:
 				if self.debug:
 					err = err.decode()
 					err = err.replace('\n','')
-					print('Error setting notification: '+str(err))			
+					print('Error setting notification: '+str(err))
 
 		except Exception as e: 
 			if self.debug: print('Error processing openplotter-gpio actions: '+str(e))

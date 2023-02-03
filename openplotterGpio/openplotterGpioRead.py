@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import threading, time, pigpio, math, ujson, ssl, subprocess
+import threading, time, pigpio, math, ujson, ssl, subprocess, sys
+import RPi.GPIO as GPIO
 from openplotterSettings import conf
 from openplotterSettings import platform
 from websocket import create_connection
@@ -23,51 +24,33 @@ try: from w1thermsensor import W1ThermSensor, Unit
 except: pass
 
 class rpmReader:
-	def __init__(self, pi, gpio, pulses_per_rev=1.0, weighting=0.0, min_RPM=5.0, pull='down'):
-		self.pi = pi
-		self.gpio = gpio
-		self.pulses_per_rev = pulses_per_rev
+	def __init__(self, TACH, pulses_per_rev=1.0, pull='down'):
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+		if pull== 'up': GPIO.setup(TACH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+		elif pull == 'down': GPIO.setup(TACH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		else: GPIO.setup(TACH, GPIO.IN)
+		GPIO.add_event_detect(TACH, GPIO.FALLING, self.fell)
+		self.t = time.time()
+		self.rpm = 0
 		self.counter = 0
-		if min_RPM > 1000.0: min_RPM = 1000.0
-		elif min_RPM < 1.0: min_RPM = 1.0
-		self.min_RPM = min_RPM
-		self._watchdog = 200
-		if weighting < 0.0: weighting = 0.0
-		elif weighting > 0.99: weighting = 0.99
-		self._new = 1.0 - weighting
-		self._old = weighting
-		self._high_tick = None
-		self._period = None
-		pi.set_mode(gpio, pigpio.INPUT)
-		if pull== 'up': pi.set_pull_up_down(gpio, pigpio.PUD_UP)
-		elif pull == 'down': pi.set_pull_up_down(gpio, pigpio.PUD_DOWN)
-		else: pi.set_pull_up_down(gpio, pigpio.PUD_OFF)
-		self._cb = pi.callback(gpio, pigpio.RISING_EDGE, self._cbf)
-		pi.set_watchdog(gpio, self._watchdog)
-
-	def _cbf(self, gpio, level, tick):
-		if level == 1:
-			self.counter = self.counter+(1/self.pulses_per_rev)
-			if self._high_tick is not None:
-				t = pigpio.tickDiff(self._high_tick, tick)
-				if self._period is not None: self._period = (self._old * self._period) + (self._new * t)
-				else: self._period = t
-			self._high_tick = tick
-		elif level == 2:
-			if self._period is not None:
-				if self._period < 2000000000:
-					self._period += (self._watchdog * 1000)
-
-	def RPM(self):
-		RPM = 0.0
-		if self._period is not None:
-			RPM = 60000000.0 / (self._period * self.pulses_per_rev)
-			if RPM < self.min_RPM: RPM = 0.0
-		return RPM
-
+		self.pulsesCounter = 0
+		self.pulses_per_rev = pulses_per_rev
+		
+	def fell(self,n):
+		dt = time.time() - self.t
+		if dt < 0.01: return # reject spuriously short pulses
+		freq = 1 / dt
+		self.rpm = (freq / self.pulses_per_rev) * 60
+		self.pulsesCounter = self.pulsesCounter + 1
+		if self.pulsesCounter == self.pulses_per_rev:
+			self.counter = self.counter + 1
+			self.pulsesCounter = 0
+			self.t = time.time()
+		
 	def cancel(self):
-		self.pi.set_watchdog(self.gpio, 0)
-		self._cb.cancel()
+		GPIO.cleanup()
+		sys.exit()
 
 ############################################################################################
 
@@ -122,12 +105,7 @@ class Process:
 		for i in pulselist:
 			if pulselist[i]['revCounter'] or pulselist[i]['revolutions'] or pulselist[i]['linearSpeed'] or pulselist[i]['distance']:
 				try:
-					items = i.split('-')
-					host = items[0]
-					gpio = items[1]
-					pi = pigpio.pi(host)
-					if not pi.connected: continue
-					self.instances[i] = {'pi': pi ,'instance': rpmReader(pi, int(gpio), pulses_per_rev=pulselist[i]['pulsesPerRev'], weighting=pulselist[i]['weighting'], min_RPM=pulselist[i]['minRPM'], pull=pulselist[i]['pull'])}
+					self.instances[i] = {'instance': rpmReader(int(i), pulses_per_rev=pulselist[i]['pulsesPerRev'], pull=pulselist[i]['pull'])}
 				except Exception as e: 
 					if self.debug: print('Creating GPIO pulses error: '+str(e))
 
@@ -142,13 +120,17 @@ class Process:
 						rate = pulselist[i]['rate']
 						radius = pulselist[i]['radius']
 						calibration = pulselist[i]['calibration']
-						rpm = self.instances[i]['instance'].RPM()
+						rpm = self.instances[i]['instance'].rpm
 						counter = self.instances[i]['instance'].counter
-						hertz = rpm/60
-						rps = rpm*(math.pi/30)
+						if time.time() - self.instances[i]['instance'].t > 2: # min rpm = 30
+							hertz = 0
+							rps = 0
+						else:
+							hertz = rpm/60
+							rps = rpm*(math.pi/30)
 						if radius: 
 							lSpeed = rps*radius
-							distance = counter*(2*math.pi*radius)
+							distance = counter*((2*math.pi)*radius)
 							linearSpeedSK = pulselist[i]['linearSpeed']
 							if linearSpeedSK: values += '{"path":"'+linearSpeedSK+'","value":'+str(lSpeed*calibration)+'},'
 							distanceSK = pulselist[i]['distance']
@@ -168,7 +150,6 @@ class Process:
 									else:
 										for i in self.instances:
 											self.instances[i]['instance'].cancel()
-											self.instances[i]['pi'].stop()
 										self.instances = {}
 										return
 								except: 
@@ -176,7 +157,6 @@ class Process:
 									self.ws = False
 									for i in self.instances:
 										self.instances[i]['instance'].cancel()
-										self.instances[i]['pi'].stop()
 									self.instances = {}
 									return
 				except Exception as e: 
@@ -187,8 +167,8 @@ class Process:
 		paths = ''
 		pathsList = {}
 		for i in pulselist:
-			path = pulselist[i]['resetCounter']
-			if path: 
+			if pulselist[i]['revCounter'] or pulselist[i]['distance']:
+				path = 'notifications.GPIO'+i+'.reset'
 				paths += '{"path":"'+path+'"},'
 				pathsList[i] = path
 
@@ -204,7 +184,7 @@ class Process:
 				return
 
 		while True:
-			time.sleep(0.1)
+			time.sleep(0.01)
 			try:
 				try: 
 					if self.ws: result = self.ws.recv()
@@ -216,28 +196,24 @@ class Process:
 				data = ujson.loads(result)
 				if 'updates' in data:
 					for update in data['updates']:
-						source = 'OpenPlotter'
-						if '$source' in update: source = update['$source']
 						if 'values' in update:
 							for value in update['values']:
 								if 'path' in value:
 									for i in pathsList:
 										if value['path'] == pathsList[i]:
 											if 'value' in value:
-												if value['value'] == True:
-													if i in self.instances:
-														if 'instance' in self.instances[i]: 
-															self.instances[i]['instance'].counter = 0
-													SignalK = '{"updates":[{"$source":"'+source+'","values":[{"path":"'+value['path']+'","value": false}]}]}\n'
-													try: 
-														if self.ws: self.ws.send(SignalK)
-														else: return
-													except: 
-														if self.ws: self.ws.close()
-														self.ws = False
-														return												
+												if 'message' in value['value']:
+													if 'request' in value['value']['message']:
+														if i in self.instances:
+															if 'instance' in self.instances[i]: 
+																self.instances[i]['instance'].counter = 0
+																command = ['set-notification','notifications.GPIO'+i+'.reset','normal','done']
+																process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+																out, err = process.communicate()
+																if err:
+																	if self.debug: print('Error sending pulses GPIO notification: '+str(err))										
 			except Exception as e: 
-				if self.debug: print('Reading GPIO pulses resetCounter error: '+str(e))
+				if self.debug: print('Failed to reset GPIO pulses: '+str(e))
 				return
 
 	def digital(self,digitalList):
@@ -283,7 +259,7 @@ class Process:
 								process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 								out, err = process.communicate()
 								if err:
-									if self.debug: print('Error sending GPIO notification: '+str(err))
+									if self.debug: print('Error sending digital GPIO notification: '+str(err))
 							instances2[i]['old'] = level
 					except Exception as e: 
 						if self.debug: print('Reading GPIO digital error: '+str(e))
@@ -313,8 +289,7 @@ def main():
 	except: pulselist = {}
 	for i in pulselist:
 		if pulselist[i]['revCounter'] or pulselist[i]['revolutions'] or pulselist[i]['linearSpeed'] or pulselist[i]['distance']: enableX2 = True
-		if pulselist[i]['revCounter'] or pulselist[i]['distance']:
-			if pulselist[i]['resetCounter']: enableX3 = True
+		if pulselist[i]['revCounter'] or pulselist[i]['distance']: enableX3 = True
 
 	data = conf2.get('GPIO', 'digital')
 	try: digitalList = eval(data)

@@ -1,24 +1,40 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2021-06-02 20:54+0200\n"
-"PO-Revision-Date: 2022-12-16 10:45\n"
+"POT-Creation-Date: 2023-02-01 20:35+0100\n"
+"PO-Revision-Date: 2023-02-03 17:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-SearchPath-0: .\n"
 "X-Crowdin-Project: openplotter\n"
 "X-Crowdin-Project-ID: 289888\n"
 "X-Crowdin-Language: cs\n"
 "X-Crowdin-File: openplotter-gpio.po\n"
 "X-Crowdin-File-ID: 30\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: actions.py:39
+msgid "turn it high"
+msgstr ""
+
+#: actions.py:39 actions.py:40
+msgid "Allowed values for state:"
+msgstr ""
+
+#: actions.py:40
+msgid "turn it low"
+msgstr ""
+
+#: actions.py:48
+msgid "reset counter and distance"
+msgstr ""
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -32,31 +48,27 @@ msgstr "openplotter-gpio"
 msgid "Installing python packages..."
 msgstr "Instalování balíčků pro Python..."
 
-#: gpioPostInstall.py:33 gpioPostInstall.py:42 gpioPostInstall.py:52
-#: gpioPostInstall.py:59 gpioPostInstall.py:65 gpioPreUninstall.py:32
-#: gpioPreUninstall.py:43 gpioPreUninstall.py:49
+#: gpioPostInstall.py:33 gpioPostInstall.py:41 gpioPostInstall.py:50
+#: gpioPostInstall.py:56 gpioPreUninstall.py:32 gpioPreUninstall.py:41
+#: gpioPreUninstall.py:47
 msgid "DONE"
 msgstr "Hotovo"
 
-#: gpioPostInstall.py:34 gpioPostInstall.py:43 gpioPostInstall.py:53
-#: gpioPostInstall.py:60 gpioPostInstall.py:66 gpioPreUninstall.py:33
-#: gpioPreUninstall.py:44 gpioPreUninstall.py:50
+#: gpioPostInstall.py:34 gpioPostInstall.py:42 gpioPostInstall.py:51
+#: gpioPostInstall.py:57 gpioPreUninstall.py:33 gpioPreUninstall.py:42
+#: gpioPreUninstall.py:48
 msgid "FAILED: "
 msgstr "Chyba: "
 
 #: gpioPostInstall.py:36
-msgid "Checking access to Signal K server..."
-msgstr "Kontrola přístupu k serveru Signal K..."
-
-#: gpioPostInstall.py:45
-msgid "Adding openplotter-gpio-read service..."
-msgstr "Přidávání služby openplotter-gpio-read..."
-
-#: gpioPostInstall.py:55
 msgid "Enabling pigpiod service..."
 msgstr "Povolení služby pigpiod..."
 
-#: gpioPostInstall.py:62
+#: gpioPostInstall.py:44
+msgid "Checking access to Signal K server..."
+msgstr "Kontrola přístupu k serveru Signal K..."
+
+#: gpioPostInstall.py:53
 msgid "Setting version..."
 msgstr "Nastavuji verzi..."
 
@@ -65,10 +77,10 @@ msgid "Removing python packages..."
 msgstr "Odstraňování balíčků pro Python..."
 
 #: gpioPreUninstall.py:35
-msgid "Removing pigpiod and openplotter-gpio-read services..."
-msgstr "Odstraňuji služby pigiod a openplotter-gpio-read..."
+msgid "Removing pigpiod service..."
+msgstr ""
 
-#: gpioPreUninstall.py:46
+#: gpioPreUninstall.py:44
 msgid "Removing version..."
 msgstr "Odstraňuji verzi..."
 
@@ -96,357 +108,415 @@ msgstr "Povoleno"
 msgid "Refresh"
 msgstr "Aktualizovat"
 
-#: openplotterGpio.py:72
+#: openplotterGpio.py:65
+msgid "Rescue"
+msgstr ""
+
+#: openplotterGpio.py:76
 msgid "Digital"
 msgstr "Digitální"
 
-#: openplotterGpio.py:73
+#: openplotterGpio.py:77
 msgid "Pulses"
 msgstr "Pulzy"
 
-#: openplotterGpio.py:75
-msgid " Seatalk-1 input"
-msgstr " Vstup Seatalk-1"
+#: openplotterGpio.py:79
+msgid " Seatalk1 input"
+msgstr ""
 
-#: openplotterGpio.py:152
+#: openplotterGpio.py:155
 msgid "Restarting Signal K server... "
 msgstr "Restartuji Signal K server... "
 
-#: openplotterGpio.py:158
+#: openplotterGpio.py:161
 msgid "Signal K server restarted"
 msgstr "Signal K server byl restartován"
 
-#: openplotterGpio.py:171
-msgid " Press \"Approve\" and then \"Refresh\"."
-msgstr " Stiskněte \"Schválit\" a pak \"Obnovit\"."
-
-#: openplotterGpio.py:175
-msgid " Press \"Refresh\"."
-msgstr " Stiskněte Aktualizovat."
-
-#: openplotterGpio.py:177
-msgid " Press \"Allowed\"."
-msgstr " Stiskněte \"Povoleno\"."
-
-#: openplotterGpio.py:193
+#: openplotterGpio.py:183 openplotterGpio.py:191
 msgid "GPIO service is enabled"
 msgstr "Služba GPIO je povolena"
 
-#: openplotterGpio.py:196
+#: openplotterGpio.py:185 openplotterGpio.py:189 startup.py:53 startup.py:160
+msgid "GPIO is in rescue mode"
+msgstr ""
+
+#: openplotterGpio.py:194
 msgid "There is nothing to send. GPIO service is disabled"
 msgstr "Není co odeslat. Služba GPIO je zakázána"
 
-#: openplotterGpio.py:202 openplotterGpio.py:300
+#: openplotterGpio.py:204
+msgid " Press \"Approve\" and then \"Refresh\"."
+msgstr " Stiskněte \"Schválit\" a pak \"Obnovit\"."
+
+#: openplotterGpio.py:208
+msgid " Press \"Refresh\"."
+msgstr " Stiskněte Aktualizovat."
+
+#: openplotterGpio.py:210
+msgid " Press \"Allowed\"."
+msgstr " Stiskněte \"Povoleno\"."
+
+#: openplotterGpio.py:223
 msgid "Host"
 msgstr "Hostitel"
 
-#: openplotterGpio.py:204
-msgid "Internal pull resistor"
-msgstr "Interní pull-up"
+#: openplotterGpio.py:225
+msgid "Mode"
+msgstr ""
 
-#: openplotterGpio.py:206 openplotterGpio.py:1219
-msgid "Send initial state"
-msgstr "Odeslat počáteční stav"
+#: openplotterGpio.py:226 openplotterGpio.py:1181
+msgid "High"
+msgstr ""
 
-#: openplotterGpio.py:212 openplotterGpio.py:312 openplotterGpio.py:598
-msgid "Add"
-msgstr "Přidat"
+#: openplotterGpio.py:227 openplotterGpio.py:1199
+msgid "Low"
+msgstr ""
 
-#: openplotterGpio.py:214 openplotterGpio.py:314 openplotterGpio.py:424
-#: openplotterGpio.py:600 openplotterGpio.py:796
+#: openplotterGpio.py:228
+msgid "Initial state"
+msgstr ""
+
+#: openplotterGpio.py:234
+msgid "Add input"
+msgstr ""
+
+#: openplotterGpio.py:236
+msgid "Add output"
+msgstr ""
+
+#: openplotterGpio.py:238 openplotterGpio.py:372 openplotterGpio.py:469
+#: openplotterGpio.py:645 openplotterGpio.py:841
 msgid "Edit"
 msgstr "Upravit"
 
-#: openplotterGpio.py:216 openplotterGpio.py:316 openplotterGpio.py:602
+#: openplotterGpio.py:240 openplotterGpio.py:374 openplotterGpio.py:647
 msgid "Remove"
 msgstr "Odstranit"
 
-#: openplotterGpio.py:291 openplotterGpio.py:714
+#: openplotterGpio.py:322
+msgid "You can turn GPIO outputs high or low using \"Actions\" in the Notifications app"
+msgstr ""
+
+#: openplotterGpio.py:348 openplotterGpio.py:759
 msgid "yes"
 msgstr "ano"
 
-#: openplotterGpio.py:292 openplotterGpio.py:704
+#: openplotterGpio.py:349 openplotterGpio.py:749
 msgid "no"
 msgstr "ne"
 
-#: openplotterGpio.py:302
+#: openplotterGpio.py:352
+msgid "input"
+msgstr ""
+
+#: openplotterGpio.py:353
+msgid "output"
+msgstr ""
+
+#: openplotterGpio.py:361
 msgid "Revolutions"
 msgstr "Otáčky"
 
-#: openplotterGpio.py:303
+#: openplotterGpio.py:362
 msgid "Counter"
 msgstr "Počitadlo"
 
-#: openplotterGpio.py:304
-msgid "Reset"
-msgstr "Resetovat"
-
-#: openplotterGpio.py:305
+#: openplotterGpio.py:363
 msgid "Speed"
 msgstr "Rychlost"
 
-#: openplotterGpio.py:306
+#: openplotterGpio.py:364
 msgid "Distance"
 msgstr "Vzdálenost"
 
-#: openplotterGpio.py:410
+#: openplotterGpio.py:370 openplotterGpio.py:643
+msgid "Add"
+msgstr "Přidat"
+
+#: openplotterGpio.py:455
 msgid "Type"
 msgstr "Typ"
 
-#: openplotterGpio.py:412 openplotterGpio.py:792
+#: openplotterGpio.py:457 openplotterGpio.py:837
 msgid "Signal K key"
 msgstr "Signal K klíč"
 
-#: openplotterGpio.py:413
+#: openplotterGpio.py:458
 msgid "Rate"
 msgstr "Interval"
 
-#: openplotterGpio.py:414 openplotterGpio.py:808
+#: openplotterGpio.py:459 openplotterGpio.py:853
 msgid "Offset"
 msgstr "Ofset"
 
-#: openplotterGpio.py:420
+#: openplotterGpio.py:465
 msgid "Set 1W GPIO"
 msgstr "Nastavit 1W GPIO"
 
-#: openplotterGpio.py:426
+#: openplotterGpio.py:471
 msgid "Clear"
 msgstr "Vymazat"
 
-#: openplotterGpio.py:439
+#: openplotterGpio.py:484
 msgid "This feature is only for Raspberry Pi"
 msgstr "Tato funkce je pouze pro Raspberry Pi"
 
-#: openplotterGpio.py:454 startup.py:93
+#: openplotterGpio.py:499 startup.py:117
 msgid "Please enable 1W interface in Preferences -> Raspberry Pi configuration -> Interfaces."
 msgstr "Prosím povolte 1W rozhraní v Nastavení -> Raspberry Pi konfigurace -> Rozhraní."
 
-#: openplotterGpio.py:498
+#: openplotterGpio.py:543
 msgid "OpenPlotter will restart. Are you sure?"
 msgstr "OpenPlotter se restartuje. Jste si jisti?"
 
-#: openplotterGpio.py:499
+#: openplotterGpio.py:544
 msgid "Question"
 msgstr "Dotaz"
 
-#: openplotterGpio.py:591 openplotterGpio.py:738
+#: openplotterGpio.py:636 openplotterGpio.py:783
 msgid "Invert signal"
 msgstr "Invertovat signál"
 
-#: openplotterGpio.py:592
+#: openplotterGpio.py:637
 msgid "SK connection ID"
 msgstr "ID spojení SK"
 
-#: openplotterGpio.py:611
+#: openplotterGpio.py:656
 msgid "This feature is only for Raspberry Pi."
 msgstr "Tato funkce je pouze pro Raspberry Pi."
 
-#: openplotterGpio.py:645
+#: openplotterGpio.py:690
 msgid "Fill in all fields"
 msgstr "Vyplňte všechna pole"
 
-#: openplotterGpio.py:661
+#: openplotterGpio.py:706
 msgid "Failed. Error creating connection in Signal K"
 msgstr "Chyba při vytváření připojení k Signal K serveru"
 
-#: openplotterGpio.py:664
+#: openplotterGpio.py:709
 msgid "Please install \"Signal K Installer\" OpenPlotter app"
 msgstr "Prosím, nainstalujte OpenPlotter aplikaci \"Instalátor Signal K\""
 
-#: openplotterGpio.py:683
+#: openplotterGpio.py:728
 msgid "Failed. Error removing connection in Signal K"
 msgstr "Chyba. Chyba při odstraňování připojení k Signal K serveru"
 
-#: openplotterGpio.py:724
+#: openplotterGpio.py:769
 msgid "Add SK Connection"
 msgstr "Přidat připojení do SK"
 
-#: openplotterGpio.py:729
+#: openplotterGpio.py:774
 msgid "ID"
 msgstr "ID"
 
-#: openplotterGpio.py:735
+#: openplotterGpio.py:780
 msgid "Select"
 msgstr "Vybrat"
 
-#: openplotterGpio.py:786
+#: openplotterGpio.py:831
 msgid "Editing sensor "
 msgstr "Upravit senzor "
 
-#: openplotterGpio.py:804 openplotterGpio.py:883
+#: openplotterGpio.py:849 openplotterGpio.py:915
 msgid "Rate (seconds)"
 msgstr "Interval (sekundy)"
 
-#: openplotterGpio.py:858
+#: openplotterGpio.py:903
 msgid "Editing GPIO pulses"
 msgstr "Upravit GPIO"
 
-#: openplotterGpio.py:859
+#: openplotterGpio.py:904
 msgid "Adding GPIO pulses"
 msgstr "Přidávání GPIO pulsů"
 
-#: openplotterGpio.py:865 openplotterGpio.py:1191
-msgid "localhost"
-msgstr "localhost"
-
-#: openplotterGpio.py:888
+#: openplotterGpio.py:920
 msgid "Pulses per revolution"
 msgstr "Počet pulsů za otáčku"
 
-#: openplotterGpio.py:893 openplotterGpio.py:1209
-msgid "internal pull resistor"
-msgstr "interní pull-up"
+#: openplotterGpio.py:925
+msgid "Internal pull resistor"
+msgstr "Interní pull-up"
 
-#: openplotterGpio.py:894 openplotterGpio.py:1210
+#: openplotterGpio.py:926 openplotterGpio.py:1173
 msgid "none"
 msgstr "žádný"
 
-#: openplotterGpio.py:900
-msgid "Weighting"
-msgstr "Offset hodnoty"
-
-#: openplotterGpio.py:905
-msgid "Min RPM"
-msgstr "Min RPM"
-
-#: openplotterGpio.py:910
+#: openplotterGpio.py:932
 msgid "Revolutions (Hz)"
 msgstr "Otáčky (Hz)"
 
-#: openplotterGpio.py:916
+#: openplotterGpio.py:938
 msgid "Revolutions counter"
 msgstr "Čítač otáček"
 
-#: openplotterGpio.py:922
-msgid "Reset (counter, distance)"
-msgstr "Resetovat (počitadlo, vzdálenost)"
-
-#: openplotterGpio.py:930
+#: openplotterGpio.py:944
 msgid "Radius (m)"
 msgstr "Poloměr (m)"
 
-#: openplotterGpio.py:934
+#: openplotterGpio.py:948
 msgid "Speed (m/s)"
 msgstr "Rychlost (m/s)"
 
-#: openplotterGpio.py:940
+#: openplotterGpio.py:954
 msgid "Speed calibration"
 msgstr "Kalibrace rychlosti"
 
-#: openplotterGpio.py:945
+#: openplotterGpio.py:959
 msgid "Distance (m)"
 msgstr "Vzdálenost (m)"
 
-#: openplotterGpio.py:951
+#: openplotterGpio.py:965
 msgid "Set defaults"
 msgstr "Nastavit výchozí hodnoty"
 
-#: openplotterGpio.py:1075 openplotterGpio.py:1143 openplotterGpio.py:1270
-#: openplotterGpio.py:1298
-msgid "Enter the host name."
-msgstr "Zadejte název hostitele."
-
-#: openplotterGpio.py:1075 openplotterGpio.py:1143 openplotterGpio.py:1146
-#: openplotterGpio.py:1150 openplotterGpio.py:1154 openplotterGpio.py:1158
-#: openplotterGpio.py:1162 openplotterGpio.py:1166 openplotterGpio.py:1171
-#: openplotterGpio.py:1175 openplotterGpio.py:1270 openplotterGpio.py:1298
-#: openplotterGpio.py:1301
-msgid "Error"
-msgstr "Chyba"
-
-#: openplotterGpio.py:1146 openplotterGpio.py:1301
+#: openplotterGpio.py:1112 openplotterGpio.py:1322 openplotterGpio.py:1430
 msgid "Enter the GPIO."
 msgstr "Zadejte GPIO."
 
-#: openplotterGpio.py:1150
+#: openplotterGpio.py:1112 openplotterGpio.py:1116 openplotterGpio.py:1120
+#: openplotterGpio.py:1124 openplotterGpio.py:1129 openplotterGpio.py:1133
+#: openplotterGpio.py:1298 openplotterGpio.py:1319 openplotterGpio.py:1322
+#: openplotterGpio.py:1406 openplotterGpio.py:1427 openplotterGpio.py:1430
+msgid "Error"
+msgstr "Chyba"
+
+#: openplotterGpio.py:1116
 msgid "\"Rate\" value has to be a number."
 msgstr "\"Otáčky\" musí být číslo."
 
-#: openplotterGpio.py:1154
+#: openplotterGpio.py:1120
 msgid "\"Pulses per revolution\" value has to be a number."
 msgstr "\"Pulsy za otáčku\" musí být číslo."
 
-#: openplotterGpio.py:1158
-msgid "\"Weighting\" value has to be a number."
-msgstr "\"Offset hodnoty\" musí být číslo."
-
-#: openplotterGpio.py:1162
-msgid "\"Min RPM\" value has to be a number."
-msgstr "\"Minimální otáčky\" musí být číslo."
-
-#: openplotterGpio.py:1166
+#: openplotterGpio.py:1124
 msgid "To get \"Speed\" or \"Distance\" enter the radius."
 msgstr "Chcete-li získat \"Rychlost\" nebo \"Vzdálenost\", zadejte \"Poloměr\"."
 
-#: openplotterGpio.py:1171
+#: openplotterGpio.py:1129
 msgid "\"Radius\" value has to be a number."
 msgstr "\"Poloměr\" musí být číslo."
 
-#: openplotterGpio.py:1175
+#: openplotterGpio.py:1133
 msgid "\"Speed calibration\" value has to be a number."
 msgstr "\"Kalibrace rychlosti\" musí být číslo."
 
-#: openplotterGpio.py:1184
-msgid "Editing GPIO digital"
-msgstr "Upravuji digitální GPIO"
+#: openplotterGpio.py:1142
+msgid "Editing GPIO digital input"
+msgstr ""
 
-#: openplotterGpio.py:1185
-msgid "Adding GPIO digital"
-msgstr "Přidávám digitální GPIO"
+#: openplotterGpio.py:1143
+msgid "Adding GPIO digital input"
+msgstr ""
 
-#: startup.py:44
+#: openplotterGpio.py:1149 openplotterGpio.py:1339
+msgid "localhost"
+msgstr "localhost"
+
+#: openplotterGpio.py:1163
+msgid "Send initial state"
+msgstr "Odeslat počáteční stav"
+
+#: openplotterGpio.py:1172
+msgid "internal pull resistor"
+msgstr "interní pull-up"
+
+#: openplotterGpio.py:1183 openplotterGpio.py:1201
+msgid "state:"
+msgstr ""
+
+#: openplotterGpio.py:1188 openplotterGpio.py:1206
+msgid "message:"
+msgstr ""
+
+#: openplotterGpio.py:1192 openplotterGpio.py:1210
+msgid "method:"
+msgstr ""
+
+#: openplotterGpio.py:1193 openplotterGpio.py:1211
+msgid "visual"
+msgstr ""
+
+#: openplotterGpio.py:1194 openplotterGpio.py:1212
+msgid "sound"
+msgstr ""
+
+#: openplotterGpio.py:1298 openplotterGpio.py:1319 openplotterGpio.py:1406
+#: openplotterGpio.py:1427
+msgid "Enter the host name."
+msgstr "Zadejte název hostitele."
+
+#: openplotterGpio.py:1332
+msgid "Editing GPIO digital output"
+msgstr ""
+
+#: openplotterGpio.py:1333
+msgid "Adding GPIO digital output"
+msgstr ""
+
+#: startup.py:29
+msgid "Starting GPIO..."
+msgstr ""
+
+#: startup.py:49
+msgid "GPIO started"
+msgstr ""
+
+#: startup.py:51
+msgid "No GPIO defined"
+msgstr ""
+
+#: startup.py:64
 msgid "Checking GPIO..."
 msgstr "Kontrola GPIO..."
 
-#: startup.py:55
+#: startup.py:75
 msgid "pigpiod running"
 msgstr "pigpiod běží"
 
-#: startup.py:56
+#: startup.py:79
 msgid "pigpiod not running"
 msgstr "pigpiod neběží"
 
-#: startup.py:74
-msgid "Seatalk 1 enabled"
-msgstr "Seatalk 1 povolen"
+#: startup.py:98
+msgid "Seatalk1 enabled"
+msgstr ""
 
-#: startup.py:78
-msgid "Seatalk 1 disabled"
-msgstr "Seatalk 1 zakázán"
+#: startup.py:102
+msgid "Seatalk1 disabled"
+msgstr ""
 
-#: startup.py:89 startup.py:99
+#: startup.py:113 startup.py:123
 msgid "1W enabled"
 msgstr "1W povoleno"
 
-#: startup.py:103
+#: startup.py:127
 msgid "1W disabled"
 msgstr "1W zakázáno"
 
-#: startup.py:112
+#: startup.py:136
 msgid "pulses enabled"
 msgstr "pulsy povoleny"
 
-#: startup.py:116
+#: startup.py:140
 msgid "pulses disabled"
 msgstr "pulsy zakázány"
 
-#: startup.py:125
+#: startup.py:149
 msgid "digital enabled"
 msgstr "digitální Gpio povoleno"
 
-#: startup.py:129
+#: startup.py:153
 msgid "digital disabled"
 msgstr "digitální Gpio zakázáno"
 
-#: startup.py:137 startup.py:147
-msgid "GPIO service running"
-msgstr "GPIO služba spuštěna"
+#: startup.py:167 startup.py:175 startup.py:184
+msgid "openplotter-gpio-read running"
+msgstr ""
 
-#: startup.py:141 startup.py:151
-msgid "GPIO service not running"
-msgstr "GPIO služba neběží"
+#: startup.py:179 startup.py:188
+msgid "openplotter-gpio-read not running"
+msgstr ""
 
-#: startup.py:162
+#: startup.py:199
 msgid "Access to Signal K server validated"
 msgstr "Přístup k serveru Signal K byl ověřen"
-

@@ -95,15 +95,13 @@ class Gpio:
 		try: pulselist = eval(data)
 		except: pulselist = {}
 		for i in pulselist:
-			items = i.split('-')
-			if items[0] == 'localhost':
-				gpioBCM = 'GPIO '+items[1]
-				for ii in self.gpioMap:
-					if gpioBCM == ii['BCM']:
-						ground = True
-						power3 = True
-						pin = ii['physical']
-						self.used.append({'app':'GPIO', 'id':'pulses', 'physical':pin})
+			gpioBCM = 'GPIO '+i
+			for ii in self.gpioMap:
+				if gpioBCM == ii['BCM']:
+					ground = True
+					power3 = True
+					pin = ii['physical']
+					self.used.append({'app':'GPIO', 'id':'pulses', 'physical':pin})
 
 		#digital
 		data = self.conf.get('GPIO', 'digital')

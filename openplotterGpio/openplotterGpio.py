@@ -124,12 +124,8 @@ class MyFrame(wx.Frame):
 		self.ShowStatusBar(w_msg,(255,140,0)) 
 
 	def onTabChange(self, event):
-		#TODO
-		if self.notebook.GetSelection() == 1: self.ShowStatusBarRED('Coming soon')
-		else:
-			try:
-				self.SetStatusText('')
-			except:pass
+		try: self.SetStatusText('')
+		except: pass
 
 	def OnToolHelp(self, event): 
 		url = "/usr/share/openplotter-doc/gpio/gpio_app.html"
@@ -172,12 +168,12 @@ class MyFrame(wx.Frame):
 
 		self.readSeatalk()
 		self.readOneW()
-		#self.readPulses()
+		self.readPulses()
 		self.readDigital()
 
 		enable = False
 		if self.oneWlist: enable = True
-		#if self.gpioPulses: enable = True
+		if self.gpioPulses: enable = True
 		if self.gpioDigital: enable = True
 		if enable:
 			test = subprocess.check_output(['ps','aux']).decode(sys.stdin.encoding)
@@ -360,16 +356,12 @@ class MyFrame(wx.Frame):
 	###########################################################################
 
 	def pagePulses(self):
-		pass
-		'''
 		self.listPulses = wx.ListCtrl(self.pulses, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-		self.listPulses.InsertColumn(0, _('Host'), width=75)
-		self.listPulses.InsertColumn(1, 'GPIO', width=50)
-		self.listPulses.InsertColumn(2, _('Revolutions'), width=115)
-		self.listPulses.InsertColumn(3, _('Counter'), width=115)
-		self.listPulses.InsertColumn(4, _('Reset'), width=115)
-		self.listPulses.InsertColumn(5, _('Speed'), width=115)
-		self.listPulses.InsertColumn(6, _('Distance'), width=115)
+		self.listPulses.InsertColumn(0, 'GPIO', width=50)
+		self.listPulses.InsertColumn(1, _('Revolutions'), width=162)
+		self.listPulses.InsertColumn(2, _('Counter'), width=162)
+		self.listPulses.InsertColumn(3, _('Speed'), width=162)
+		self.listPulses.InsertColumn(4, _('Distance'), width=162)
 		self.listPulses.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistPulsesSelected)
 		self.listPulses.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistPulsesDeselected)
 		self.listPulses.SetTextColour(wx.BLACK)
@@ -387,7 +379,7 @@ class MyFrame(wx.Frame):
 		sizer.Add(self.toolbar5, 0, wx.EXPAND, 0)
 
 		self.pulses.SetSizer(sizer)
-		'''
+
 	def onListlistPulsesSelected(self,e):
 		self.onListlistPulsesDeselected()
 		selected = self.listPulses.GetFirstSelected()
@@ -406,37 +398,29 @@ class MyFrame(wx.Frame):
 	def onEditPulses(self,e):
 		selected = self.listPulses.GetFirstSelected()
 		if selected == -1: return
-		host = self.listPulses.GetItemText(selected, 0)
-		gpio = self.listPulses.GetItemText(selected, 1)
-		index = host+'-'+gpio
-		edit = {"host": host, "gpio": gpio, "rate": self.gpioPulses[index]['rate'],"pulsesPerRev": self.gpioPulses[index]['pulsesPerRev'],"pull": self.gpioPulses[index]['pull'], "weighting": self.gpioPulses[index]['weighting'], "minRPM": self.gpioPulses[index]['minRPM'], "counterSK": self.gpioPulses[index]['revCounter'], "resetSK": self.gpioPulses[index]['resetCounter'], "revolutionsSK": self.gpioPulses[index]['revolutions'], "radius": self.gpioPulses[index]['radius'], "calibration": self.gpioPulses[index]['calibration'], "speedSK": self.gpioPulses[index]['linearSpeed'], "distanceSK": self.gpioPulses[index]['distance']}
+		gpio = self.listPulses.GetItemText(selected, 0)
+		edit = {"gpio": gpio, "rate": self.gpioPulses[gpio]['rate'],"pulsesPerRev": self.gpioPulses[gpio]['pulsesPerRev'],"pull": self.gpioPulses[gpio]['pull'], "counterSK": self.gpioPulses[gpio]['revCounter'], "revolutionsSK": self.gpioPulses[gpio]['revolutions'], "radius": self.gpioPulses[gpio]['radius'], "calibration": self.gpioPulses[gpio]['calibration'], "speedSK": self.gpioPulses[gpio]['linearSpeed'], "distanceSK": self.gpioPulses[gpio]['distance']}
 		self.setPulses(edit)
 
 	def setPulses(self,edit):
 		dlg = editPulses(edit)
 		res = dlg.ShowModal()
 		if res == wx.ID_OK:
-			if dlg.localhost.GetValue(): host = 'localhost'
-			else: host = dlg.host.GetValue()
 			gpio = dlg.gpio.GetValue()
-			index = host+'-'+gpio
 			if edit:
-				oldIndex = edit['host']+'-'+edit['gpio']
-				if oldIndex != index: del self.gpioPulses[oldIndex]
+				oldIndex = edit['gpio']
+				if oldIndex != gpio: del self.gpioPulses[oldIndex]
 			rate = float(dlg.rate.GetValue())
 			pulsesPerRev = int(dlg.pulses.GetValue())
 			pull = str(dlg.pull.GetValue())
-			weighting = float(dlg.weighting.GetValue())
-			minRPM = int(dlg.minRPM.GetValue())
 			revCounter = str(dlg.counterSK.GetValue())
-			resetCounter = str(dlg.resetSK.GetValue())
 			revolutions = str(dlg.revolutionsSK.GetValue())
 			if dlg.radius.GetValue(): radius = float(dlg.radius.GetValue())
 			else: radius = ''
 			calibration = float(dlg.calibration.GetValue())
 			linearSpeed = str(dlg.speedSK.GetValue())
 			distance = str(dlg.distanceSK.GetValue())
-			self.gpioPulses[index] = {"rate": rate, "pulsesPerRev": pulsesPerRev, "pull": pull, "weighting": weighting, "minRPM": minRPM, "revCounter": revCounter, "resetCounter": resetCounter, "revolutions": revolutions, "radius": radius, "calibration": calibration, "linearSpeed": linearSpeed, "distance": distance}
+			self.gpioPulses[gpio] = {"rate": rate, "pulsesPerRev": pulsesPerRev, "pull": pull, "revCounter": revCounter, "revolutions": revolutions, "radius": radius, "calibration": calibration, "linearSpeed": linearSpeed, "distance": distance}
 			self.conf.set('GPIO', 'pulses', str(self.gpioPulses))
 			self.stopGpioRead()
 			self.onRefresh()
@@ -445,10 +429,8 @@ class MyFrame(wx.Frame):
 	def onRemovePulses(self,e):
 		selected = self.listPulses.GetFirstSelected()
 		if selected == -1: return
-		host = self.listPulses.GetItemText(selected, 0)
-		gpio = self.listPulses.GetItemText(selected, 1)
-		index = host+'-'+gpio
-		del self.gpioPulses[index]
+		gpio = self.listPulses.GetItemText(selected, 0)
+		del self.gpioPulses[gpio]
 		self.conf.set('GPIO', 'pulses', str(self.gpioPulses))
 		self.stopGpioRead()
 		self.onRefresh()
@@ -461,10 +443,7 @@ class MyFrame(wx.Frame):
 		except: self.gpioPulses = {}
 		if self.gpioPulses:
 			for i in self.gpioPulses:
-				items = i.split('-')
-				host = items[0]
-				gpio = items[1]
-				self.listPulses.Append([host, gpio, self.gpioPulses[i]['revolutions'], self.gpioPulses[i]['revCounter'], self.gpioPulses[i]['resetCounter'], self.gpioPulses[i]['linearSpeed'], self.gpioPulses[i]['distance']])
+				self.listPulses.Append([i, self.gpioPulses[i]['revolutions'], self.gpioPulses[i]['revCounter'], self.gpioPulses[i]['linearSpeed'], self.gpioPulses[i]['distance']])
 				if self.gpioPulses[i]['revolutions'] or self.gpioPulses[i]['revCounter'] or self.gpioPulses[i]['linearSpeed'] or self.gpioPulses[i]['distance']:
 					self.listPulses.SetItemBackgroundColour(self.listPulses.GetItemCount()-1,(255,220,100))
 
@@ -924,23 +903,10 @@ class editPulses(wx.Dialog):
 		if edit: title = _('Editing GPIO pulses')
 		else: title = _('Adding GPIO pulses')
 
-		wx.Dialog.__init__(self, None, title=title, size=(800, 370))
+		wx.Dialog.__init__(self, None, title=title, size=(800, 420))
 		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
 		panel = wx.Panel(self)
 
-		self.localhost = wx.CheckBox(panel, label=_('localhost'))
-		self.localhost.Bind(wx.EVT_CHECKBOX, self.onLocalhost)
-		self.host = wx.TextCtrl(panel)
-		if edit: 
-			if edit['host'] == 'localhost': 
-				self.localhost.SetValue(True)
-				self.host.Disable()
-			else: 
-				self.host.SetValue(edit['host'])
-				self.host.Enable()
-		else: 
-			self.localhost.SetValue(True)
-			self.host.Disable()
 		self.gpio = wx.TextCtrl(panel, style=wx.CB_READONLY)
 		selectGpio =wx.Button(panel, label='GPIO')
 		selectGpio.Bind(wx.EVT_BUTTON, self.onSelectGpio)
@@ -956,22 +922,12 @@ class editPulses(wx.Dialog):
 		if edit: self.pulses.SetValue(str(edit['pulsesPerRev']))
 		else: self.pulses.SetValue('1')
 
-		pullLabel= wx.StaticText(panel, label = _('internal pull resistor'))
+		pullLabel= wx.StaticText(panel, label = _('Internal pull resistor'))
 		self.pull = wx.ComboBox(panel, choices = [_('none'),'up','down'], style=wx.CB_READONLY)
 		if edit: self.pull.SetValue(edit['pull'])
 		else: self.pull.SetValue('down')
 
 		vline1 = wx.StaticLine(panel)
-
-		weightingLabel = wx.StaticText(panel, label=_('Weighting'))
-		self.weighting = wx.TextCtrl(panel)
-		if edit: self.weighting.SetValue(str(edit['weighting']))
-		else: self.weighting.SetValue('0')
-
-		minRPMLabel = wx.StaticText(panel, label=_('Min RPM'))
-		self.minRPM = wx.TextCtrl(panel)
-		if edit: self.minRPM.SetValue(str(edit['minRPM']))
-		else: self.minRPM.SetValue('5')
 
 		revolutionsSKLabel = wx.StaticText(panel, label=_('Revolutions (Hz)'))
 		self.revolutionsSK = wx.TextCtrl(panel)
@@ -984,14 +940,6 @@ class editPulses(wx.Dialog):
 		counterSKedit = wx.Button(panel, label='Signal K')
 		counterSKedit.Bind(wx.EVT_BUTTON, self.onCounterSKedit)
 		if edit: self.counterSK.SetValue(str(edit['counterSK']))
-
-		resetSKLabel = wx.StaticText(panel, label=_('Reset (counter, distance)'))
-		self.resetSK = wx.TextCtrl(panel)
-		resetSKedit = wx.Button(panel, label='Signal K')
-		resetSKedit.Bind(wx.EVT_BUTTON, self.onResetSKedit)
-		if edit: self.resetSK.SetValue(str(edit['resetSK']))
-
-		vline2 = wx.StaticLine(panel)
 
 		radiusLabel = wx.StaticText(panel, label=_('Radius (m)'))
 		self.radius = wx.TextCtrl(panel)
@@ -1020,10 +968,6 @@ class editPulses(wx.Dialog):
 		okBtn = wx.Button(panel, wx.ID_OK)
 		okBtn.Bind(wx.EVT_BUTTON, self.ok)
 
-		column1h00 = wx.BoxSizer(wx.HORIZONTAL)
-		column1h00.Add(self.localhost, 0, wx.ALL | wx.EXPAND, 5)
-		column1h00.Add(self.host, 1, wx.ALL | wx.EXPAND, 5)
-
 		column1h0 = wx.BoxSizer(wx.HORIZONTAL)
 		column1h0.Add(self.gpio, 0, wx.ALL | wx.EXPAND, 5)
 		column1h0.Add(selectGpio, 0, wx.ALL | wx.EXPAND, 5)
@@ -1048,18 +992,6 @@ class editPulses(wx.Dialog):
 		column2h1.Add(self.counterSK, 1, wx.ALL | wx.EXPAND, 5)
 		column2h1.Add(counterSKedit, 0, wx.ALL | wx.EXPAND, 5)
 
-		column2h2 = wx.BoxSizer(wx.HORIZONTAL)
-		column2h2.Add(self.resetSK, 1, wx.ALL | wx.EXPAND, 5)
-		column2h2.Add(resetSKedit, 0, wx.ALL | wx.EXPAND, 5)
-
-		column2h3 = wx.BoxSizer(wx.HORIZONTAL)
-		column2h3.Add(weightingLabel, 0, wx.ALL | wx.EXPAND, 5)
-		column2h3.Add(self.weighting, 0, wx.ALL | wx.EXPAND, 5)
-
-		column2h4 = wx.BoxSizer(wx.HORIZONTAL)
-		column2h4.Add(minRPMLabel, 0, wx.ALL | wx.EXPAND, 5)
-		column2h4.Add(self.minRPM, 0, wx.ALL | wx.EXPAND, 5)
-
 		column3h0 = wx.BoxSizer(wx.HORIZONTAL)
 		column3h0.Add(radiusLabel, 0, wx.ALL | wx.EXPAND, 5)
 		column3h0.Add(self.radius, 0, wx.ALL | wx.EXPAND, 5)
@@ -1077,23 +1009,16 @@ class editPulses(wx.Dialog):
 		column3h3.Add(self.calibration, 0, wx.ALL | wx.EXPAND, 5)
 
 		column1 = wx.BoxSizer(wx.VERTICAL)
-		column1.Add(column1h00, 0, wx.ALL | wx.EXPAND, 5)
 		column1.Add(column1h0, 0, wx.ALL | wx.EXPAND, 5)
-		column1.Add(column1h1, 0, wx.ALL | wx.EXPAND, 5)
-		column1.Add(column1h2, 0, wx.ALL | wx.EXPAND, 5)
 		column1.Add(column1h3, 0, wx.ALL | wx.EXPAND, 5)
-
-		column2 = wx.BoxSizer(wx.VERTICAL)
-		column2.Add(column2h3, 0, wx.ALL | wx.EXPAND, 5)
-		column2.Add(column2h4, 0, wx.ALL | wx.EXPAND, 5)
-		column2.Add(revolutionsSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
-		column2.Add(column2h0, 0, wx.ALL | wx.EXPAND, 5)
-		column2.AddSpacer(5)
-		column2.Add(counterSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
-		column2.Add(column2h1, 0, wx.ALL | wx.EXPAND, 5)
-		column2.AddSpacer(5)
-		column2.Add(resetSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
-		column2.Add(column2h2, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(column1h2, 0, wx.ALL | wx.EXPAND, 5)
+		column1.Add(revolutionsSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column1.Add(column2h0, 0, wx.ALL | wx.EXPAND, 5)
+		column1.AddSpacer(5)
+		column1.Add(counterSKLabel, 0, wx.LEFT | wx.EXPAND, 10)
+		column1.Add(column2h1, 0, wx.ALL | wx.EXPAND, 5)
+		column1.AddSpacer(5)
+		column1.Add(column1h1, 0, wx.ALL | wx.EXPAND, 5)
 
 		column3 = wx.BoxSizer(wx.VERTICAL)
 		column3.Add(column3h0, 0, wx.ALL | wx.EXPAND, 5)
@@ -1109,8 +1034,6 @@ class editPulses(wx.Dialog):
 		hbox = wx.BoxSizer(wx.HORIZONTAL)
 		hbox.Add(column1, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
 		hbox.Add(vline1, 0, wx.EXPAND, 0)
-		hbox.Add(column2, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
-		hbox.Add(vline2, 0, wx.EXPAND, 0)
 		hbox.Add(column3, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 5)
 
 		actionbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -1130,16 +1053,8 @@ class editPulses(wx.Dialog):
 
 		self.Centre() 
 
-	def onLocalhost(self,e):
-		if self.localhost.GetValue(): self.host.Disable()
-		else: self.host.Enable()
-		self.gpio.SetValue('')
 
 	def onSelectGpio(self,e):
-		if not self.localhost.GetValue():
-			if not self.host.GetValue():
-				wx.MessageBox(_('Enter the host name.'), _('Error'), wx.OK | wx.ICON_ERROR)
-				return
 		gpioPin = '0'
 		gpioBCM = self.gpio.GetValue()
 		if gpioBCM:
@@ -1147,8 +1062,7 @@ class editPulses(wx.Dialog):
 			gpios = gpio.Gpio()
 			for i in gpios.gpioMap:
 				if gpioBCM == i['BCM']: gpioPin = i['physical']
-		if self.localhost.GetValue(): dlg = gpio.GpioMap(['GPIO'],gpioPin)
-		else: dlg = gpio.GpioMap(['GPIO'],gpioPin, self.host.GetValue())
+		dlg = gpio.GpioMap(['GPIO'],gpioPin)
 		res = dlg.ShowModal()
 		if res == wx.ID_OK:
 			gpioBCM = dlg.selected['BCM'].replace('GPIO ','')
@@ -1171,14 +1085,6 @@ class editPulses(wx.Dialog):
 			self.counterSK.SetValue(key)
 		dlg.Destroy()
 
-	def onResetSKedit(self,e):
-		dlg = selectKey.SelectKey(self.resetSK.GetValue(),0)
-		res = dlg.ShowModal()
-		if res == wx.OK:
-			key = dlg.selected_key.replace(':','.')
-			self.resetSK.SetValue(key)
-		dlg.Destroy()
-
 	def onSpeedSKedit(self,e):
 		dlg = selectKey.SelectKey(self.speedSK.GetValue(),0)
 		res = dlg.ShowModal()
@@ -1199,15 +1105,9 @@ class editPulses(wx.Dialog):
 		self.rate.SetValue('1')
 		self.pulses.SetValue('1')
 		self.pull.SetValue('down')
-		self.weighting.SetValue('0')
-		self.minRPM.SetValue('5')
 		self.calibration.SetValue('1.0')
 
 	def ok(self,e):
-		if not self.localhost.GetValue():
-			if not self.host.GetValue():
-				wx.MessageBox(_('Enter the host name.'), _('Error'), wx.OK | wx.ICON_ERROR)
-				return
 		if not self.gpio.GetValue():
 			wx.MessageBox(_('Enter the GPIO.'), _('Error'), wx.OK | wx.ICON_ERROR)
 			return
@@ -1218,14 +1118,6 @@ class editPulses(wx.Dialog):
 		try: test = int(self.pulses.GetValue())
 		except:
 			wx.MessageBox(_('"Pulses per revolution" value has to be a number.'), _('Error'), wx.OK | wx.ICON_ERROR)
-			return
-		try: test = float(self.weighting.GetValue())
-		except:
-			wx.MessageBox(_('"Weighting" value has to be a number.'), _('Error'), wx.OK | wx.ICON_ERROR)
-			return
-		try: test = int(self.minRPM.GetValue())
-		except:
-			wx.MessageBox(_('"Min RPM" value has to be a number.'), _('Error'), wx.OK | wx.ICON_ERROR)
 			return
 		if self.speedSK.GetValue() or self.distanceSK.GetValue():
 			if not self.radius.GetValue():
