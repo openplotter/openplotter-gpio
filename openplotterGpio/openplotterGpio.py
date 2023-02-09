@@ -56,7 +56,7 @@ class MyFrame(wx.Frame):
 		self.toolbar1.AddSeparator()
 		self.aproveSK = self.toolbar1.AddTool(105, _('Approve'), wx.Bitmap(self.currentdir+"/data/sk.png"))
 		self.Bind(wx.EVT_TOOL, self.onAproveSK, self.aproveSK)
-		self.connectionSK = self.toolbar1.AddTool(106, _('Allowed'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+		self.connectionSK = self.toolbar1.AddTool(106, _('Reconnect'), wx.Bitmap(self.currentdir+"/data/sk.png"))
 		self.Bind(wx.EVT_TOOL, self.onConnectionSK, self.connectionSK)
 		self.toolbar1.AddSeparator()
 		self.refresh = self.toolbar1.AddTool(104, _('Refresh'), wx.Bitmap(self.currentdir+"/data/refresh.png"))
@@ -146,9 +146,9 @@ class MyFrame(wx.Frame):
 			webbrowser.open(url, new=2)
 
 	def onConnectionSK(self,e):
-		if self.platform.skPort: 
-			url = self.platform.http+'localhost:'+self.platform.skPort+'/admin/#/security/devices'
-			webbrowser.open(url, new=2)
+		self.conf.set('GPIO', 'href', '')
+		self.conf.set('GPIO', 'token', '')
+		self.onRefresh()
 
 	def restart_SK(self, msg):
 		if self.platform.skDir:
@@ -203,11 +203,11 @@ class MyFrame(wx.Frame):
 			self.toolbar1.EnableTool(105,True)
 			self.ShowStatusBarYELLOW(result[1]+_(' Press "Approve" and then "Refresh".'))
 		elif result[0] == 'error':
-			self.ShowStatusBarRED(result[1])
+			self.ShowStatusBarRED(result[1]+_(' Try "Reconnect".'))
 		elif result[0] == 'repeat':
 			self.ShowStatusBarYELLOW(result[1]+_(' Press "Refresh".'))
 		elif result[0] == 'permissions':
-			self.ShowStatusBarYELLOW(result[1]+_(' Press "Allowed".'))
+			self.ShowStatusBarYELLOW(result[1])
 		elif result[0] == 'approved':
 			self.ShowStatusBarGREEN(result[1])
 
