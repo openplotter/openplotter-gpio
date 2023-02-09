@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:49+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca\n"
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Aprova"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Permès"
+msgid "Reconnect"
+msgstr ""
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -148,13 +148,13 @@ msgstr "Res a enviar. El servei GPIO està deshabilitat"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Prem \"Aprova\" i després \"Actualitza\"."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr ""
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Prem \"Actualitza\"."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Prem \"Permès\"."
 
 #: openplotterGpio.py:223
 msgid "Host"

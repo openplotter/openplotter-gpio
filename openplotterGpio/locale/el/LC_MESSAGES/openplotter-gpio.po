@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -101,7 +101,7 @@ msgid "Approve"
 msgstr ""
 
 #: openplotterGpio.py:59
-msgid "Allowed"
+msgid "Reconnect"
 msgstr ""
 
 #: openplotterGpio.py:62
@@ -148,12 +148,12 @@ msgstr ""
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr ""
 
-#: openplotterGpio.py:208
-msgid " Press \"Refresh\"."
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
 msgstr ""
 
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
+#: openplotterGpio.py:208
+msgid " Press \"Refresh\"."
 msgstr ""
 
 #: openplotterGpio.py:223

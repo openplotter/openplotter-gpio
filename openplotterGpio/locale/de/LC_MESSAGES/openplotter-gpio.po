@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -22,19 +22,19 @@ msgstr ""
 
 #: actions.py:39
 msgid "turn it high"
-msgstr ""
+msgstr "hoch drehen"
 
 #: actions.py:39 actions.py:40
 msgid "Allowed values for state:"
-msgstr ""
+msgstr "Erlaubte Werte für Status:"
 
 #: actions.py:40
 msgid "turn it low"
-msgstr ""
+msgstr "drehe es niedrig"
 
 #: actions.py:48
 msgid "reset counter and distance"
-msgstr ""
+msgstr "Zähler und Distanz zurücksetzen"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -78,7 +78,7 @@ msgstr "Entferne Python-Pakete..."
 
 #: gpioPreUninstall.py:35
 msgid "Removing pigpiod service..."
-msgstr ""
+msgstr "Entferne Pigpid-Dienst"
 
 #: gpioPreUninstall.py:44
 msgid "Removing version..."
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Bestätigen"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Zulässig"
+msgid "Reconnect"
+msgstr ""
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -110,7 +110,7 @@ msgstr "Aktualisieren"
 
 #: openplotterGpio.py:65
 msgid "Rescue"
-msgstr ""
+msgstr "Rettung"
 
 #: openplotterGpio.py:76
 msgid "Digital"
@@ -122,7 +122,7 @@ msgstr "Pulse"
 
 #: openplotterGpio.py:79
 msgid " Seatalk1 input"
-msgstr ""
+msgstr " Seatalk1 Eingabe"
 
 #: openplotterGpio.py:155
 msgid "Restarting Signal K server... "
@@ -138,7 +138,7 @@ msgstr "GPIO-Dienst ist aktiviert"
 
 #: openplotterGpio.py:185 openplotterGpio.py:189 startup.py:53 startup.py:160
 msgid "GPIO is in rescue mode"
-msgstr ""
+msgstr "GPIO ist im Rettungsmodus"
 
 #: openplotterGpio.py:194
 msgid "There is nothing to send. GPIO service is disabled"
@@ -148,13 +148,13 @@ msgstr "Es gibt nichts zu senden. GPIO-Dienst ist deaktiviert"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Drücken Sie \"Genehmigen\" und dann \"Aktualisieren\"."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr ""
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Drücke \"Aktualisieren\"."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Drücke \"Erlaubt\"."
 
 #: openplotterGpio.py:223
 msgid "Host"
@@ -162,27 +162,27 @@ msgstr "Host"
 
 #: openplotterGpio.py:225
 msgid "Mode"
-msgstr ""
+msgstr "Modus"
 
 #: openplotterGpio.py:226 openplotterGpio.py:1181
 msgid "High"
-msgstr ""
+msgstr "Hoch"
 
 #: openplotterGpio.py:227 openplotterGpio.py:1199
 msgid "Low"
-msgstr ""
+msgstr "Niedrig"
 
 #: openplotterGpio.py:228
 msgid "Initial state"
-msgstr ""
+msgstr "Anfangsstatus"
 
 #: openplotterGpio.py:234
 msgid "Add input"
-msgstr ""
+msgstr "Eingabe hinzufügen"
 
 #: openplotterGpio.py:236
 msgid "Add output"
-msgstr ""
+msgstr "Ausgaben hinzufügen"
 
 #: openplotterGpio.py:238 openplotterGpio.py:372 openplotterGpio.py:469
 #: openplotterGpio.py:645 openplotterGpio.py:841
@@ -195,7 +195,7 @@ msgstr "Entfernen"
 
 #: openplotterGpio.py:322
 msgid "You can turn GPIO outputs high or low using \"Actions\" in the Notifications app"
-msgstr ""
+msgstr "Du kannst GPIO-Ausgaben hoch oder niedrig schalten mit \"Aktionen\" in der Benachrichtigungs-App"
 
 #: openplotterGpio.py:348 openplotterGpio.py:759
 msgid "yes"
@@ -207,11 +207,11 @@ msgstr "nein"
 
 #: openplotterGpio.py:352
 msgid "input"
-msgstr ""
+msgstr "Eingang"
 
 #: openplotterGpio.py:353
 msgid "output"
-msgstr ""
+msgstr "Ausgang"
 
 #: openplotterGpio.py:361
 msgid "Revolutions"
@@ -402,11 +402,11 @@ msgstr "Der Wert \"Geschwindigkeitskalibration\" muss eine Zahl sein."
 
 #: openplotterGpio.py:1142
 msgid "Editing GPIO digital input"
-msgstr ""
+msgstr "Bearbeite GPIO Digitaleingabe"
 
 #: openplotterGpio.py:1143
 msgid "Adding GPIO digital input"
-msgstr ""
+msgstr "Hinzufügen von GPIO-Digitaleingabe"
 
 #: openplotterGpio.py:1149 openplotterGpio.py:1339
 msgid "localhost"
@@ -422,23 +422,23 @@ msgstr "interner Pull-Widerstand"
 
 #: openplotterGpio.py:1183 openplotterGpio.py:1201
 msgid "state:"
-msgstr ""
+msgstr "Zustand:"
 
 #: openplotterGpio.py:1188 openplotterGpio.py:1206
 msgid "message:"
-msgstr ""
+msgstr "Meldung:"
 
 #: openplotterGpio.py:1192 openplotterGpio.py:1210
 msgid "method:"
-msgstr ""
+msgstr "Methode:"
 
 #: openplotterGpio.py:1193 openplotterGpio.py:1211
 msgid "visual"
-msgstr ""
+msgstr "visuell"
 
 #: openplotterGpio.py:1194 openplotterGpio.py:1212
 msgid "sound"
-msgstr ""
+msgstr "Ton"
 
 #: openplotterGpio.py:1298 openplotterGpio.py:1319 openplotterGpio.py:1406
 #: openplotterGpio.py:1427
@@ -447,23 +447,23 @@ msgstr "Geben Sie den Hostnamen ein."
 
 #: openplotterGpio.py:1332
 msgid "Editing GPIO digital output"
-msgstr ""
+msgstr "Bearbeite GPIO Digitalausgabe"
 
 #: openplotterGpio.py:1333
 msgid "Adding GPIO digital output"
-msgstr ""
+msgstr "GPIO-Digitalausgabe hinzufügen"
 
 #: startup.py:29
 msgid "Starting GPIO..."
-msgstr ""
+msgstr "GPIO wird gestartet..."
 
 #: startup.py:49
 msgid "GPIO started"
-msgstr ""
+msgstr "GPIO gestartet"
 
 #: startup.py:51
 msgid "No GPIO defined"
-msgstr ""
+msgstr "Kein GPIO definiert"
 
 #: startup.py:64
 msgid "Checking GPIO..."
@@ -483,7 +483,7 @@ msgstr ""
 
 #: startup.py:102
 msgid "Seatalk1 disabled"
-msgstr ""
+msgstr "Seatalk1 deaktiviert"
 
 #: startup.py:113 startup.py:123
 msgid "1W enabled"
@@ -511,11 +511,11 @@ msgstr "digital deaktiviert"
 
 #: startup.py:167 startup.py:175 startup.py:184
 msgid "openplotter-gpio-read running"
-msgstr ""
+msgstr "openplotter-gpio-read läuft"
 
 #: startup.py:179 startup.py:188
 msgid "openplotter-gpio-read not running"
-msgstr ""
+msgstr "openplotter-gpio-read läuft nicht"
 
 #: startup.py:199
 msgid "Access to Signal K server validated"

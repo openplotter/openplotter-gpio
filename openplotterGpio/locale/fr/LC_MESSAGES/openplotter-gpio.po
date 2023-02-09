@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Aprouver"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Autorisé"
+msgid "Reconnect"
+msgstr ""
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -148,13 +148,13 @@ msgstr "Il n'y a rien à envoyer. Le service GPIO est désactivé"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Appuyez sur « Approuver », puis « Actualiser »."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr ""
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Appuyez sur \"Actualiser\"."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Appuyez sur \"Autorisé\"."
 
 #: openplotterGpio.py:223
 msgid "Host"

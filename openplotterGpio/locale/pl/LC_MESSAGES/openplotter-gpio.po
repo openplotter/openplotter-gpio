@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl\n"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: actions.py:48
 msgid "reset counter and distance"
-msgstr ""
+msgstr "zresetuj licznik i odległość"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -78,7 +78,7 @@ msgstr "Odinstalowywanie pakietów Python..."
 
 #: gpioPreUninstall.py:35
 msgid "Removing pigpiod service..."
-msgstr ""
+msgstr "Usuwanie usługi pigpiod..."
 
 #: gpioPreUninstall.py:44
 msgid "Removing version..."
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Zatwierdź"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Dozwolone"
+msgid "Reconnect"
+msgstr "Połącz ponownie"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -122,7 +122,7 @@ msgstr "Impulsowy"
 
 #: openplotterGpio.py:79
 msgid " Seatalk1 input"
-msgstr ""
+msgstr " Seatalk-1 wejście"
 
 #: openplotterGpio.py:155
 msgid "Restarting Signal K server... "
@@ -148,13 +148,13 @@ msgstr "Nie ma nic do wysłania. Usługa GPIO jest wyłączona"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Naciśnij \"Zatwierdź\", a następnie \"Odśwież\"."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr " Spróbuj \"Połącz ponownie\"."
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Naciśnij \"Odśwież\"."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Naciśnij \"Dozwolone\"."
 
 #: openplotterGpio.py:223
 msgid "Host"
@@ -162,27 +162,27 @@ msgstr "Host"
 
 #: openplotterGpio.py:225
 msgid "Mode"
-msgstr ""
+msgstr "Tryb"
 
 #: openplotterGpio.py:226 openplotterGpio.py:1181
 msgid "High"
-msgstr ""
+msgstr "Wysoki"
 
 #: openplotterGpio.py:227 openplotterGpio.py:1199
 msgid "Low"
-msgstr ""
+msgstr "Niski"
 
 #: openplotterGpio.py:228
 msgid "Initial state"
-msgstr ""
+msgstr "Stan początkowy"
 
 #: openplotterGpio.py:234
 msgid "Add input"
-msgstr ""
+msgstr "Dodaj wejście"
 
 #: openplotterGpio.py:236
 msgid "Add output"
-msgstr ""
+msgstr "Dodaj wyjście"
 
 #: openplotterGpio.py:238 openplotterGpio.py:372 openplotterGpio.py:469
 #: openplotterGpio.py:645 openplotterGpio.py:841
@@ -195,7 +195,7 @@ msgstr "Usuń"
 
 #: openplotterGpio.py:322
 msgid "You can turn GPIO outputs high or low using \"Actions\" in the Notifications app"
-msgstr ""
+msgstr "Możesz zmienić stan wyjście GPIO w wysokiego lub niskiego za pomocą \"Akcji\" w aplikacji Notifications"
 
 #: openplotterGpio.py:348 openplotterGpio.py:759
 msgid "yes"
@@ -207,11 +207,11 @@ msgstr "nie"
 
 #: openplotterGpio.py:352
 msgid "input"
-msgstr ""
+msgstr "wejście"
 
 #: openplotterGpio.py:353
 msgid "output"
-msgstr ""
+msgstr "wyjście"
 
 #: openplotterGpio.py:361
 msgid "Revolutions"

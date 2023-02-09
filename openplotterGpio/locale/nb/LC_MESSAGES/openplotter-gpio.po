@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "Language: nb_NO\n"
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Godta"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Tillatt"
+msgid "Reconnect"
+msgstr "Koble til på nytt"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -148,13 +148,13 @@ msgstr "Det er ingenting å sende. GPIO-tjenesten er deaktivert"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Trykk \"Godkjenn\" og deretter \"Oppdater\"."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr " Prøv \"Koble til på nytt\"."
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Trykk Oppdater."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Trykk \"Tillatt\"."
 
 #: openplotterGpio.py:223
 msgid "Host"

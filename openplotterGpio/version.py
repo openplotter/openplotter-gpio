@@ -1,3 +1,3 @@
-version = '3.2.24'
+version = '3.2.26'
 codeName = 'STOPmaremortum'
 state = 'beta'

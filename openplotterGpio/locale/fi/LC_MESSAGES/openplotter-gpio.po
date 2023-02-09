@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2023-02-01 20:35+0100\n"
-"PO-Revision-Date: 2023-02-03 17:48+0100\n"
+"POT-Creation-Date: 2023-02-08 21:07+0100\n"
+"PO-Revision-Date: 2023-02-09 19:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
@@ -22,19 +22,19 @@ msgstr ""
 
 #: actions.py:39
 msgid "turn it high"
-msgstr ""
+msgstr "käännä se päälle"
 
 #: actions.py:39 actions.py:40
 msgid "Allowed values for state:"
-msgstr ""
+msgstr "Tilan sallitut arvot:"
 
 #: actions.py:40
 msgid "turn it low"
-msgstr ""
+msgstr "käännä se pois"
 
 #: actions.py:48
 msgid "reset counter and distance"
-msgstr ""
+msgstr "nollaa laskuri ja etäisyys"
 
 #: data/openplotter-gpio.desktop:3
 msgid "GPIO"
@@ -78,7 +78,7 @@ msgstr "Poistetaan python paketteja..."
 
 #: gpioPreUninstall.py:35
 msgid "Removing pigpiod service..."
-msgstr ""
+msgstr "Poistetaan pigpiodin palvelua..."
 
 #: gpioPreUninstall.py:44
 msgid "Removing version..."
@@ -101,8 +101,8 @@ msgid "Approve"
 msgstr "Hyväksy"
 
 #: openplotterGpio.py:59
-msgid "Allowed"
-msgstr "Sallittu"
+msgid "Reconnect"
+msgstr ""
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -110,7 +110,7 @@ msgstr "Päivitä"
 
 #: openplotterGpio.py:65
 msgid "Rescue"
-msgstr ""
+msgstr "Pelastus"
 
 #: openplotterGpio.py:76
 msgid "Digital"
@@ -122,7 +122,7 @@ msgstr "Pulssit"
 
 #: openplotterGpio.py:79
 msgid " Seatalk1 input"
-msgstr ""
+msgstr " Seatalk1 syöte"
 
 #: openplotterGpio.py:155
 msgid "Restarting Signal K server... "
@@ -138,7 +138,7 @@ msgstr "GPIO palvelu käytössä"
 
 #: openplotterGpio.py:185 openplotterGpio.py:189 startup.py:53 startup.py:160
 msgid "GPIO is in rescue mode"
-msgstr ""
+msgstr "GPIO on pelastustilassa"
 
 #: openplotterGpio.py:194
 msgid "There is nothing to send. GPIO service is disabled"
@@ -148,13 +148,13 @@ msgstr "Ei ole mitään lähetettävää. GPIO palvelu on poistettu käytöstä"
 msgid " Press \"Approve\" and then \"Refresh\"."
 msgstr " Paina \"Hyväksy\" ja sitten \"Päivitä \"."
 
+#: openplotterGpio.py:206
+msgid " Try \"Reconnect\"."
+msgstr ""
+
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
 msgstr " Paina \"Päivitä\"."
-
-#: openplotterGpio.py:210
-msgid " Press \"Allowed\"."
-msgstr " Paina \"Sallittu\"."
 
 #: openplotterGpio.py:223
 msgid "Host"
@@ -162,27 +162,27 @@ msgstr "Palvelin"
 
 #: openplotterGpio.py:225
 msgid "Mode"
-msgstr ""
+msgstr "Tila"
 
 #: openplotterGpio.py:226 openplotterGpio.py:1181
 msgid "High"
-msgstr ""
+msgstr "Ylös"
 
 #: openplotterGpio.py:227 openplotterGpio.py:1199
 msgid "Low"
-msgstr ""
+msgstr "Alas"
 
 #: openplotterGpio.py:228
 msgid "Initial state"
-msgstr ""
+msgstr "Alkuperäinen tila"
 
 #: openplotterGpio.py:234
 msgid "Add input"
-msgstr ""
+msgstr "Lisää syöttö"
 
 #: openplotterGpio.py:236
 msgid "Add output"
-msgstr ""
+msgstr "Lisää tulostus"
 
 #: openplotterGpio.py:238 openplotterGpio.py:372 openplotterGpio.py:469
 #: openplotterGpio.py:645 openplotterGpio.py:841
@@ -195,7 +195,7 @@ msgstr "Poista"
 
 #: openplotterGpio.py:322
 msgid "You can turn GPIO outputs high or low using \"Actions\" in the Notifications app"
-msgstr ""
+msgstr "Voit kääntää GPIO-tulostuksen joko päälle tai pois käyttämällä \"Toiminnot\" asetusta Ilmoitussovelluksessa"
 
 #: openplotterGpio.py:348 openplotterGpio.py:759
 msgid "yes"
@@ -207,11 +207,11 @@ msgstr "ei"
 
 #: openplotterGpio.py:352
 msgid "input"
-msgstr ""
+msgstr "syöttö"
 
 #: openplotterGpio.py:353
 msgid "output"
-msgstr ""
+msgstr "lähtö"
 
 #: openplotterGpio.py:361
 msgid "Revolutions"
@@ -402,11 +402,11 @@ msgstr "\"Nopeuden kalibrointi\"-arvon on oltava luku."
 
 #: openplotterGpio.py:1142
 msgid "Editing GPIO digital input"
-msgstr ""
+msgstr "Muokataan GPIOn digitaalisyötettä"
 
 #: openplotterGpio.py:1143
 msgid "Adding GPIO digital input"
-msgstr ""
+msgstr "Lisätään GPIO digitaalisyöte"
 
 #: openplotterGpio.py:1149 openplotterGpio.py:1339
 msgid "localhost"
@@ -422,23 +422,23 @@ msgstr "sisäinen vetovastus"
 
 #: openplotterGpio.py:1183 openplotterGpio.py:1201
 msgid "state:"
-msgstr ""
+msgstr "tila:"
 
 #: openplotterGpio.py:1188 openplotterGpio.py:1206
 msgid "message:"
-msgstr ""
+msgstr "viesti:"
 
 #: openplotterGpio.py:1192 openplotterGpio.py:1210
 msgid "method:"
-msgstr ""
+msgstr "menetelmä:"
 
 #: openplotterGpio.py:1193 openplotterGpio.py:1211
 msgid "visual"
-msgstr ""
+msgstr "visuaalinen"
 
 #: openplotterGpio.py:1194 openplotterGpio.py:1212
 msgid "sound"
-msgstr ""
+msgstr "ääni"
 
 #: openplotterGpio.py:1298 openplotterGpio.py:1319 openplotterGpio.py:1406
 #: openplotterGpio.py:1427
@@ -447,23 +447,23 @@ msgstr "Syötä isäntänimi."
 
 #: openplotterGpio.py:1332
 msgid "Editing GPIO digital output"
-msgstr ""
+msgstr "Muokataan GPIOn digitaalitulostetta"
 
 #: openplotterGpio.py:1333
 msgid "Adding GPIO digital output"
-msgstr ""
+msgstr "Lisätään GPIO digitaalituloste"
 
 #: startup.py:29
 msgid "Starting GPIO..."
-msgstr ""
+msgstr "Käynnistetään GPIO..."
 
 #: startup.py:49
 msgid "GPIO started"
-msgstr ""
+msgstr "GPIO käynnistetty"
 
 #: startup.py:51
 msgid "No GPIO defined"
-msgstr ""
+msgstr "GPIO:ta ei ole määritelty"
 
 #: startup.py:64
 msgid "Checking GPIO..."
@@ -479,11 +479,11 @@ msgstr "pigpiod ei käynnissä"
 
 #: startup.py:98
 msgid "Seatalk1 enabled"
-msgstr ""
+msgstr "Seatalk1 käytössä"
 
 #: startup.py:102
 msgid "Seatalk1 disabled"
-msgstr ""
+msgstr "Seatalk1 estetty"
 
 #: startup.py:113 startup.py:123
 msgid "1W enabled"
@@ -511,11 +511,11 @@ msgstr "digitaalinen estetty"
 
 #: startup.py:167 startup.py:175 startup.py:184
 msgid "openplotter-gpio-read running"
-msgstr ""
+msgstr "openplotter-gpio-luku käynnissä"
 
 #: startup.py:179 startup.py:188
 msgid "openplotter-gpio-read not running"
-msgstr ""
+msgstr "ei openplotter-pypilot-lukua"
 
 #: startup.py:199
 msgid "Access to Signal K server validated"
