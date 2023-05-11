@@ -49,32 +49,35 @@ class Actions:
 
 	def run(self,action,data):
 		try:
-			
 			state = ''
 			message = ''
 			sound = False
 			visual = False
-
 			if '-high' in action or '-low' in action:
 				items = action.split('-')
 				host = items[0]
 				gpio = int(items[1])
 				turn = items[2]
-				pi = pigpio.pi(host)
-				pi.set_mode(gpio, pigpio.OUTPUT)
-				if turn == 'high': pi.write(gpio,1)
-				elif turn == 'low': pi.write(gpio,0)
-				pi.stop()
-				key = 'notifications.GPIO'+str(gpio)
-				lines = data.split('\n')
-				for i in lines:
-					line = i.split('=')
-					if line[0].strip() == 'state': state = line[1].strip()
-					elif line[0].strip() == 'message': message = line[1].strip()
-					elif line[0].strip() == 'sound':
-						if line[1].strip()=="yes": sound = True
-					elif line[0].strip() == 'visual':
-						if line[1].strip()=="yes": visual = True
+				data0 = self.conf.get('GPIO', 'digital')
+				try: digitalList = eval(data0)
+				except: digitalList = {}
+				if host+'-'+str(gpio) in digitalList:
+					pi = pigpio.pi(host)
+					pi.set_mode(gpio, pigpio.OUTPUT)
+					if turn == 'high': pi.write(gpio,1)
+					elif turn == 'low': pi.write(gpio,0)
+					pi.stop()
+					key = 'notifications.GPIO'+str(gpio)
+					lines = data.split('\n')
+					for i in lines:
+						line = i.split('=')
+						if line[0].strip() == 'state': state = line[1].strip()
+						elif line[0].strip() == 'message': message = line[1].strip()
+						elif line[0].strip() == 'sound':
+							if line[1].strip()=="yes": sound = True
+						elif line[0].strip() == 'visual':
+							if line[1].strip()=="yes": visual = True
+				else: return
 			elif '-reset' in action:
 				items = action.split('-')
 				gpio = items[0]
