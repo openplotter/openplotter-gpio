@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
 "POT-Creation-Date: 2023-02-08 21:07+0100\n"
-"PO-Revision-Date: 2023-02-09 19:23+0100\n"
+"PO-Revision-Date: 2023-05-11 14:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl\n"
@@ -422,11 +422,11 @@ msgstr "wewnętrzny rezystor podciągający"
 
 #: openplotterGpio.py:1183 openplotterGpio.py:1201
 msgid "state:"
-msgstr ""
+msgstr "stan:"
 
 #: openplotterGpio.py:1188 openplotterGpio.py:1206
 msgid "message:"
-msgstr ""
+msgstr "wiadomość:"
 
 #: openplotterGpio.py:1192 openplotterGpio.py:1210
 msgid "method:"
@@ -447,15 +447,15 @@ msgstr "Wprowadź nazwę hosta."
 
 #: openplotterGpio.py:1332
 msgid "Editing GPIO digital output"
-msgstr ""
+msgstr "Edycja cyfrowego wyjścia GPIO"
 
 #: openplotterGpio.py:1333
 msgid "Adding GPIO digital output"
-msgstr ""
+msgstr "Dodawanie cyfrowego wyjścia GPIO"
 
 #: startup.py:29
 msgid "Starting GPIO..."
-msgstr ""
+msgstr "Uruchamianie GPIO..."
 
 #: startup.py:49
 msgid "GPIO started"
@@ -463,7 +463,7 @@ msgstr ""
 
 #: startup.py:51
 msgid "No GPIO defined"
-msgstr ""
+msgstr "Nie zdefiniowano GPIO"
 
 #: startup.py:64
 msgid "Checking GPIO..."
@@ -479,11 +479,11 @@ msgstr "pigpiod nieuruchomiony"
 
 #: startup.py:98
 msgid "Seatalk1 enabled"
-msgstr ""
+msgstr "Seatalk1 włączone"
 
 #: startup.py:102
 msgid "Seatalk1 disabled"
-msgstr ""
+msgstr "Seatalk 1 wyłączony"
 
 #: startup.py:113 startup.py:123
 msgid "1W enabled"
@@ -511,11 +511,11 @@ msgstr "cyfrowy wyłączony"
 
 #: startup.py:167 startup.py:175 startup.py:184
 msgid "openplotter-gpio-read running"
-msgstr ""
+msgstr "openplotter-gpio-read działa"
 
 #: startup.py:179 startup.py:188
 msgid "openplotter-gpio-read not running"
-msgstr ""
+msgstr "openplotter-gpio-read nie działa"
 
 #: startup.py:199
 msgid "Access to Signal K server validated"

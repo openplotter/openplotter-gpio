@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
 "POT-Creation-Date: 2023-02-08 21:07+0100\n"
-"PO-Revision-Date: 2023-02-09 19:23+0100\n"
+"PO-Revision-Date: 2023-05-11 14:36+0200\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -102,7 +102,7 @@ msgstr "Bestätigen"
 
 #: openplotterGpio.py:59
 msgid "Reconnect"
-msgstr ""
+msgstr "Neu verbinden"
 
 #: openplotterGpio.py:62
 msgid "Refresh"
@@ -150,7 +150,7 @@ msgstr " Drücken Sie \"Genehmigen\" und dann \"Aktualisieren\"."
 
 #: openplotterGpio.py:206
 msgid " Try \"Reconnect\"."
-msgstr ""
+msgstr " Versuchen Sie \"Erneut verbinden\"."
 
 #: openplotterGpio.py:208
 msgid " Press \"Refresh\"."
@@ -479,7 +479,7 @@ msgstr "pigpiod läuft nicht"
 
 #: startup.py:98
 msgid "Seatalk1 enabled"
-msgstr ""
+msgstr "Seatalk1 aktiviert"
 
 #: startup.py:102
 msgid "Seatalk1 disabled"
