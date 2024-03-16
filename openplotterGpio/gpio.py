@@ -66,11 +66,11 @@ class Gpio:
 		else:
 			gpioBCM = '4'
 			pin = '7'
-			config = '/boot/config.txt'
+			config = '/boot/firmware/config.txt'
 			try: 
 				file = open(config, 'r')
 			except:
-				config = '/boot/firmware/config.txt'
+				config = '/boot/config.txt'
 				file = open(config, 'r')
 			while True:
 				line = file.readline()

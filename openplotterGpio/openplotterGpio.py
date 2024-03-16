@@ -500,12 +500,12 @@ class MyFrame(wx.Frame):
 			return
 		gpios = gpio.Gpio()
 		gpioBCM = '4'
-		config = '/boot/config.txt'
-		boot = '/boot'
+		config = '/boot/firmware/config.txt'
+		boot = '/boot/firmware'
 		try: file = open(config, 'r')
 		except:
-			config = '/boot/firmware/config.txt'
-			boot = '/boot/firmware'
+			config = '/boot/config.txt'
+			boot = '/boot'
 			file = open(config, 'r')
 		while True:
 			line = file.readline()
