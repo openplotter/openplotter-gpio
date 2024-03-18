@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import os, subprocess
+import os, subprocess, sys
 from openplotterSettings import conf
 from openplotterSettings import language
 
@@ -32,12 +32,20 @@ def main():
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	print(_('Removing pigpiod service...'))
+	print(_('Removing services...'))
 	try:
 		subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
-		subprocess.call(['systemctl', 'disable', 'pigpiod'])
-		subprocess.call(['systemctl', 'stop', 'pigpiod'])
-		subprocess.call(['systemctl', 'daemon-reload'])
+		'''
+		try:
+			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
+			out = out.replace("\n","")
+			out = out.strip()
+		except: out = ''
+		if out != '5':
+			subprocess.call(['systemctl', 'disable', 'pigpiod'])
+			subprocess.call(['systemctl', 'stop', 'pigpiod'])
+			subprocess.call(['systemctl', 'daemon-reload'])
+		'''
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 

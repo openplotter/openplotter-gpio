@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys, subprocess, uuid
+import os, sys, subprocess
 from openplotterSettings import conf
 from openplotterSettings import language
 from .version import version
@@ -29,26 +29,25 @@ def main():
 
 	print(_('Installing python packages...'))
 	try:
-		subprocess.call(['pip3', 'install', 'w1thermsensor', 'websocket-client', '-U'])
+		subprocess.call(['pip3', 'install', 'w1thermsensor', '-U', '--break-system-packages'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	print(_('Enabling pigpiod service...'))
+	'''
 	try:
-		subprocess.call(['systemctl', 'enable', 'pigpiod'])
-		subprocess.call(['systemctl', 'restart', 'pigpiod'])
-		subprocess.call(['systemctl', 'daemon-reload'])
-		print(_('DONE'))
-	except Exception as e: print(_('FAILED: ')+str(e))
-
-	print(_('Checking access to Signal K server...'))
-	try:
-		from openplotterSignalkInstaller import connections
-		skConnections = connections.Connections('GPIO')
-		result = skConnections.checkConnection()
-		if result[1]: print(result[1])
-		else: print(_('DONE'))
-	except Exception as e: print(_('FAILED: ')+str(e))
+		out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
+		out = out.replace("\n","")
+		out = out.strip()
+	except: out = ''
+	if out != '5':
+		print(_('Enabling pigpiod service...'))
+		try:
+			subprocess.call(['systemctl', 'enable', 'pigpiod'])
+			subprocess.call(['systemctl', 'restart', 'pigpiod'])
+			subprocess.call(['systemctl', 'daemon-reload'])
+			print(_('DONE'))
+		except Exception as e: print(_('FAILED: ')+str(e))
+	'''
 
 	print(_('Setting version...'))
 	try:

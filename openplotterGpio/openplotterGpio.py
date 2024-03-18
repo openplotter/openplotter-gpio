@@ -21,7 +21,6 @@ from openplotterSettings import language
 from openplotterSettings import platform
 from openplotterSettings import gpio
 from openplotterSettings import selectKey
-from openplotterSignalkInstaller import connections
 try: from w1thermsensor import W1ThermSensor
 except: pass
 from .version import version
@@ -34,6 +33,12 @@ class MyFrame(wx.Frame):
 		self.currentdir = os.path.dirname(os.path.abspath(__file__))
 		self.currentLanguage = self.conf.get('GENERAL', 'lang')
 		self.language = language.Language(self.currentdir,'openplotter-gpio',self.currentLanguage)
+
+		try:
+			self.piType = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
+			self.piType = self.piType.replace("\n","")
+			self.piType = self.piType.strip()
+		except: self.piType = ''
 
 		wx.Frame.__init__(self, None, title='GPIO '+version, size=(800,444))
 		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
@@ -54,11 +59,6 @@ class MyFrame(wx.Frame):
 		toolGpio = self.toolbar1.AddTool(103, _('GPIO Map'), wx.Bitmap(self.currentdir+"/data/chip.png"))
 		self.Bind(wx.EVT_TOOL, self.OnToolGpio, toolGpio)
 		self.toolbar1.AddSeparator()
-		self.aproveSK = self.toolbar1.AddTool(105, _('Approve'), wx.Bitmap(self.currentdir+"/data/sk.png"))
-		self.Bind(wx.EVT_TOOL, self.onAproveSK, self.aproveSK)
-		self.connectionSK = self.toolbar1.AddTool(106, _('Reconnect'), wx.Bitmap(self.currentdir+"/data/sk.png"))
-		self.Bind(wx.EVT_TOOL, self.onConnectionSK, self.connectionSK)
-		self.toolbar1.AddSeparator()
 		self.refresh = self.toolbar1.AddTool(104, _('Refresh'), wx.Bitmap(self.currentdir+"/data/refresh.png"))
 		self.Bind(wx.EVT_TOOL, self.onRefresh, self.refresh)
 		self.toolbar1.AddSeparator()
@@ -73,14 +73,14 @@ class MyFrame(wx.Frame):
 		self.seatalk = wx.Panel(self.notebook)
 		self.pulses = wx.Panel(self.notebook)
 		self.connections = wx.Panel(self.notebook)
+		self.notebook.AddPage(self.oneW, '1W')
 		self.notebook.AddPage(self.digital, _('Digital'))
 		self.notebook.AddPage(self.pulses, _('Pulses'))
-		self.notebook.AddPage(self.oneW, '1W')
 		self.notebook.AddPage(self.seatalk, _(' Seatalk1 input'))
 		self.il = wx.ImageList(24, 24)
-		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/digital.png", wx.BITMAP_TYPE_PNG))
-		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/pulses.png", wx.BITMAP_TYPE_PNG))
-		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/temp.png", wx.BITMAP_TYPE_PNG))
+		img0 = self.il.Add(wx.Bitmap(self.currentdir+"/data/temp.png", wx.BITMAP_TYPE_PNG))
+		img1 = self.il.Add(wx.Bitmap(self.currentdir+"/data/digital.png", wx.BITMAP_TYPE_PNG))
+		img2 = self.il.Add(wx.Bitmap(self.currentdir+"/data/pulses.png", wx.BITMAP_TYPE_PNG))
 		img3 = self.il.Add(wx.Bitmap(self.currentdir+"/data/seatalk.png", wx.BITMAP_TYPE_PNG))
 		self.notebook.AssignImageList(self.il)
 		self.notebook.SetPageImage(0, img0)
@@ -95,10 +95,10 @@ class MyFrame(wx.Frame):
 
 		if not self.platform.isRPI: self.toolbar1.EnableTool(103,False)
 
-		self.pageDigital()
+		#self.pageDigital()
 		self.pageOneW()
-		self.pagePulses()
-		self.pageSeatalk()
+		#self.pagePulses()
+		#if self.piType != '5': self.pageSeatalk()
 
 		self.onRefresh()
 
@@ -140,16 +140,6 @@ class MyFrame(wx.Frame):
 		res = dlg.ShowModal()
 		dlg.Destroy()
 
-	def onAproveSK(self,e):
-		if self.platform.skPort: 
-			url = self.platform.http+'localhost:'+self.platform.skPort+'/admin/#/security/access/requests'
-			webbrowser.open(url, new=2)
-
-	def onConnectionSK(self,e):
-		self.conf.set('GPIO', 'href', '')
-		self.conf.set('GPIO', 'token', '')
-		self.onRefresh()
-
 	def restart_SK(self, msg):
 		if self.platform.skDir:
 			if msg == 0: msg = _('Restarting Signal K server... ')
@@ -166,15 +156,15 @@ class MyFrame(wx.Frame):
 	def onRefresh(self, e=0):
 		self.ShowStatusBarBLACK(' ')
 
-		self.readSeatalk()
+		#if self.piType != '5': self.readSeatalk()
 		self.readOneW()
-		self.readPulses()
-		self.readDigital()
+		#self.readPulses()
+		#self.readDigital()
 
 		enable = False
 		if self.oneWlist: enable = True
-		if self.gpioPulses: enable = True
-		if self.gpioDigital: enable = True
+		#if self.gpioPulses: enable = True
+		#if self.gpioDigital: enable = True
 		if enable:
 			test = subprocess.check_output(['ps','aux']).decode(sys.stdin.encoding)
 			if not 'openplotter-gpio-read' in test:
@@ -192,24 +182,11 @@ class MyFrame(wx.Frame):
 		else: 
 			self.stopGpioRead()
 			self.ShowStatusBarBLACK(_('There is nothing to send. GPIO service is disabled'))
-
-		try: subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
-		except: self.ShowStatusBarRED('pigpiod is disabled')
-
-		self.toolbar1.EnableTool(105,False)
-		skConnections = connections.Connections('GPIO')
-		result = skConnections.checkConnection()
-		if result[0] == 'pending':
-			self.toolbar1.EnableTool(105,True)
-			self.ShowStatusBarYELLOW(result[1]+_(' Press "Approve" and then "Refresh".'))
-		elif result[0] == 'error':
-			self.ShowStatusBarRED(result[1]+_(' Try "Reconnect".'))
-		elif result[0] == 'repeat':
-			self.ShowStatusBarYELLOW(result[1]+_(' Press "Refresh".'))
-		elif result[0] == 'permissions':
-			self.ShowStatusBarYELLOW(result[1])
-		elif result[0] == 'approved':
-			self.ShowStatusBarGREEN(result[1])
+		'''
+		if self.piType != '5':
+			try: subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
+			except: self.ShowStatusBarRED('pigpiod is disabled')
+		'''
 
 	def onToolRescue(self,e):
 		if self.toolbar1.GetToolState(107): self.conf.set('GENERAL', 'rescue', 'yes')
@@ -454,7 +431,7 @@ class MyFrame(wx.Frame):
 			self.listOneW = wx.ListCtrl(self.oneW, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
 			self.listOneW.InsertColumn(0, _('Type'), width=80)
 			self.listOneW.InsertColumn(1, 'ID', width=110)
-			self.listOneW.InsertColumn(2, _('Signal K key'), width=370)
+			self.listOneW.InsertColumn(2, _('Signal K key'), width=360)
 			self.listOneW.InsertColumn(3, _('Rate'), width=75)
 			self.listOneW.InsertColumn(4, _('Offset'), width=75)
 			self.listOneW.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistOneWSelected)
@@ -830,12 +807,12 @@ class edit1W(wx.Dialog):
 		self.platform = platform.Platform()
 		title = _('Editing sensor ')+sid
 
-		wx.Dialog.__init__(self, None, title=title, size=(450, 180))
+		wx.Dialog.__init__(self, None, title=title, size=(450, 200))
 		self.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
 		panel = wx.Panel(self)
 
 		titl = wx.StaticText(panel, label=_('Signal K key'))
-		self.SKkey = wx.TextCtrl(panel)
+		self.SKkey = wx.TextCtrl(panel,size=(-1, 25))
 		self.SKkey.SetValue(sk)
 
 		self.edit_skkey = wx.Button(panel, label=_('Edit'))
@@ -847,11 +824,11 @@ class edit1W(wx.Dialog):
 
 		self.rate_list = ['1.0', '5.0', '30.0', '60.0', '300.0']
 		self.rate_label = wx.StaticText(panel, label=_('Rate (seconds)'))
-		self.rate = wx.ComboBox(panel, choices=self.rate_list, style=wx.CB_READONLY)
+		self.rate = wx.ComboBox(panel, choices=self.rate_list, style=wx.CB_READONLY,size=(-1, 25))
 		self.rate.SetValue(rate)
 
 		self.offset_label = wx.StaticText(panel, label=_('Offset'))
-		self.offset = wx.TextCtrl(panel)
+		self.offset = wx.TextCtrl(panel,size=(-1, 25))
 		self.offset.SetValue(offset)
 
 		cancelBtn = wx.Button(panel, wx.ID_CANCEL)

@@ -16,10 +16,11 @@
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
 import threading, time, pigpio, math, ujson, ssl, subprocess, sys
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from openplotterSettings import conf
 from openplotterSettings import platform
 from websocket import create_connection
+from openplotterSignalkInstaller import connections
 try: from w1thermsensor import W1ThermSensor, Unit
 except: pass
 
@@ -65,7 +66,8 @@ class Process:
 	def connect(self):
 		self.platform = platform.Platform()
 		uri = self.platform.ws+'localhost:'+self.platform.skPort+'/signalk/v1/stream?subscribe=none'
-		token = self.conf.get('GPIO', 'token')
+		skConnections = connections.Connections('GPIO')
+		token = skConnections.token
 		if token:
 			headers = {'Authorization': 'Bearer '+token}
 			self.ws = create_connection(uri, header=headers, sslopt={"cert_reqs": ssl.CERT_NONE})
@@ -284,6 +286,7 @@ def main():
 	for i in oneWlist:
 		if oneWlist[i]['sk']: enableX1 = True
 
+	'''
 	data = conf2.get('GPIO', 'pulses')
 	try: pulselist = eval(data)
 	except: pulselist = {}
@@ -295,6 +298,7 @@ def main():
 	try: digitalList = eval(data)
 	except: digitalList = {}
 	if digitalList: enableX4 = True
+	'''
 
 	if enableX1 or enableX2 or enableX3 or enableX4:
 		process = Process()

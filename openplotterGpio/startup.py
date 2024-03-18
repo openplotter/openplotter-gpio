@@ -71,37 +71,44 @@ class Check():
 
 		#pigpiod
 		try:
-			subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
-			msg = _('pigpiod running')
-			if not green: green = msg
-			else: green+= ' | '+msg
-		except: 
-			msg = _('pigpiod not running')
-			if red: red += '\n   '+msg
-			else: red = msg
-		#seatalk
-		try:
-			setting_file = platform2.skDir+'/settings.json'
-			with open(setting_file) as data_file:
-				data = ujson.load(data_file)
-		except: data = {}
-		if 'pipedProviders' in data:
-			data = data['pipedProviders']
-		else:
-			data = []
-		seatalkExists = False
-		for i in data:
+			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
+			out = out.replace("\n","")
+			out = out.strip()
+		except: out = ''
+		if out != '5':
 			try:
-				if i['pipeElements'][0]['options']['type'] == 'Seatalk' and i['enabled']: seatalkExists = True
-			except: pass
-		if seatalkExists:
-			msg = _('Seatalk1 enabled')
-			if not black: black = msg
-			else: black+= ' | '+msg
-		else: 
-			msg = _('Seatalk1 disabled')
-			if not black: black = msg
-			else: black+= ' | '+msg
+				subprocess.check_output(['systemctl', 'is-active', 'pigpiod']).decode(sys.stdin.encoding)
+				msg = _('pigpiod running')
+				if not green: green = msg
+				else: green+= ' | '+msg
+			except: 
+				msg = _('pigpiod not running')
+				if red: red += '\n   '+msg
+				else: red = msg
+			#seatalk
+			try:
+				setting_file = platform2.skDir+'/settings.json'
+				with open(setting_file) as data_file:
+					data = ujson.load(data_file)
+			except: data = {}
+			if 'pipedProviders' in data:
+				data = data['pipedProviders']
+			else:
+				data = []
+			seatalkExists = False
+			for i in data:
+				try:
+					if i['pipeElements'][0]['options']['type'] == 'Seatalk' and i['enabled']: seatalkExists = True
+				except: pass
+			if seatalkExists:
+				msg = _('Seatalk1 enabled')
+				if not black: black = msg
+				else: black+= ' | '+msg
+			else: 
+				msg = _('Seatalk1 disabled')
+				if not black: black = msg
+				else: black+= ' | '+msg
+
 
 		#1W
 		data = self.conf.get('GPIO', '1w')
@@ -128,6 +135,7 @@ class Check():
 				if not black: black = msg
 				else: black+= ' | '+msg
 
+
 		#pulses
 		data = self.conf.get('GPIO', 'pulses')
 		try: pulseslist = eval(data)
@@ -153,6 +161,7 @@ class Check():
 			msg = _('digital disabled')
 			if not black: black = msg
 			else: black+= ' | '+msg
+
 
 		#service
 		if self.conf.get('GENERAL', 'rescue') == 'yes':
@@ -192,10 +201,10 @@ class Check():
 		#access
 		skConnections = connections.Connections('GPIO')
 		result = skConnections.checkConnection()
-		if result[0] == 'pending' or result[0] == 'error' or result[0] == 'repeat' or result[0] == 'permissions':
+		if result[0] =='error':
 			if not red: red = result[1]
 			else: red+= '\n    '+result[1]
-		if result[0] == 'approved' or result[0] == 'validated':
+		if result[0] =='validated':
 			msg = _('Access to Signal K server validated')
 			if not black: black = msg
 			else: black+= ' | '+msg
