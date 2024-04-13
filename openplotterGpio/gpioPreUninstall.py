@@ -34,7 +34,9 @@ def main():
 
 	print(_('Removing services...'))
 	try:
-		subprocess.call(['pkill', '-f', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
+		subprocess.call(['systemctl', 'daemon-reload'])
 		'''
 		try:
 			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)

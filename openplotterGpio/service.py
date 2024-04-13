@@ -23,3 +23,9 @@ if sys.argv[1]=='sk':
 		subprocess.call(['systemctl', 'stop', 'signalk.socket'])
 		subprocess.call(['systemctl', 'start', 'signalk.socket'])
 		subprocess.call(['systemctl', 'start', 'signalk.service'])
+elif sys.argv[1]=='enable':
+	subprocess.call(['systemctl', 'restart', 'openplotter-gpio-read.service'])
+	subprocess.call(['systemctl', 'enable', 'openplotter-gpio-read.service'])
+elif sys.argv[1]=='disable':
+	subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read.service'])
+	subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read.service'])

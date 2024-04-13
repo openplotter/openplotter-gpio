@@ -29,7 +29,16 @@ def main():
 
 	print(_('Installing python packages...'))
 	try:
-		subprocess.call(['pip3', 'install', 'w1thermsensor', '-U', '--break-system-packages'])
+		subprocess.call(['pip3', 'install', 'w1thermsensor', 'gpiod', '-U', '--break-system-packages'])
+		print(_('DONE'))
+	except Exception as e: print(_('FAILED: ')+str(e))
+
+	print(_('Creating services...'))
+	try:
+		fo = open('/etc/systemd/system/openplotter-gpio-read.service', "w")
+		fo.write( '[Service]\nEnvironment=OPrescue=0\nEnvironmentFile=/boot/firmware/config.txt\nExecStart=openplotter-gpio-read $OPrescue\nUser='+conf2.user+'\nRestart=always\nRestartSec=3\n\n[Install]\nWantedBy=local-fs.target')
+		fo.close()
+		subprocess.call(['systemctl', 'daemon-reload'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 

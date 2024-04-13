@@ -108,19 +108,17 @@ class Gpio:
 		try: digitalList = eval(data)
 		except: digitalList = {}
 		for i in digitalList:
-			items = i.split('-')
-			if items[0] == 'localhost':
-				gpioBCM = 'GPIO '+items[1]
-				for ii in self.gpioMap:
-					if gpioBCM == ii['BCM']:
-						pin = ii['physical']
-						if digitalList[i]['mode'] == 'in':
-							ground = True
-							power3 = True
-							self.used.append({'app':'GPIO', 'id':'digital input', 'physical':pin})
-						elif digitalList[i]['mode'] == 'out':
-							ground = True
-							self.used.append({'app':'GPIO', 'id':'digital output', 'physical':pin})
+			gpioBCM = 'GPIO '+i
+			for ii in self.gpioMap:
+				if gpioBCM == ii['BCM']:
+					pin = ii['physical']
+					if digitalList[i]['mode'] == 'in':
+						ground = True
+						power3 = True
+						self.used.append({'app':'GPIO', 'id':'digital input', 'physical':pin})
+					elif digitalList[i]['mode'] == 'out':
+						ground = True
+						self.used.append({'app':'GPIO', 'id':'digital output', 'physical':pin})
 		#common
 		if power3:
 			self.used.append({'app':'GPIO', 'id':'power', 'physical':'1'})

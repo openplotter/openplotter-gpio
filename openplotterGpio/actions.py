@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Openplotter. If not, see <http://www.gnu.org/licenses/>.
 
-import os, subprocess, pigpio
+import os, subprocess, gpiod, sys
 from openplotterSettings import language
+from gpiod.line import Direction, Value
 
 class Actions:
 	def __init__(self,conf,currentLanguage):
@@ -32,12 +33,9 @@ class Actions:
 		except: digitalList = {}
 		if digitalList:
 			for i in digitalList:
-				items = i.split('-')
-				host = items[0]
-				gpio = items[1]
 				if digitalList[i]['mode'] == 'out':
-					self.available.append({'ID':i+'-high','name': host+'-'+'GPIO'+gpio+': '+_('turn it high'),"module": "openplotterGpio",'data':True,'default':'state=alert\nmessage=GPIO'+gpio+' is high\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
-					self.available.append({'ID':i+'-low','name': host+'-'+'GPIO'+gpio+': '+_('turn it low'),"module": "openplotterGpio",'data':True,'default':'state=normal\nmessage=GPIO'+gpio+' is low\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
+					self.available.append({'ID':i+'-high','name': 'GPIO'+i+': '+_('turn it high'),"module": "openplotterGpio",'data':True,'default':'state=alert\nmessage=GPIO'+i+' is high\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
+					self.available.append({'ID':i+'-low','name': 'GPIO'+i+': '+_('turn it low'),"module": "openplotterGpio",'data':True,'default':'state=normal\nmessage=GPIO'+i+' is low\nsound=no\nvisual=yes','help':_('Allowed values for state:')+' normal, alert, warn, alarm, emergency'})
 
 		data = self.conf.get('GPIO', 'pulses')
 		try: pulsesList = eval(data)
@@ -53,21 +51,29 @@ class Actions:
 			message = ''
 			sound = False
 			visual = False
+
 			if '-high' in action or '-low' in action:
 				items = action.split('-')
-				host = items[0]
-				gpio = int(items[1])
-				turn = items[2]
+				gpio = items[0]
+				turn = items[1]
 				data0 = self.conf.get('GPIO', 'digital')
 				try: digitalList = eval(data0)
 				except: digitalList = {}
-				if host+'-'+str(gpio) in digitalList:
-					pi = pigpio.pi(host)
-					pi.set_mode(gpio, pigpio.OUTPUT)
-					if turn == 'high': pi.write(gpio,1)
-					elif turn == 'low': pi.write(gpio,0)
-					pi.stop()
-					key = 'notifications.GPIO'+str(gpio)
+				if gpio in digitalList:
+					if turn == 'low': value = Value.INACTIVE
+					elif turn == 'high': value = Value.ACTIVE
+					try:
+						out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
+						out = out.replace("\n","")
+						out = out.strip()
+					except: out = ''
+					if out == '5': chip = '/dev/gpiochip4'
+					elif out == '4': chip = '/dev/gpiochip0'
+					else: chip = ''
+					if chip:
+						with gpiod.request_lines(chip,consumer="toggle-line-value",config={int(gpio): gpiod.LineSettings(direction=Direction.OUTPUT)}) as request:
+							request.set_value(int(gpio), value)
+					key = 'notifications.GPIO'+gpio
 					lines = data.split('\n')
 					for i in lines:
 						line = i.split('=')
