@@ -1,3 +1,9 @@
+openplotter-gpio (4.2.0-beta) bookworm; urgency=medium
+
+  * beta
+
+ -- Sailoog <info@sailoog.com>  Sat, 16 Mar 2024 11:54:49 +0100
+
 openplotter-gpio (3.2.32-stable) bullseye; urgency=medium
 
   * Update translations
