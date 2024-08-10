@@ -36,8 +36,6 @@ def main():
 	try:
 		subprocess.call(['systemctl', 'disable', 'openplotter-gpio-read'])
 		subprocess.call(['systemctl', 'stop', 'openplotter-gpio-read'])
-		subprocess.call(['systemctl', 'daemon-reload'])
-		'''
 		try:
 			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
 			out = out.replace("\n","")
@@ -46,8 +44,7 @@ def main():
 		if out != '5':
 			subprocess.call(['systemctl', 'disable', 'pigpiod'])
 			subprocess.call(['systemctl', 'stop', 'pigpiod'])
-			subprocess.call(['systemctl', 'daemon-reload'])
-		'''
+		subprocess.call(['systemctl', 'daemon-reload'])
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 

@@ -42,7 +42,7 @@ def main():
 		print(_('DONE'))
 	except Exception as e: print(_('FAILED: ')+str(e))
 
-	'''
+
 	try:
 		out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
 		out = out.replace("\n","")
@@ -56,7 +56,7 @@ def main():
 			subprocess.call(['systemctl', 'daemon-reload'])
 			print(_('DONE'))
 		except Exception as e: print(_('FAILED: ')+str(e))
-	'''
+
 
 	print(_('Setting version...'))
 	try:

@@ -45,7 +45,6 @@ class Check():
 		red = ''
 
 		#pigpiod
-		'''
 		try:
 			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
 			out = out.replace("\n","")
@@ -84,7 +83,7 @@ class Check():
 				msg = _('Seatalk1 disabled')
 				if not black: black = msg
 				else: black+= ' | '+msg
-		'''
+
 
 		#1W
 		data = self.conf.get('GPIO', '1w')

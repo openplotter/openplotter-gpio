@@ -94,9 +94,9 @@ class MyFrame(wx.Frame):
 		self.pageDigital()
 		self.pageOneW()
 		self.pagePulses()
-		#if self.piType != '5': self.pageSeatalk()
+		self.pageSeatalk()
 
-		#if self.piType != '5': self.readSeatalk()
+		if self.piType != '5': self.readSeatalk()
 		self.readOneW()
 		self.readPulses()
 		self.readDigital()
@@ -153,7 +153,7 @@ class MyFrame(wx.Frame):
 		subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'disable'])
 
 	def onRefresh(self, e=0):
-		#if self.piType != '5': self.readSeatalk()
+		if self.piType != '5': self.readSeatalk()
 		self.readOneW()
 		self.readPulses()
 		self.readDigital()
@@ -169,11 +169,10 @@ class MyFrame(wx.Frame):
 			subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'disable'])
 			self.ShowStatusBarBLACK(_('GPIO service is disabled'))
 
-		'''
 		if self.piType != '5':
 			try: subprocess.check_output(['systemctl', 'is-enabled', 'pigpiod']).decode(sys.stdin.encoding)
 			except: self.ShowStatusBarRED('pigpiod is disabled')
-		'''
+
 
 	###########################################################################
 
@@ -566,27 +565,39 @@ class MyFrame(wx.Frame):
 
 	def pageSeatalk(self):
 		if self.platform.isRPI:
-			self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-			self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
-			self.listSeatalk.InsertColumn(1, _('Invert signal'), width=200)
-			self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=270)
-			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
-			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
-			self.listSeatalk.SetTextColour(wx.BLACK)
+			if self.piType != '5':
+				self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+				self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
+				self.listSeatalk.InsertColumn(1, _('Invert signal'), width=200)
+				self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=270)
+				self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
+				self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
+				self.listSeatalk.SetTextColour(wx.BLACK)
 
-			self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
-			self.addSeatalkCon = self.toolbar3.AddTool(303, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
-			self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
-			self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
-			self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
-			self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
-			self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
+				self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
+				self.addSeatalkCon = self.toolbar3.AddTool(303, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+				self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
+				self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+				self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
+				self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+				self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
 
-			sizer = wx.BoxSizer(wx.HORIZONTAL)
-			sizer.Add(self.listSeatalk, 1, wx.EXPAND, 0)
-			sizer.Add(self.toolbar3, 0, wx.EXPAND, 0)
+				sizer = wx.BoxSizer(wx.HORIZONTAL)
+				sizer.Add(self.listSeatalk, 1, wx.EXPAND, 0)
+				sizer.Add(self.toolbar3, 0, wx.EXPAND, 0)
 
-			self.seatalk.SetSizer(sizer)
+				self.seatalk.SetSizer(sizer)
+			else:
+				text1 = wx.StaticText(self.seatalk, label=_('At the moment, this feature only works on Raspberry Pi 4.'))
+				hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+				hbox1.AddStretchSpacer(1)
+				hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
+				hbox1.AddStretchSpacer(1)
+				vbox = wx.BoxSizer(wx.VERTICAL)
+				vbox.AddStretchSpacer(1)
+				vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
+				vbox.AddStretchSpacer(1)
+				self.seatalk.SetSizer(vbox)
 		else:
 			text1 = wx.StaticText(self.seatalk, label=_('This feature is only for Raspberry Pi.'))
 			hbox1 = wx.BoxSizer(wx.HORIZONTAL)
