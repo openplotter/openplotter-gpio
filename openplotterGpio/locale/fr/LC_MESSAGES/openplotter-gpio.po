@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
 "POT-Creation-Date: 2024-08-10 11:05+0200\n"
-"PO-Revision-Date: 2024-08-10 11:09+0200\n"
+"PO-Revision-Date: 2024-08-29 13:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -66,7 +66,7 @@ msgstr "Création des services..."
 
 #: gpioPostInstall.py:52
 msgid "Enabling pigpiod service..."
-msgstr ""
+msgstr "Activation du service pigpiod..."
 
 #: gpioPostInstall.py:61
 msgid "Setting version..."
@@ -251,7 +251,7 @@ msgstr "Identifiant de connexion SK"
 
 #: openplotterGpio.py:591
 msgid "At the moment, this feature only works on Raspberry Pi 4."
-msgstr ""
+msgstr "Pour le moment, cette fonctionnalité ne fonctionne que sur Raspberry Pi 4."
 
 #: openplotterGpio.py:602
 msgid "This feature is only for Raspberry Pi."
@@ -417,19 +417,19 @@ msgstr "Vérification du GPIO..."
 
 #: startup.py:56
 msgid "pigpiod running"
-msgstr ""
+msgstr "pigpiod actif"
 
 #: startup.py:60
 msgid "pigpiod not running"
-msgstr ""
+msgstr "pigpiod inactif"
 
 #: startup.py:79
 msgid "Seatalk1 enabled"
-msgstr ""
+msgstr "Seatalk1 activé"
 
 #: startup.py:83
 msgid "Seatalk1 disabled"
-msgstr ""
+msgstr "Seatalk1 désactivé"
 
 #: startup.py:95 startup.py:105
 msgid "1W enabled"
