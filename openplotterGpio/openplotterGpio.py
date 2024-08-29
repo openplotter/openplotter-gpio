@@ -29,6 +29,8 @@ class MyFrame(wx.Frame):
 	def __init__(self):
 		self.conf = conf.Conf()
 		self.conf_folder = self.conf.conf_folder
+		if self.conf.get('GENERAL', 'debug') == 'yes': self.debug = True
+		else: self.debug = False
 		self.platform = platform.Platform()
 		self.currentdir = os.path.dirname(os.path.abspath(__file__))
 		self.currentLanguage = self.conf.get('GENERAL', 'lang')
@@ -96,7 +98,7 @@ class MyFrame(wx.Frame):
 		self.pagePulses()
 		self.pageSeatalk()
 
-		if self.piType != '5': self.readSeatalk()
+		self.readSeatalk()
 		self.readOneW()
 		self.readPulses()
 		self.readDigital()
@@ -153,7 +155,7 @@ class MyFrame(wx.Frame):
 		subprocess.call([self.platform.admin, 'python3', self.currentdir+'/service.py', 'disable'])
 
 	def onRefresh(self, e=0):
-		if self.piType != '5': self.readSeatalk()
+		self.readSeatalk()
 		self.readOneW()
 		self.readPulses()
 		self.readDigital()
@@ -565,39 +567,29 @@ class MyFrame(wx.Frame):
 
 	def pageSeatalk(self):
 		if self.platform.isRPI:
-			if self.piType != '5':
-				self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
-				self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
-				self.listSeatalk.InsertColumn(1, _('Invert signal'), width=200)
-				self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=270)
-				self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
-				self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
-				self.listSeatalk.SetTextColour(wx.BLACK)
+			self.listSeatalk = wx.ListCtrl(self.seatalk, -1, style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES, size=(-1,200))
+			self.listSeatalk.InsertColumn(0, 'GPIO', width=100)
+			self.listSeatalk.InsertColumn(1, _('Invert signal'), width=195)
+			self.listSeatalk.InsertColumn(2, _('SK connection ID'), width=195)
+			self.listSeatalk.InsertColumn(3, _('Type'), width=195)
+			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onListlistSeatalkSelected)
+			self.listSeatalk.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onListlistSeatalkDeselected)
+			self.listSeatalk.SetTextColour(wx.BLACK)
 
-				self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
-				self.addSeatalkCon = self.toolbar3.AddTool(303, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
-				self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
-				self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
-				self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
-				self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
-				self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
+			self.toolbar3 = wx.ToolBar(self.seatalk, style=wx.TB_TEXT | wx.TB_VERTICAL)
+			self.addSeatalkCon = self.toolbar3.AddTool(303, _('Add'), wx.Bitmap(self.currentdir+"/data/sk.png"))
+			self.Bind(wx.EVT_TOOL, self.onAddSeatalkCon, self.addSeatalkCon)
+			self.editSeatalkCon= self.toolbar3.AddTool(301, _('Edit'), wx.Bitmap(self.currentdir+"/data/edit.png"))
+			self.Bind(wx.EVT_TOOL, self.onEditSeatalkCon, self.editSeatalkCon)
+			self.removeSeatalkCon = self.toolbar3.AddTool(302, _('Remove'), wx.Bitmap(self.currentdir+"/data/cancel.png"))
+			self.Bind(wx.EVT_TOOL, self.onRemoveSeatalkCon, self.removeSeatalkCon)
 
-				sizer = wx.BoxSizer(wx.HORIZONTAL)
-				sizer.Add(self.listSeatalk, 1, wx.EXPAND, 0)
-				sizer.Add(self.toolbar3, 0, wx.EXPAND, 0)
+			sizer = wx.BoxSizer(wx.HORIZONTAL)
+			sizer.Add(self.listSeatalk, 1, wx.EXPAND, 0)
+			sizer.Add(self.toolbar3, 0, wx.EXPAND, 0)
 
-				self.seatalk.SetSizer(sizer)
-			else:
-				text1 = wx.StaticText(self.seatalk, label=_('At the moment, this feature only works on Raspberry Pi 4.'))
-				hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-				hbox1.AddStretchSpacer(1)
-				hbox1.Add(text1, 0, wx.ALL | wx.EXPAND, 5)
-				hbox1.AddStretchSpacer(1)
-				vbox = wx.BoxSizer(wx.VERTICAL)
-				vbox.AddStretchSpacer(1)
-				vbox.Add(hbox1, 0, wx.ALL | wx.EXPAND, 5)
-				vbox.AddStretchSpacer(1)
-				self.seatalk.SetSizer(vbox)
+			self.seatalk.SetSizer(sizer)
+
 		else:
 			text1 = wx.StaticText(self.seatalk, label=_('This feature is only for Raspberry Pi.'))
 			hbox1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -626,16 +618,19 @@ class MyFrame(wx.Frame):
 			ID = ''
 			gpio = '' 
 			gpioInvert = ''
+			library = ''
 			dlg = addSeatalkConn()
 			res = dlg.ShowModal()
 			if res == wx.ID_OK:
 				ID = dlg.ID.GetValue()
+				library = dlg.library.GetValue()
 				gpio = dlg.gpio.GetValue()
 				gpioInvert = dlg.gpioInvert.GetValue()
 				if not ID or not gpio:
 					self.ShowStatusBarRED(_('Fill in all fields'))
 					dlg.Destroy()
 					return
+				if library != 'gpiod' and library != 'pigpio': library = 'gpiod'
 				if len(gpio) == 6: gpio = gpio.replace(' ','0')
 				if len(gpio) == 7: gpio = gpio.replace(' ','')
 				from openplotterSignalkInstaller import editSettings
@@ -646,7 +641,7 @@ class MyFrame(wx.Frame):
 						ID = ID+str(c)
 						c = c + 1
 					else: break
-				if skSettings.setSeatalkConnection(ID, gpio, gpioInvert): 
+				if skSettings.setSeatalkConnection(ID, gpio, gpioInvert, library): 
 					self.restart_SK(0)
 					self.onRefresh()
 				else: self.ShowStatusBarRED(_('Failed. Error creating connection in Signal K'))
@@ -693,6 +688,7 @@ class MyFrame(wx.Frame):
 			gpio = ''
 			gpioInvert = False
 			gpioInvert2 = _('no')
+			library = ''
 			try:
 				dataType = i['pipeElements'][0]['options']['type']
 				if dataType == 'Seatalk':
@@ -700,12 +696,15 @@ class MyFrame(wx.Frame):
 					skId = i['id']
 					enabled = i['enabled']
 					if 'gpio' in subOptions: gpio = subOptions['gpio']
+					if 'type' in subOptions: library = subOptions['type']
+					else: library = 'pigpio'
 					if 'gpioInvert' in subOptions: 
 						gpioInvert = subOptions['gpioInvert']
 						if gpioInvert: gpioInvert2 = _('yes')
-					self.listSeatalk.Append([gpio,gpioInvert2,skId])
+					self.listSeatalk.Append([gpio,gpioInvert2,skId,library])
 					if enabled: self.listSeatalk.SetItemBackgroundColour(self.listSeatalk.GetItemCount()-1,(255,220,100))
-			except: pass
+			except Exception as e: 
+				if self.debug: print(str(e))
 
 ################################################################################
 
@@ -717,11 +716,14 @@ class addSeatalkConn(wx.Dialog):
 		wx.Dialog.__init__(self, None, title=title, size=(260, 230))
 		panel = wx.Panel(self)
 
-		idLabel = wx.StaticText(panel, label=_('ID'))
+		idLabel = wx.StaticText(panel, label=_('ID'),size=(-1, 30))
 		self.ID = wx.TextCtrl(panel)
 
+		library_label = wx.StaticText(panel, label=_('GPIO Library'))
+		self.library = wx.ComboBox(panel, choices=['gpiod','pigpio'], style=wx.CB_READONLY,size=(-1, 30))
+
 		gpioLabel = wx.StaticText(panel, label='GPIO')
-		self.gpio = wx.TextCtrl(panel, style=wx.CB_READONLY)
+		self.gpio = wx.TextCtrl(panel, style=wx.CB_READONLY,size=(-1, 30))
 
 		selectGpio =wx.Button(panel, label=_('Select'))
 		selectGpio.Bind(wx.EVT_BUTTON, self.onSelectGpio)
@@ -734,6 +736,10 @@ class addSeatalkConn(wx.Dialog):
 		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
 		hbox1.Add(idLabel, 0, wx.LEFT | wx.EXPAND, 10)
 		hbox1.Add(self.ID, 1, wx.LEFT |  wx.RIGHT | wx.EXPAND, 10)
+
+		hbox1b = wx.BoxSizer(wx.HORIZONTAL)
+		hbox1b.Add(library_label, 0, wx.LEFT | wx.EXPAND, 10)
+		hbox1b.Add(self.library, 1, wx.LEFT |  wx.RIGHT | wx.EXPAND, 10)
 
 		hbox2 = wx.BoxSizer(wx.HORIZONTAL)
 		hbox2.Add(gpioLabel, 0, wx.LEFT | wx.EXPAND, 10)
@@ -748,9 +754,11 @@ class addSeatalkConn(wx.Dialog):
 		vbox = wx.BoxSizer(wx.VERTICAL)
 		vbox.AddSpacer(10)
 		vbox.Add(hbox1, 0, wx.EXPAND, 0)
-		vbox.AddSpacer(20)
+		vbox.AddSpacer(10)
+		vbox.Add(hbox1b, 0, wx.EXPAND, 0)
+		vbox.AddSpacer(10)
 		vbox.Add(hbox2, 0, wx.EXPAND, 0)
-		vbox.AddSpacer(20)
+		vbox.AddSpacer(10)
 		vbox.Add(self.gpioInvert, 0, wx.LEFT | wx.EXPAND, 5)
 		vbox.AddStretchSpacer(1)
 		vbox.Add(hbox, 0, wx.EXPAND, 0)

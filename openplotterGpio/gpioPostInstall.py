@@ -56,7 +56,12 @@ def main():
 			subprocess.call(['systemctl', 'daemon-reload'])
 			print(_('DONE'))
 		except Exception as e: print(_('FAILED: ')+str(e))
-
+	else:
+		try:
+			subprocess.call(['systemctl', 'disable', 'pigpiod'])
+			subprocess.call(['systemctl', 'stop', 'pigpiod'])
+			subprocess.call(['systemctl', 'daemon-reload'])
+		except: pass
 
 	print(_('Setting version...'))
 	try:
