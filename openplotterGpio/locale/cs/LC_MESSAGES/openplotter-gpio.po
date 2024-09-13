@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: openplotter\n"
-"POT-Creation-Date: 2024-08-10 11:05+0200\n"
-"PO-Revision-Date: 2024-08-29 13:09+0200\n"
+"POT-Creation-Date: 2024-08-29 11:57+0200\n"
+"PO-Revision-Date: 2024-09-13 17:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -49,13 +49,13 @@ msgid "Installing python packages..."
 msgstr "Instalování balíčků pro Python..."
 
 #: gpioPostInstall.py:33 gpioPostInstall.py:42 gpioPostInstall.py:57
-#: gpioPostInstall.py:64 gpioPreUninstall.py:32 gpioPreUninstall.py:48
+#: gpioPostInstall.py:69 gpioPreUninstall.py:32 gpioPreUninstall.py:48
 #: gpioPreUninstall.py:54
 msgid "DONE"
 msgstr "Hotovo"
 
 #: gpioPostInstall.py:34 gpioPostInstall.py:43 gpioPostInstall.py:58
-#: gpioPostInstall.py:65 gpioPreUninstall.py:33 gpioPreUninstall.py:49
+#: gpioPostInstall.py:70 gpioPreUninstall.py:33 gpioPreUninstall.py:49
 #: gpioPreUninstall.py:55
 msgid "FAILED: "
 msgstr "Chyba: "
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Enabling pigpiod service..."
 msgstr ""
 
-#: gpioPostInstall.py:61
+#: gpioPostInstall.py:66
 msgid "Setting version..."
 msgstr "Nastavuji verzi..."
 
@@ -132,11 +132,11 @@ msgstr ""
 msgid "Mode"
 msgstr ""
 
-#: openplotterGpio.py:183 openplotterGpio.py:1113
+#: openplotterGpio.py:183 openplotterGpio.py:1117
 msgid "High"
 msgstr ""
 
-#: openplotterGpio.py:184 openplotterGpio.py:1131
+#: openplotterGpio.py:184 openplotterGpio.py:1135
 msgid "Low"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgid "Add output"
 msgstr ""
 
 #: openplotterGpio.py:195 openplotterGpio.py:310 openplotterGpio.py:405
-#: openplotterGpio.py:580 openplotterGpio.py:787
+#: openplotterGpio.py:580 openplotterGpio.py:791
 msgid "Edit"
 msgstr "Upravit"
 
@@ -165,11 +165,11 @@ msgstr "Odstranit"
 msgid "You can turn GPIO outputs high or low using \"Actions\" in the Notifications app"
 msgstr ""
 
-#: openplotterGpio.py:286 openplotterGpio.py:705
+#: openplotterGpio.py:286 openplotterGpio.py:700
 msgid "yes"
 msgstr "ano"
 
-#: openplotterGpio.py:287 openplotterGpio.py:695
+#: openplotterGpio.py:287 openplotterGpio.py:688
 msgid "no"
 msgstr "ne"
 
@@ -201,11 +201,11 @@ msgstr "Vzdálenost"
 msgid "Add"
 msgstr "Přidat"
 
-#: openplotterGpio.py:391
+#: openplotterGpio.py:391 openplotterGpio.py:572
 msgid "Type"
 msgstr "Typ"
 
-#: openplotterGpio.py:393 openplotterGpio.py:783
+#: openplotterGpio.py:393 openplotterGpio.py:787
 msgid "Signal K key"
 msgstr "Signal K klíč"
 
@@ -213,7 +213,7 @@ msgstr "Signal K klíč"
 msgid "Rate"
 msgstr "Interval"
 
-#: openplotterGpio.py:395 openplotterGpio.py:799
+#: openplotterGpio.py:395 openplotterGpio.py:803
 msgid "Offset"
 msgstr "Ofset"
 
@@ -241,173 +241,173 @@ msgstr "OpenPlotter se restartuje. Jste si jisti?"
 msgid "Question"
 msgstr "Dotaz"
 
-#: openplotterGpio.py:571 openplotterGpio.py:729
+#: openplotterGpio.py:570 openplotterGpio.py:727
 msgid "Invert signal"
 msgstr "Invertovat signál"
 
-#: openplotterGpio.py:572
+#: openplotterGpio.py:571
 msgid "SK connection ID"
 msgstr "ID spojení SK"
 
-#: openplotterGpio.py:591
-msgid "At the moment, this feature only works on Raspberry Pi 4."
-msgstr ""
-
-#: openplotterGpio.py:602
+#: openplotterGpio.py:592
 msgid "This feature is only for Raspberry Pi."
 msgstr "Tato funkce je pouze pro Raspberry Pi."
 
-#: openplotterGpio.py:636
+#: openplotterGpio.py:628
 msgid "Fill in all fields"
 msgstr "Vyplňte všechna pole"
 
-#: openplotterGpio.py:652
+#: openplotterGpio.py:645
 msgid "Failed. Error creating connection in Signal K"
 msgstr "Chyba při vytváření připojení k Signal K serveru"
 
-#: openplotterGpio.py:655
+#: openplotterGpio.py:648
 msgid "Please install \"Signal K Installer\" OpenPlotter app"
 msgstr "Prosím, nainstalujte OpenPlotter aplikaci \"Instalátor Signal K\""
 
-#: openplotterGpio.py:674
+#: openplotterGpio.py:667
 msgid "Failed. Error removing connection in Signal K"
 msgstr "Chyba. Chyba při odstraňování připojení k Signal K serveru"
 
-#: openplotterGpio.py:715
+#: openplotterGpio.py:710
 msgid "Add SK Connection"
 msgstr "Přidat připojení do SK"
 
-#: openplotterGpio.py:720
+#: openplotterGpio.py:715
 msgid "ID"
 msgstr "ID"
 
-#: openplotterGpio.py:726
+#: openplotterGpio.py:718
+msgid "GPIO Library"
+msgstr ""
+
+#: openplotterGpio.py:724
 msgid "Select"
 msgstr "Vybrat"
 
-#: openplotterGpio.py:777
+#: openplotterGpio.py:781
 msgid "Editing sensor "
 msgstr "Upravit senzor "
 
-#: openplotterGpio.py:795 openplotterGpio.py:861
+#: openplotterGpio.py:799 openplotterGpio.py:865
 msgid "Rate (seconds)"
 msgstr "Interval (sekundy)"
 
-#: openplotterGpio.py:849
+#: openplotterGpio.py:853
 msgid "Editing GPIO pulses"
 msgstr "Upravit GPIO"
 
-#: openplotterGpio.py:850
+#: openplotterGpio.py:854
 msgid "Adding GPIO pulses"
 msgstr "Přidávání GPIO pulsů"
 
-#: openplotterGpio.py:866
+#: openplotterGpio.py:870
 msgid "Pulses per revolution"
 msgstr "Počet pulsů za otáčku"
 
-#: openplotterGpio.py:871 openplotterGpio.py:1104
+#: openplotterGpio.py:875 openplotterGpio.py:1108
 msgid "Internal pull resistor"
 msgstr "Interní pull-up"
 
-#: openplotterGpio.py:872 openplotterGpio.py:1105
+#: openplotterGpio.py:876 openplotterGpio.py:1109
 msgid "none"
 msgstr "žádný"
 
-#: openplotterGpio.py:878
+#: openplotterGpio.py:882
 msgid "Revolutions (Hz)"
 msgstr "Otáčky (Hz)"
 
-#: openplotterGpio.py:884
+#: openplotterGpio.py:888
 msgid "Revolutions counter"
 msgstr "Čítač otáček"
 
-#: openplotterGpio.py:890
+#: openplotterGpio.py:894
 msgid "Radius (m)"
 msgstr "Poloměr (m)"
 
-#: openplotterGpio.py:894
+#: openplotterGpio.py:898
 msgid "Speed (m/s)"
 msgstr "Rychlost (m/s)"
 
-#: openplotterGpio.py:900
+#: openplotterGpio.py:904
 msgid "Speed calibration"
 msgstr "Kalibrace rychlosti"
 
-#: openplotterGpio.py:905
+#: openplotterGpio.py:909
 msgid "Distance (m)"
 msgstr "Vzdálenost (m)"
 
-#: openplotterGpio.py:911
+#: openplotterGpio.py:915
 msgid "Set defaults"
 msgstr "Nastavit výchozí hodnoty"
 
-#: openplotterGpio.py:1058 openplotterGpio.py:1239 openplotterGpio.py:1314
+#: openplotterGpio.py:1062 openplotterGpio.py:1243 openplotterGpio.py:1318
 msgid "Enter the GPIO."
 msgstr "Zadejte GPIO."
 
-#: openplotterGpio.py:1058 openplotterGpio.py:1062 openplotterGpio.py:1066
-#: openplotterGpio.py:1070 openplotterGpio.py:1075 openplotterGpio.py:1079
-#: openplotterGpio.py:1239 openplotterGpio.py:1314
+#: openplotterGpio.py:1062 openplotterGpio.py:1066 openplotterGpio.py:1070
+#: openplotterGpio.py:1074 openplotterGpio.py:1079 openplotterGpio.py:1083
+#: openplotterGpio.py:1243 openplotterGpio.py:1318
 msgid "Error"
 msgstr "Chyba"
 
-#: openplotterGpio.py:1062
+#: openplotterGpio.py:1066
 msgid "\"Rate\" value has to be a number."
 msgstr "\"Otáčky\" musí být číslo."
 
-#: openplotterGpio.py:1066
+#: openplotterGpio.py:1070
 msgid "\"Pulses per revolution\" value has to be a number."
 msgstr "\"Pulsy za otáčku\" musí být číslo."
 
-#: openplotterGpio.py:1070
+#: openplotterGpio.py:1074
 msgid "To get \"Speed\" or \"Distance\" enter the radius."
 msgstr "Chcete-li získat \"Rychlost\" nebo \"Vzdálenost\", zadejte \"Poloměr\"."
 
-#: openplotterGpio.py:1075
+#: openplotterGpio.py:1079
 msgid "\"Radius\" value has to be a number."
 msgstr "\"Poloměr\" musí být číslo."
 
-#: openplotterGpio.py:1079
+#: openplotterGpio.py:1083
 msgid "\"Speed calibration\" value has to be a number."
 msgstr "\"Kalibrace rychlosti\" musí být číslo."
 
-#: openplotterGpio.py:1088
+#: openplotterGpio.py:1092
 msgid "Editing GPIO digital input"
 msgstr ""
 
-#: openplotterGpio.py:1089
+#: openplotterGpio.py:1093
 msgid "Adding GPIO digital input"
 msgstr ""
 
-#: openplotterGpio.py:1095
+#: openplotterGpio.py:1099
 msgid "Send initial state"
 msgstr "Odeslat počáteční stav"
 
-#: openplotterGpio.py:1115 openplotterGpio.py:1133
+#: openplotterGpio.py:1119 openplotterGpio.py:1137
 msgid "state:"
 msgstr ""
 
-#: openplotterGpio.py:1120 openplotterGpio.py:1138
+#: openplotterGpio.py:1124 openplotterGpio.py:1142
 msgid "message:"
 msgstr ""
 
-#: openplotterGpio.py:1124 openplotterGpio.py:1142
+#: openplotterGpio.py:1128 openplotterGpio.py:1146
 msgid "method:"
 msgstr ""
 
-#: openplotterGpio.py:1125 openplotterGpio.py:1143
+#: openplotterGpio.py:1129 openplotterGpio.py:1147
 msgid "visual"
 msgstr ""
 
-#: openplotterGpio.py:1126 openplotterGpio.py:1144
+#: openplotterGpio.py:1130 openplotterGpio.py:1148
 msgid "sound"
 msgstr ""
 
-#: openplotterGpio.py:1249
+#: openplotterGpio.py:1253
 msgid "Editing GPIO digital output"
 msgstr ""
 
-#: openplotterGpio.py:1250
+#: openplotterGpio.py:1254
 msgid "Adding GPIO digital output"
 msgstr ""
 

@@ -62,17 +62,8 @@ class Actions:
 				if gpio in digitalList:
 					if turn == 'low': value = Value.INACTIVE
 					elif turn == 'high': value = Value.ACTIVE
-					try:
-						out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
-						out = out.replace("\n","")
-						out = out.strip()
-					except: out = ''
-					if out == '5': chip = '/dev/gpiochip4'
-					elif out == '4': chip = '/dev/gpiochip0'
-					else: chip = ''
-					if chip:
-						with gpiod.request_lines(chip,consumer="toggle-line-value",config={int(gpio): gpiod.LineSettings(direction=Direction.OUTPUT)}) as request:
-							request.set_value(int(gpio), value)
+					with gpiod.request_lines('/dev/gpiochip0',consumer="toggle-line-value",config={int(gpio): gpiod.LineSettings(direction=Direction.OUTPUT)}) as request:
+						request.set_value(int(gpio), value)
 					key = 'notifications.GPIO'+gpio
 					lines = data.split('\n')
 					for i in lines:

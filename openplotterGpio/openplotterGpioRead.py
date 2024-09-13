@@ -31,14 +31,7 @@ class Process:
 		self.instances = {}
 		if conf.get('GENERAL', 'debug') == 'yes': self.debug = True
 		else: self.debug = False
-		try:
-			out = subprocess.check_output('raspi-config nonint get_pi_type', shell=True).decode(sys.stdin.encoding)
-			out = out.replace("\n","")
-			out = out.strip()
-		except: out = ''
-		if out == '5': self.chip = '/dev/gpiochip4'
-		elif out == '4': self.chip = '/dev/gpiochip0'
-		else: self.chip = ''
+		self.chip = '/dev/gpiochip0'
 
 	def connect(self):
 		self.platform = platform.Platform()
@@ -239,35 +232,34 @@ class Process:
 				return
 
 	def digital(self,digitalList):
-		if self.chip:
-			config = {}
-			for i in digitalList:
-				if digitalList[i]['mode'] == 'in':
+		config = {}
+		for i in digitalList:
+			if digitalList[i]['mode'] == 'in':
+				try:
+					if digitalList[i]['pull'] == 'up': bias = Bias.PULL_UP
+					elif digitalList[i]['pull'] == 'down': bias = Bias.PULL_DOWN
+					else: bias = Bias.DISABLED
+					if digitalList[i]['init']:
+						with gpiod.request_lines(self.chip,consumer="get-line-value",config={int(i): gpiod.LineSettings(direction=Direction.INPUT,bias=bias,debounce_period=timedelta(milliseconds=10))}) as request:
+							value = request.get_value(int(i))
+							if value == gpiodValue.ACTIVE: self.setnot(i,digitalList[i],'h')
+							elif value == gpiodValue.INACTIVE: self.setnot(i,digitalList[i],'l')
+					config[int(i)] = gpiod.LineSettings(edge_detection=Edge.BOTH,bias=bias,debounce_period=timedelta(milliseconds=10))
+				except Exception as e: 
+					if self.debug: 
+						print('Error setting GPIO digital: '+str(e))
+						sys.stdout.flush()
+		with gpiod.request_lines(self.chip,consumer="watch-digital",config=config) as request:
+			while True:
+				for event in request.read_edge_events():
 					try:
-						if digitalList[i]['pull'] == 'up': bias = Bias.PULL_UP
-						elif digitalList[i]['pull'] == 'down': bias = Bias.PULL_DOWN
-						else: bias = Bias.DISABLED
-						if digitalList[i]['init']:
-							with gpiod.request_lines(self.chip,consumer="get-line-value",config={int(i): gpiod.LineSettings(direction=Direction.INPUT,bias=bias,debounce_period=timedelta(milliseconds=10))}) as request:
-								value = request.get_value(int(i))
-								if value == gpiodValue.ACTIVE: self.setnot(i,digitalList[i],'h')
-								elif value == gpiodValue.INACTIVE: self.setnot(i,digitalList[i],'l')
-						config[int(i)] = gpiod.LineSettings(edge_detection=Edge.BOTH,bias=bias,debounce_period=timedelta(milliseconds=10))
+						gpio = str(event.line_offset)
+						if event.event_type is event.Type.FALLING_EDGE: self.setnot(gpio,digitalList[gpio],'l')
+						if event.event_type is event.Type.RISING_EDGE: self.setnot(gpio,digitalList[gpio],'h')
 					except Exception as e: 
 						if self.debug: 
-							print('Error setting GPIO digital: '+str(e))
+							print('Error reading GPIO digital: '+str(e))
 							sys.stdout.flush()
-			with gpiod.request_lines(self.chip,consumer="watch-digital",config=config) as request:
-				while True:
-					for event in request.read_edge_events():
-						try:
-							gpio = str(event.line_offset)
-							if event.event_type is event.Type.FALLING_EDGE: self.setnot(gpio,digitalList[gpio],'l')
-							if event.event_type is event.Type.RISING_EDGE: self.setnot(gpio,digitalList[gpio],'h')
-						except Exception as e: 
-							if self.debug: 
-								print('Error reading GPIO digital: '+str(e))
-								sys.stdout.flush()
 
 	def setnot (self,gpio,conf,state):
 		command = ['set-notification']
