@@ -30,12 +30,12 @@ class rpmReader:
 		if pull== 'up': GPIO.setup(TACH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 		elif pull == 'down': GPIO.setup(TACH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 		else: GPIO.setup(TACH, GPIO.IN)
-		GPIO.add_event_detect(TACH, GPIO.FALLING, self.fell)
 		self.t = time.time()
 		self.rpm = 0
 		self.counter = 0
 		self.pulsesCounter = 0
 		self.pulses_per_rev = pulses_per_rev
+		GPIO.add_event_detect(TACH, GPIO.FALLING, self.fell)
 		
 	def fell(self,n):
 		dt = time.time() - self.t
