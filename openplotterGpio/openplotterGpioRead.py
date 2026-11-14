@@ -38,7 +38,8 @@ class rpmReader:
 		self.pulses_per_rev = pulses_per_rev
 		
 	def fell(self,n):
-		dt = time.time() - self.t
+		now = time.time()
+		dt = now - self.t
 		if dt < 0.01: return # reject spuriously short pulses
 		freq = 1 / dt
 		self.rpm = (freq / self.pulses_per_rev) * 60
@@ -46,7 +47,7 @@ class rpmReader:
 		if self.pulsesCounter == self.pulses_per_rev:
 			self.counter = self.counter + 1
 			self.pulsesCounter = 0
-			self.t = time.time()
+		self.t = now
 		
 	def cancel(self):
 		GPIO.cleanup()
